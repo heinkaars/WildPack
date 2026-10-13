@@ -2,7 +2,7 @@ import type { TextStyle } from 'react-native';
 
 /**
  * WildPack design tokens, taken from the Figma handoff
- * (file qqd2yAkDOA9I0mXQnpozUm — Documentation 88386:2, Component 1:220).
+ * (file Foqg4MWr8YslYW5bKKS1Y2 — Documentation 88386:2, Component 1:220).
  */
 
 const dark = '#21262E';

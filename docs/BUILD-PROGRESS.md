@@ -3,7 +3,7 @@
 The MVP is the prototype codebase with its UI rebuilt from Figma, one section per chat.
 Data layer, auth, sync, AI routes and security fixes stay as they are.
 
-Figma file `qqd2yAkDOA9I0mXQnpozUm` ("WildPack Final Version"): handoff doc `88386:2`,
+Figma file `Foqg4MWr8YslYW5bKKS1Y2` ("WildPack Final Version"): handoff doc `88386:2`,
 components `1:220`, icons `161:749`.
 
 | # | Section | Status |
