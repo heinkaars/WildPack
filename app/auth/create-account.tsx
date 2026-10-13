@@ -1,7 +1,14 @@
 import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { PrimaryButton } from '../../components/PrimaryButton';
-import { AuthScreen, Field, TextLink } from '../../components/AuthScreen';
+import { Button, Input } from '../../components/ui';
+import {
+  ActionGroup,
+  AuthScreen,
+  FieldNote,
+  PasswordInput,
+  PromptLink,
+} from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
 import { showFlash } from '../../lib/flash';
 
@@ -11,11 +18,17 @@ export default function CreateAccountScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const trimmed = email.trim();
-  const canSubmit = trimmed.includes('@') && password.length >= 6 && !busy;
+  const tooShort = password.length > 0 && password.length < 6;
+  // Flag the confirmation once it stops being the start of the password, not
+  // while it is still being typed.
+  const mismatch = confirm.length > 0 && !password.startsWith(confirm);
+  const canSubmit =
+    trimmed.includes('@') && password.length >= 6 && confirm === password && !busy;
 
   async function handleSubmit() {
     setBusy(true);
@@ -34,43 +47,65 @@ export default function CreateAccountScreen() {
 
   return (
     <AuthScreen
-      title="Save your lifelist"
-      subtitle="Everything you have collected so far stays exactly as it is — an account just means it survives a lost or replaced phone."
+      wordmark
+      title="Create Account"
+      subtitle="Hey, let's create an account to save all the data and species you've recorded."
       error={error}
       footer={
-        <TextLink
-          label="I already have an account"
-          onPress={() => router.replace('/auth/sign-in')}
-        />
+        <ActionGroup>
+          <Button
+            label="Create account"
+            onPress={handleSubmit}
+            disabled={!canSubmit}
+            loading={busy}
+            style={styles.button}
+          />
+          <PromptLink
+            prompt="Already have an account?"
+            action="Sign in"
+            onPress={() => router.replace('/auth/sign-in')}
+          />
+        </ActionGroup>
       }
     >
-      <Field
-        label="Email"
+      <Input
         value={email}
         onChangeText={setEmail}
-        placeholder="you@example.com"
+        placeholder="Write Email"
+        accessibilityLabel="Email"
         keyboardType="email-address"
         autoCapitalize="none"
         autoComplete="email"
         autoCorrect={false}
-        editable={!busy}
-        hint="Double-check this one — it is how you get back in if you forget your password."
+        disabled={busy}
       />
-      <Field
-        label="Password"
+      {/* Email confirmation is off, so a typo here can't be caught later —
+          this is the only nudge before it locks them out of a reset. */}
+      <FieldNote>Double-check this — it's how you get back in if you forget your password.</FieldNote>
+      <PasswordInput
         value={password}
         onChangeText={setPassword}
-        placeholder="At least 6 characters"
-        secureTextEntry
-        autoCapitalize="none"
+        placeholder="Write Password"
+        accessibilityLabel="Password"
         autoComplete="new-password"
-        editable={!busy}
+        disabled={busy}
       />
-      <PrimaryButton
-        label={busy ? 'Creating…' : 'Create account'}
-        onPress={handleSubmit}
-        disabled={!canSubmit}
+      {tooShort && <FieldNote>At least 6 characters.</FieldNote>}
+      <PasswordInput
+        value={confirm}
+        onChangeText={setConfirm}
+        placeholder="Confirm Password"
+        accessibilityLabel="Confirm password"
+        autoComplete="new-password"
+        disabled={busy}
+        error={mismatch}
+        onSubmitEditing={canSubmit ? handleSubmit : undefined}
       />
+      {mismatch && <FieldNote tone="error">The passwords don't match.</FieldNote>}
     </AuthScreen>
   );
 }
+
+const styles = StyleSheet.create({
+  button: { alignSelf: 'stretch' },
+});

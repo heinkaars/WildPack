@@ -1,7 +1,15 @@
 import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { PrimaryButton } from '../../components/PrimaryButton';
-import { AuthScreen, Field, TextLink } from '../../components/AuthScreen';
+import { Button, Input } from '../../components/ui';
+import {
+  ActionGroup,
+  AuthScreen,
+  FieldNote,
+  MessageBox,
+  PasswordInput,
+  TextLink,
+} from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
 
 /**
@@ -21,6 +29,7 @@ export default function VerifyScreen() {
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const tooShort = password.length > 0 && password.length < 6;
   const canSubmit = code.trim().length === 6 && password.length >= 6 && !busy;
 
   async function handleSubmit() {
@@ -52,35 +61,47 @@ export default function VerifyScreen() {
       title="Check your email"
       subtitle={`We sent a 6-digit code to ${email}. Enter it below and choose your new password.`}
       error={error}
-      footer={<TextLink label="Send the code again" onPress={handleResend} />}
+      footer={
+        <>
+          <ActionGroup>
+            <Button
+              label="Set new password"
+              onPress={handleSubmit}
+              disabled={!canSubmit}
+              loading={busy}
+              style={styles.button}
+            />
+            <TextLink label="Send the code again" onPress={handleResend} />
+          </ActionGroup>
+          {notice && <MessageBox>{notice}</MessageBox>}
+        </>
+      }
     >
-      <Field
-        label="6-digit code"
+      <Input
         value={code}
         onChangeText={(text) => setCode(text.replace(/[^0-9]/g, '').slice(0, 6))}
-        placeholder="123456"
+        placeholder="6-digit code"
+        accessibilityLabel="6-digit code"
         keyboardType="number-pad"
         autoComplete="one-time-code"
         textContentType="oneTimeCode"
         maxLength={6}
-        editable={!busy}
-        hint={notice ?? undefined}
+        disabled={busy}
       />
-      <Field
-        label="New password"
+      <PasswordInput
         value={password}
         onChangeText={setPassword}
-        placeholder="At least 6 characters"
-        secureTextEntry
-        autoCapitalize="none"
+        placeholder="New Password"
+        accessibilityLabel="New password"
         autoComplete="new-password"
-        editable={!busy}
+        disabled={busy}
+        onSubmitEditing={canSubmit ? handleSubmit : undefined}
       />
-      <PrimaryButton
-        label={busy ? 'Checking…' : 'Set new password'}
-        onPress={handleSubmit}
-        disabled={!canSubmit}
-      />
+      {tooShort && <FieldNote>At least 6 characters.</FieldNote>}
     </AuthScreen>
   );
 }
+
+const styles = StyleSheet.create({
+  button: { alignSelf: 'stretch' },
+});

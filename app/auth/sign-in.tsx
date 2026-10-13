@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { PrimaryButton } from '../../components/PrimaryButton';
-import { AuthScreen, Field, TextLink } from '../../components/AuthScreen';
+import { Button, Input } from '../../components/ui';
+import {
+  ActionGroup,
+  AuthScreen,
+  MessageBox,
+  PasswordInput,
+  TextLink,
+} from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
 import { previewMerge } from '../../lib/account-switch';
 import { showFlash } from '../../lib/flash';
-import { colors, radii, spacing } from '../../lib/theme';
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -57,57 +62,54 @@ export default function SignInScreen() {
       error={error}
       footer={
         <>
-          <TextLink label="Forgot your password?" onPress={() => router.push('/auth/forgot-password')} />
-          <TextLink label="Create an account instead" onPress={() => router.replace('/auth/create-account')} />
+          <ActionGroup>
+            <Button
+              label="Sign in"
+              onPress={handleSubmit}
+              disabled={!canSubmit}
+              loading={busy}
+              style={styles.button}
+            />
+            <TextLink label="Create an account instead" onPress={() => router.replace('/auth/create-account')} />
+          </ActionGroup>
+          {carrying && (
+            <MessageBox>
+              The {carrying.sightings === 1 ? 'sighting' : `${carrying.sightings} sightings`} on this
+              phone {carrying.sightings === 1 ? 'moves' : 'move'} across to the account you sign in to.
+              Nothing is lost.
+            </MessageBox>
+          )}
         </>
       }
     >
-      {carrying && (
-        <View style={styles.notice}>
-          <Text style={styles.noticeText}>
-            The {carrying.sightings === 1 ? 'sighting' : `${carrying.sightings} sightings`} on this
-            phone {carrying.sightings === 1 ? 'moves' : 'move'} across to the account you sign in to.
-            Nothing is lost.
-          </Text>
-        </View>
-      )}
-
-      <Field
-        label="Email"
+      <Input
         value={email}
         onChangeText={setEmail}
-        placeholder="you@example.com"
+        placeholder="Enter Email"
+        accessibilityLabel="Email"
         keyboardType="email-address"
         autoCapitalize="none"
         autoComplete="email"
         autoCorrect={false}
-        editable={!busy}
+        disabled={busy}
       />
-      <Field
-        label="Password"
+      <PasswordInput
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
+        placeholder="Enter Password"
+        accessibilityLabel="Password"
         autoComplete="current-password"
-        editable={!busy}
+        disabled={busy}
+        onSubmitEditing={canSubmit ? handleSubmit : undefined}
       />
-      <PrimaryButton
-        label={busy ? 'Signing in…' : 'Sign in'}
-        onPress={handleSubmit}
-        disabled={!canSubmit}
-      />
+      <View style={styles.forgot}>
+        <TextLink label="Forgot Password?" onPress={() => router.push('/auth/forgot-password')} />
+      </View>
     </AuthScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  notice: {
-    padding: spacing.md,
-    borderRadius: radii.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  noticeText: { fontSize: 14, lineHeight: 20, color: colors.inkMuted },
+  button: { alignSelf: 'stretch' },
+  forgot: { marginTop: 4, alignItems: 'flex-start' },
 });

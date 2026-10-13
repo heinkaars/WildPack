@@ -37,6 +37,12 @@ export const colors = {
   fillStrong: 'rgba(33, 38, 46, 0.1)',
   stroke: 'rgba(33, 38, 46, 0.6)',
   strokeStrong: 'rgba(33, 38, 46, 0.8)',
+  /** "soft orange/10" — the info message box on auth screens. */
+  primaryFill: 'rgba(255, 153, 0, 0.1)',
+  /** The WildPack wordmark (Figma "orange/100"). */
+  wordmark: palette.badgeIcon,
+  /** iOS "fill/tertiary" behind the round back button. */
+  backButtonFill: 'rgba(120, 120, 128, 0.16)',
   warningFill: 'rgba(249, 79, 64, 0.1)',
   warningStroke: 'rgba(249, 79, 64, 0.5)',
   /** Handoff "badge locked/attention tint". */
@@ -82,7 +88,7 @@ export const radii = {
 };
 
 export const sizes = {
-  button: 56,
+  button: 60,
   input: 56,
   navItem: 48,
   icon: 24,

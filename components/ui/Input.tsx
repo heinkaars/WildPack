@@ -1,4 +1,4 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, ReactNode, useState } from 'react';
 import {
   Pressable,
   StyleProp,
@@ -19,6 +19,8 @@ type InputProps = Omit<TextInputProps, 'style' | 'editable'> & {
   disabled?: boolean;
   /** Shows the chevron used for picker-style fields. */
   dropdown?: boolean;
+  /** Something at the right end of the field, such as the password eye. */
+  trailing?: ReactNode;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -27,7 +29,7 @@ type InputProps = Omit<TextInputProps, 'style' | 'editable'> & {
  * so the four Figma states come from props + focus rather than a variant prop.
  */
 export const Input = forwardRef<TextInput, InputProps>(function Input(
-  { error, disabled, dropdown, style, onFocus, onBlur, ...rest },
+  { error, disabled, dropdown, trailing, style, onFocus, onBlur, ...rest },
   ref,
 ) {
   const [focused, setFocused] = useState(false);
@@ -60,6 +62,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
         {...rest}
       />
       {dropdown && <ChevronDown color={chevronColor} />}
+      {trailing}
     </View>
   );
 });
