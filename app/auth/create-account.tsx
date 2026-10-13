@@ -71,7 +71,7 @@ export default function CreateAccountScreen() {
       <Input
         value={email}
         onChangeText={setEmail}
-        placeholder="Write Email"
+        placeholder="Email"
         accessibilityLabel="Email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -79,13 +79,10 @@ export default function CreateAccountScreen() {
         autoCorrect={false}
         disabled={busy}
       />
-      {/* Email confirmation is off, so a typo here can't be caught later —
-          this is the only nudge before it locks them out of a reset. */}
-      <FieldNote>Double-check this — it's how you get back in if you forget your password.</FieldNote>
       <PasswordInput
         value={password}
         onChangeText={setPassword}
-        placeholder="Write Password"
+        placeholder="Password"
         accessibilityLabel="Password"
         autoComplete="new-password"
         disabled={busy}

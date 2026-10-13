@@ -82,7 +82,7 @@ Figma frames; they reuse the same frame.
   preview without a server (dev builds only).
 - Decisions: "Keep me signed in" is left out (the app always stays signed in, since accounts
   start anonymous). Create Account adds a confirm-password field, the button says "Create
-  account", and the email keeps a "double-check this" note because email confirmation is off.
+  account". Placeholders are just "Email" / "Password" (user's call, not Figma's "Enter …"/"Write …").
   Sign-in/merge logic is unchanged.
 
 ## Open items / decisions for later chats

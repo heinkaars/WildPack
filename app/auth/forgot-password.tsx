@@ -48,7 +48,7 @@ export default function ForgotPasswordScreen() {
       <Input
         value={email}
         onChangeText={setEmail}
-        placeholder="Enter Email"
+        placeholder="Email"
         accessibilityLabel="Email"
         keyboardType="email-address"
         autoCapitalize="none"

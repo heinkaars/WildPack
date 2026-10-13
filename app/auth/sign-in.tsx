@@ -85,7 +85,7 @@ export default function SignInScreen() {
       <Input
         value={email}
         onChangeText={setEmail}
-        placeholder="Enter Email"
+        placeholder="Email"
         accessibilityLabel="Email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -96,7 +96,7 @@ export default function SignInScreen() {
       <PasswordInput
         value={password}
         onChangeText={setPassword}
-        placeholder="Enter Password"
+        placeholder="Password"
         accessibilityLabel="Password"
         autoComplete="current-password"
         disabled={busy}
