@@ -9,7 +9,7 @@ components `1:220`, icons `161:749`.
 | # | Section | Status |
 |---|---------|--------|
 | 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — merged to `master` |
-| 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — branch `mvp/auth`, not merged yet |
+| 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
 | 3 | Onboarding | Next |
 | 4 | Capture & identify | — |
 | 5 | Home / profile / life list | — |
