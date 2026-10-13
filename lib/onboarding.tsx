@@ -91,13 +91,15 @@ export function OnboardingGate() {
   const router = useRouter();
   const segments = useSegments();
   const inOnboarding = segments[0] === 'onboarding';
+  // The dev component gallery stays reachable before onboarding, in dev builds only.
+  const inDevGallery = __DEV__ && segments[0] === 'dev';
 
   useEffect(() => {
-    if (!ready || !needsOnboarding || inOnboarding) return;
+    if (!ready || !needsOnboarding || inOnboarding || inDevGallery) return;
     router.replace('/onboarding/welcome');
-  }, [ready, needsOnboarding, inOnboarding, router]);
+  }, [ready, needsOnboarding, inOnboarding, inDevGallery, router]);
 
-  if (ready) return null;
+  if (ready || inDevGallery) return null;
 
   return (
     <View style={styles.cover}>

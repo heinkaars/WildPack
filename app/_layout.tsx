@@ -3,6 +3,18 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import {
+  Baloo2_600SemiBold,
+  Baloo2_700Bold,
+  Baloo2_800ExtraBold,
+} from '@expo-google-fonts/baloo-2';
+import {
+  Nunito_400Regular,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+} from '@expo-google-fonts/nunito';
 import { AuthProvider } from '../lib/auth';
 import { LifelistProvider } from '../lib/lifelist-store';
 import { CaptureSessionProvider } from '../lib/capture-session';
@@ -10,6 +22,20 @@ import { OnboardingGate, OnboardingProvider } from '../lib/onboarding';
 import { colors } from '../lib/theme';
 
 export default function RootLayout() {
+  // Keys must match `fonts` in lib/theme.ts.
+  const [fontsLoaded, fontError] = useFonts({
+    Baloo2_600SemiBold,
+    Baloo2_700Bold,
+    Baloo2_800ExtraBold,
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+  });
+
+  // Fonts are bundled, so this is a frame or two; on a load error fall back to system fonts.
+  if (!fontsLoaded && !fontError) return null;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -34,6 +60,7 @@ export default function RootLayout() {
                   <Stack.Screen name="capture/result" />
                   <Stack.Screen name="species/[id]" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="ama/[id]" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="dev/components" />
                 </Stack>
                 {/* Sits above the stack so the lifelist cannot flash before we
                     know whether this user still owes us onboarding. */}

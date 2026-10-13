@@ -1,5 +1,6 @@
 import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
-import { colors, radii, spacing } from '../lib/theme';
+import { colors, type } from '../lib/theme';
+import { Button } from './ui/Button';
 
 type Props = {
   label: string;
@@ -9,57 +10,47 @@ type Props = {
   style?: ViewStyle;
 };
 
+/**
+ * Prototype-era button API, now drawn with the Figma Button. Screens move to
+ * components/ui/Button as they are rebuilt; delete this once nothing imports it.
+ */
 export function PrimaryButton({ label, onPress, variant = 'primary', disabled, style }: Props) {
+  if (variant === 'ghost') {
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        style={({ pressed }) => [styles.ghost, disabled && styles.disabled, pressed && !disabled && styles.pressed, style]}
+      >
+        <Text style={[type.button, styles.ghostLabel]}>{label}</Text>
+      </Pressable>
+    );
+  }
   return (
-    <Pressable
+    <Button
+      label={label}
       onPress={onPress}
+      variant={variant === 'secondary' ? 'outline' : 'primary'}
       disabled={disabled}
-      style={({ pressed }) => [
-        styles.base,
-        variant === 'primary' && styles.primary,
-        variant === 'secondary' && styles.secondary,
-        variant === 'ghost' && styles.ghost,
-        disabled && styles.disabled,
-        pressed && !disabled && styles.pressed,
-        style,
-      ]}
-    >
-      <Text style={[styles.label, variant !== 'primary' && styles.darkLabel]}>{label}</Text>
-    </Pressable>
+      style={style}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  base: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radii.pill,
+  ghost: {
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  primary: {
-    backgroundColor: colors.forest,
-  },
-  secondary: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  ghost: {
-    backgroundColor: 'transparent',
+  ghostLabel: {
+    color: colors.text,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.3,
   },
   pressed: {
     opacity: 0.85,
-  },
-  label: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  darkLabel: {
-    color: colors.forest,
   },
 });

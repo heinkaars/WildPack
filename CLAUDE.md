@@ -6,6 +6,7 @@
 
 ## Before Writing Code
 - Read [`AGENTS.md`](AGENTS.md) for Expo version, dev server setup, and SSR/dev gotchas
+- MVP UI rebuild from Figma: read [`docs/BUILD-PROGRESS.md`](docs/BUILD-PROGRESS.md) for what's done and the shared tokens/components in `lib/theme.ts` and `components/ui/`
 - Port 8090 is required (checked in `.claude/launch.json`)
 - Full dev server restart needed when adding new API routes (`+api.ts`)
 
