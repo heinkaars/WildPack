@@ -1,4 +1,4 @@
-import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { colors, radii, sizes, type } from '../../lib/theme';
 import { Gradient } from './Gradient';
 import { ChevronLeft, ChevronRight } from './icons';
@@ -12,6 +12,8 @@ type Props = {
   variant?: ButtonVariant;
   /** Figma "Disable": the same button at 30% opacity. */
   disabled?: boolean;
+  /** Shows a spinner in place of the label and ignores presses. */
+  loading?: boolean;
   chevronLeft?: boolean;
   chevronRight?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -22,12 +24,15 @@ export function Button({
   onPress,
   variant = 'primary',
   disabled,
+  loading,
   chevronLeft,
   chevronRight,
   style,
 }: Props) {
   const fg = variant === 'primary' ? colors.textOnPrimary : colors.text;
-  const content = (
+  const content = loading ? (
+    <ActivityIndicator color={fg} />
+  ) : (
     <>
       {chevronLeft && <ChevronLeft color={fg} />}
       <Text style={[type.button, styles.label, { color: fg }]} numberOfLines={1}>
@@ -40,13 +45,14 @@ export function Button({
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || loading}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled, busy: !!loading }}
       style={({ pressed }) => [
         styles.shell,
         disabled && styles.disabled,
-        pressed && !disabled && styles.pressed,
+        pressed && !disabled && !loading && styles.pressed,
         style,
       ]}
     >

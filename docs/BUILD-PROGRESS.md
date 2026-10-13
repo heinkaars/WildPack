@@ -25,10 +25,15 @@ token and component below, and it skips the onboarding redirect.
 - `colors`: `primary` #FF9900, `warning` #F94F40, `text` #21262E (+ `textSecondary` 80%,
   `textMuted` 60%, `textDisabled` 50%), `cream` #FFEBCC, `progressTrack` #C2A264, and the
   translucent fills `fill` (dark 6%, input background), `fillStrong` (dark 10%, locked badge),
-  `stroke`, `warningFill`, `warningStroke`.
+  `stroke`, `warningFill`, `warningStroke`, `warningTint` (handoff "badge locked/attention"),
+  `switchTrack`.
 - `gradient` — 180°, #FF9900 → #F94F40. Use `<Gradient>` rather than LinearGradient directly.
-- `fonts` / `type` — Baloo 2 headings (`display`, `h1`–`h3`), Nunito body (`bodyLarge`, `body`,
-  `bodyBold`, `label`, `small`, `caption`, `button`). Fonts load in `app/_layout.tsx`.
+- `fonts` / `type` — named after the Figma text styles (Style Guide → Typography `56514:398`):
+  `headingXL` / `headingL` (Fredoka One 48 / 32, big titles), `headingM` (Baloo 24, section
+  titles), `button`, `levelSemiBold`, `levelMedium`, `bodyLg`, `bodySm`, `captionLg`, `captionSm`,
+  plus the handoff roles `bodyBold` (XP numbers), `label` (14 bold), `labelSm` (12, day pills) and
+  `count` (Nunito Black, notification counts). Figma's "Baloo" is the retired single-weight font;
+  Baloo 2 ExtraBold is its match. Fonts load in `app/_layout.tsx`.
 - `spacing.screen` = 20 (screen side padding); `sizes.button` / `sizes.input` = 56.
 - **Legacy names** (`forest`, `ink`, `inkMuted`, `border`, `amber`, …) still exist and point at
   the new palette so un-rebuilt screens keep working. Use the new names in rebuilt screens; delete
@@ -36,9 +41,11 @@ token and component below, and it skips the onboarding redirect.
 
 **Components — `components/ui/` (import from `components/ui`)**
 - `Button` — `variant` `primary` (gradient) / `secondary` (white) / `outline`; `disabled` = 30%
-  opacity; `chevronLeft` / `chevronRight`.
+  opacity; `loading` (spinner); `chevronLeft` / `chevronRight`. Height 56 (see open items).
 - `Input` — 56px pill; focus shows the outline, `error` gives the red state, `disabled`, `dropdown`
   chevron. `ChatInput` — the AI chat field with gradient send button.
+- `Checkbox`, `Radio`, `Switch` — the Figma controls (`checked`, `onChange`), with enlarged
+  tap areas. Checkbox is for "stay signed in"; Switch for the profile location toggle.
 - `BottomNav` — `active: 'home' | 'capture'`. Position it on the screen (it just centres itself).
 - `BadgeTile` — `badge` 1–13, `earned`. Earned = pastel tile + orange icon, locked = grey.
 - `Docent` — circular portrait, `animal` lion / rhino / gecko / raccoon, `mood` happy / sad.
@@ -59,12 +66,16 @@ token and component below, and it skips the onboarding redirect.
 
 ## Open items / decisions for later chats
 
-- **Figma call limit:** the Figma account is on the Starter plan (View seat), which allows only a
-  handful of MCP calls a month; Foundations used it up on 2026-10-13. Later sections need screen
-  designs from Figma, so either upgrade the seat/plan or paste screenshots + specs into the chat.
-- **Heading sizes are provisional.** Button/label/chat text sizes come straight from Figma; the
-  `display` / `h1`–`h3` sizes were chosen to fit, because the type scale couldn't be pulled
-  before the limit hit. Check them against the handoff doc and adjust `type` in `lib/theme.ts`.
+- **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
+  returns the Cover page, so ask the user for a node link per screen.
+- **Button height 56 vs 60.** The Button component in Figma is 56 tall; the handoff doc says
+  primary buttons are 60. `sizes.button` is 56 — check against the first real screen (Auth) and
+  change that one token if screens use 60.
+- **Still to build from screens:** the 44×44 round Back button (handoff "Leading/Back Button",
+  first needed in Auth) and the "X% confidence" pill (Capture & identify). They aren't on the
+  Components page, so take them from the screen frames.
+- **Locked badge colour.** The badge component uses grey (dark 10%) for locked; the handoff also
+  mentions a red "attention" tint (`colors.warningTint`). Check which one the Home screen uses.
 - **Badges aren't mapped to milestones yet.** `lib/milestones.ts` has 6 milestones; Figma has 13
   badges. Decide the mapping in section 5 (profile).
 - **Docent choice isn't stored yet.** The onboarding picker (section 3) needs somewhere to save

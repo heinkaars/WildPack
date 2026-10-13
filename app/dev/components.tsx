@@ -9,6 +9,7 @@ import {
   BottomNav,
   Button,
   ChatInput,
+  Checkbox,
   DOCENT_ANIMALS,
   Docent,
   DocentAnimal,
@@ -16,7 +17,9 @@ import {
   Gradient,
   Input,
   NavTab,
+  Radio,
   ScreenStatusBar,
+  Switch,
 } from '../../components/ui';
 
 /** Dev-only gallery of the Figma foundations. Open /dev/components in a dev build. */
@@ -25,6 +28,9 @@ export default function ComponentGallery() {
   const [docent, setDocent] = useState<DocentAnimal>('lion');
   const [name, setName] = useState('');
   const [chat, setChat] = useState('');
+  const [stay, setStay] = useState(true);
+  const [plan, setPlan] = useState<'a' | 'b'>('a');
+  const [location, setLocation] = useState(false);
 
   if (!__DEV__) return <Redirect href="/" />;
 
@@ -34,9 +40,9 @@ export default function ComponentGallery() {
     <View style={styles.screen}>
       <ScreenStatusBar />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={type.display}>Foundations</Text>
-        <Text style={[type.body, { color: colors.textMuted }]}>
-          Baloo 2 for headings, Nunito for body. Everything below is built from lib/theme.ts.
+        <Text style={type.headingXL}>Foundations</Text>
+        <Text style={[type.bodyLg, { color: colors.textMuted }]}>
+          Fredoka One for titles, Baloo for section headings, Nunito for body. Everything below is built from lib/theme.ts.
         </Text>
 
         <Section title="Colour">
@@ -48,17 +54,24 @@ export default function ComponentGallery() {
             <Swatch label="Track" color={palette.progressTrack} />
           </View>
           <Gradient style={styles.gradientBar} />
-          <Text style={[type.caption, { color: colors.textMuted }]}>Primary gradient, 180° #FF9900 → #F94F40</Text>
+          <Text style={[type.labelSm, { color: colors.textMuted }]}>Primary gradient, 180° #FF9900 → #F94F40</Text>
         </Section>
 
         <Section title="Type">
-          <Text style={type.h1}>Heading 1 · Baloo</Text>
-          <Text style={type.h2}>Heading 2 · Baloo</Text>
-          <Text style={type.h3}>Heading 3 · Baloo</Text>
-          <Text style={type.bodyLarge}>Body large · Nunito Bold 18</Text>
-          <Text style={type.body}>Body · Nunito Regular 16</Text>
-          <Text style={[type.small, { color: colors.textSecondary }]}>Small · Nunito SemiBold 14 at 80%</Text>
-          <Text style={[type.caption, { color: colors.textMuted }]}>Caption · Nunito SemiBold 12 at 60%</Text>
+          <Text style={type.headingXL}>Heading/XL</Text>
+          <Text style={type.headingL}>Heading/L</Text>
+          <Text style={type.headingM}>Heading/M</Text>
+          <Text style={type.button}>Level/Button-text</Text>
+          <Text style={type.levelSemiBold}>Level/SemiBold</Text>
+          <Text style={type.levelMedium}>Level/Medium</Text>
+          <Text style={type.bodyBold}>body/md-bold · 1,250 XP</Text>
+          <Text style={type.bodyLg}>Body text/Lg</Text>
+          <Text style={type.bodySm}>Body text/Sm</Text>
+          <Text style={type.label}>body/lg-bold · labels</Text>
+          <Text style={type.count}>body/black · 12</Text>
+          <Text style={type.labelSm}>body/sm-semibold · Mon Tue Wed</Text>
+          <Text style={type.captionLg}>Caption/Lg</Text>
+          <Text style={type.captionSm}>Caption/sm</Text>
         </Section>
 
         <Section title="Buttons">
@@ -69,6 +82,24 @@ export default function ComponentGallery() {
           <Button label="Learn more" variant="outline" onPress={() => {}} chevronLeft chevronRight />
           <Button label="Learn more" disabled onPress={() => {}} chevronLeft chevronRight />
           <Button label="Continue" onPress={() => {}} />
+          <Button label="Continue" loading onPress={() => {}} />
+        </Section>
+
+        <Section title="Controls">
+          <View style={styles.controlRow}>
+            <Checkbox checked={stay} onChange={setStay} accessibilityLabel="Stay signed in" />
+            <Text style={type.bodySm}>Stay signed in</Text>
+          </View>
+          <View style={styles.controlRow}>
+            <Radio checked={plan === 'a'} onChange={() => setPlan('a')} accessibilityLabel="Option A" />
+            <Text style={type.bodySm}>Option A</Text>
+            <Radio checked={plan === 'b'} onChange={() => setPlan('b')} accessibilityLabel="Option B" />
+            <Text style={type.bodySm}>Option B</Text>
+          </View>
+          <View style={styles.controlRow}>
+            <Switch checked={location} onChange={setLocation} accessibilityLabel="Location" />
+            <Text style={type.bodySm}>Location {location ? 'on' : 'off'}</Text>
+          </View>
         </Section>
 
         <Section title="Inputs">
@@ -91,13 +122,13 @@ export default function ComponentGallery() {
         </Section>
 
         <Section title="Badges">
-          <Text style={[type.caption, { color: colors.textMuted }]}>Earned</Text>
+          <Text style={[type.labelSm, { color: colors.textMuted }]}>Earned</Text>
           <View style={styles.wrap}>
             {badgeIds.map((id) => (
               <BadgeTile key={`on-${id}`} badge={id} earned />
             ))}
           </View>
-          <Text style={[type.caption, { color: colors.textMuted }]}>Locked</Text>
+          <Text style={[type.labelSm, { color: colors.textMuted }]}>Locked</Text>
           <View style={styles.wrap}>
             {badgeIds.map((id) => (
               <BadgeTile key={`off-${id}`} badge={id} earned={false} />
@@ -116,7 +147,7 @@ export default function ComponentGallery() {
               <Docent key={`s-${a}`} animal={a} mood="sad" width={76} />
             ))}
           </View>
-          <Text style={[type.caption, { color: colors.textMuted }]}>Picker — tap to select</Text>
+          <Text style={[type.labelSm, { color: colors.textMuted }]}>Picker — tap to select</Text>
           <View style={styles.wrap}>
             {DOCENT_ANIMALS.map((a) => (
               <DocentCard key={`c-${a}`} animal={a} width={160} selected={docent === a} onPress={() => setDocent(a)} />
@@ -131,7 +162,7 @@ export default function ComponentGallery() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={styles.section}>
-      <Text style={type.h3}>{title}</Text>
+      <Text style={type.headingM}>{title}</Text>
       {children}
     </View>
   );
@@ -141,7 +172,7 @@ function Swatch({ label, color }: { label: string; color: string }) {
   return (
     <View style={styles.swatch}>
       <View style={[styles.chip, { backgroundColor: color }]} />
-      <Text style={type.caption}>{label}</Text>
+      <Text style={type.labelSm}>{label}</Text>
     </View>
   );
 }
@@ -155,5 +186,6 @@ const styles = StyleSheet.create({
   swatch: { alignItems: 'center', gap: spacing.xs },
   chip: { width: 48, height: 48, borderRadius: 12, borderWidth: 1, borderColor: colors.fillStrong },
   gradientBar: { height: 56, borderRadius: 16 },
+  controlRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   onCream: { backgroundColor: colors.cream, padding: spacing.md, borderRadius: 16 },
 });

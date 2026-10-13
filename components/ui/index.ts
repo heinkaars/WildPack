@@ -9,4 +9,5 @@ export type { DocentAnimal } from './Docent';
 export { Gradient } from './Gradient';
 export { ChatInput, Input } from './Input';
 export { ScreenStatusBar } from './ScreenStatusBar';
+export { Checkbox, Radio, Switch } from './Toggles';
 export * from './icons';

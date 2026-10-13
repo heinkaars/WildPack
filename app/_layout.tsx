@@ -4,16 +4,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
-import {
-  Baloo2_600SemiBold,
-  Baloo2_700Bold,
-  Baloo2_800ExtraBold,
-} from '@expo-google-fonts/baloo-2';
+import { Baloo2_800ExtraBold } from '@expo-google-fonts/baloo-2';
+import { FredokaOne_400Regular } from '@expo-google-fonts/fredoka-one';
 import {
   Nunito_400Regular,
+  Nunito_500Medium,
   Nunito_600SemiBold,
+  Nunito_600SemiBold_Italic,
   Nunito_700Bold,
-  Nunito_800ExtraBold,
+  Nunito_900Black,
 } from '@expo-google-fonts/nunito';
 import { AuthProvider } from '../lib/auth';
 import { LifelistProvider } from '../lib/lifelist-store';
@@ -24,13 +23,14 @@ import { colors } from '../lib/theme';
 export default function RootLayout() {
   // Keys must match `fonts` in lib/theme.ts.
   const [fontsLoaded, fontError] = useFonts({
-    Baloo2_600SemiBold,
-    Baloo2_700Bold,
+    FredokaOne_400Regular,
     Baloo2_800ExtraBold,
     Nunito_400Regular,
+    Nunito_500Medium,
     Nunito_600SemiBold,
+    Nunito_600SemiBold_Italic,
     Nunito_700Bold,
-    Nunito_800ExtraBold,
+    Nunito_900Black,
   });
 
   // Fonts are bundled, so this is a frame or two; on a load error fall back to system fonts.
