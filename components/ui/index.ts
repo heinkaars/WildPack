@@ -5,7 +5,7 @@ export { BottomNav } from './BottomNav';
 export type { NavTab } from './BottomNav';
 export { Button } from './Button';
 export type { ButtonVariant } from './Button';
-export { Docent, DocentCard, DOCENT_ANIMALS } from './Docent';
+export { Docent, DocentCard, DOCENT_ANIMALS, docentFromLook } from './Docent';
 export type { DocentAnimal } from './Docent';
 export { Gradient } from './Gradient';
 export { ChatInput, Input } from './Input';

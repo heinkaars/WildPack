@@ -10,12 +10,14 @@ import {
   TextLink,
 } from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
+import { useOnboarding } from '../../lib/onboarding';
 import { previewMerge } from '../../lib/account-switch';
 import { showFlash } from '../../lib/flash';
 
 export default function SignInScreen() {
   const router = useRouter();
   const { signIn } = useAuth();
+  const { markComplete } = useOnboarding();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,6 +45,10 @@ export default function SignInScreen() {
     setError(null);
     try {
       await signIn(trimmed, password);
+      // Reached from A1's "I have an account": an existing account is past
+      // onboarding. Saying so now keeps the gate from sending the user back to
+      // A1 in the moment before the store has rebuilt around the account.
+      await markComplete();
 
       showFlash(`Welcome back. Signed in as ${trimmed}.`);
 

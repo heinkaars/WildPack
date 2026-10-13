@@ -10,8 +10,8 @@ components `1:220`, icons `161:749`.
 |---|---------|--------|
 | 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — merged to `master` |
 | 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
-| 3 | Onboarding | Next |
-| 4 | Capture & identify | — |
+| 3 | Onboarding | **Done** — on branch `mvp/onboarding`, tested in the iOS Simulator, not merged yet |
+| 4 | Capture & identify | Next |
 | 5 | Home / profile / life list | — |
 | 6 | Species detail + Ask chat | — |
 | 7 | "Looks" collection (new) | — |
@@ -85,6 +85,34 @@ Figma frames; they reuse the same frame.
   account". Placeholders are just "Email" / "Password" (user's call, not Figma's "Enter …"/"Write …").
   Sign-in/merge logic is unchanged.
 
+## What Onboarding added
+
+Figma: Onboarding `88384:3396`, Choose your Docent `88384:3880` / `88384:3901` (selected),
+name `88384:3921` / `3937` / `3953`, Welcome to the Pack `88384:3969`, Get-Start `88384:3416`,
+Turn on Location `88384:3433`.
+
+- Flow: `welcome` → `look` (choose docent) → `name` → `pack` (new) → `first-capture`.
+  "I have an account" on welcome opens `/auth/sign-in`; the onboarding gate now lets `/auth`
+  through, and a successful sign-in marks onboarding complete straight away.
+- **Docent choice is stored in `profile.look`** (`lion` / `rhino` / `gecko` / `raccoon`) — no
+  data-layer change. `docentFromLook()` (in `components/ui/Docent.tsx`) turns it back into a
+  docent; old emoji looks fall back to the lion. `lookEmoji()` gives each docent an emoji so the
+  not-yet-rebuilt home screen still shows something sensible.
+- `components/onboarding/OnboardingScreen.tsx` — the shared frame (back button, wordmark, wash
+  background, bottom buttons above the keyboard). `welcome-bg.ts` is the Figma swoosh SVG.
+  Welcome artwork is `assets/onboarding/welcome-*.png` (the Figma exports, placed and cropped as
+  in Figma).
+- Location: `expo-location` added; the pop-up shows only while the phone has never been asked,
+  "Allow Location" triggers the real system prompt. Nothing uses the location yet.
+  Permission text is in `app.json` (applies to real builds; Expo Go shows its own).
+- `Button` gained `size="compact"` (48px, for the pop-up's side-by-side buttons). New icons
+  `PinIcon`, `SparkIcon`. New token `colors.primaryFillStrong` (soft orange 20%) — the selected
+  docent card now uses it, as on the onboarding screen (it was brown from the Components page).
+- Decisions: name is required (Continue stays off until something is typed, as in Figma); the
+  old "Skip for now" is gone from welcome (not in Figma), so the 24h snooze code in
+  `lib/onboarding*.ts` is now unused. Copy is Figma's, apart from "Waiting" → "waiting".
+- `/dev/onboarding?screen=welcome|look|name|pack|first-capture` previews each screen.
+
 ## Open items / decisions for later chats
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
@@ -99,8 +127,10 @@ Figma frames; they reuse the same frame.
   mentions a red "attention" tint (`colors.warningTint`). Check which one the Home screen uses.
 - **Badges aren't mapped to milestones yet.** `lib/milestones.ts` has 6 milestones; Figma has 13
   badges. Decide the mapping in section 5 (profile).
-- **Docent choice isn't stored yet.** The onboarding picker (section 3) needs somewhere to save
-  the chosen docent — that's a data-layer change, so plan it there.
+- **Account screen's look picker** (`app/account.tsx`) still offers the old emoji looks, and
+  picking one replaces the docent. Swap it for the docent picker when section 5 rebuilds it.
+- **Location pop-up copy** is the designer's draft ("only used while the app is in use only for
+  your better experience…"); worth a tidy with the designer.
 - **Preview pane can't sign in:** the in-app browser can't reach Supabase, so normal screens sit
   on the "WildPack" cover there. Use `/dev/components`, a phone, or a regular browser.
 - Design gaps still to ask about when reached: delete-account confirmation, loading/error
