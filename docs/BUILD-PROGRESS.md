@@ -8,7 +8,7 @@ components `1:220`, icons `161:749`.
 
 | # | Section | Status |
 |---|---------|--------|
-| 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — branch `mvp/foundations` |
+| 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — merged to `master` |
 | 2 | Auth | Next |
 | 3 | Onboarding | — |
 | 4 | Capture & identify | — |
