@@ -1,3 +1,4 @@
+export { BackButton } from './BackButton';
 export { BadgeTile, BADGES } from './BadgeTile';
 export type { BadgeId } from './BadgeTile';
 export { BottomNav } from './BottomNav';

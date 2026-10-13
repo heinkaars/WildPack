@@ -9,8 +9,8 @@ components `1:220`, icons `161:749`.
 | # | Section | Status |
 |---|---------|--------|
 | 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — merged to `master` |
-| 2 | Auth | Next |
-| 3 | Onboarding | — |
+| 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
+| 3 | Onboarding | Next |
 | 4 | Capture & identify | — |
 | 5 | Home / profile / life list | — |
 | 6 | Species detail + Ask chat | — |
@@ -64,16 +64,37 @@ token and component below, and it skips the onboarding redirect.
   order: squirrel, fox, mouse, raccoon, lion, tiger, bat, cobra (best guess), elephant, hippo,
   wolf, giraffe, lynx.
 
+## What Auth added
+
+Figma: SignIn `88384:3985`, SignUP `88384:4021`. Forgot password and the code screen have no
+Figma frames; they reuse the same frame.
+
+- `components/AuthScreen.tsx` — the shared auth frame: the orange/lime wash (`AuthBackground`),
+  back button, optional `wordmark`, title + subtitle, error box. Also `PasswordInput` (eye
+  toggle), `FieldNote`, `MessageBox` (info = soft orange, error = warning tint), `ActionGroup`
+  (button with its link underneath), `TextLink`, `PromptLink` ("Already have an account? **Sign in**").
+- `components/ui/BackButton.tsx` — the 44px round back button. `EyeIcon` / `EyeOffIcon` in icons
+  (the eye-off is the matching icon from the same set, not on the Figma screens).
+- `Input` takes a `trailing` element. New tokens: `colors.primaryFill`, `colors.wordmark`
+  (#FF4C00), `colors.backButtonFill`.
+- **Button height is 60** (`sizes.button`), which settles the 56-vs-60 question.
+- `/dev/auth?screen=sign-in|create-account|forgot-password|verify` shows each auth screen in the
+  preview without a server (dev builds only).
+- Decisions: "Keep me signed in" is left out (the app always stays signed in, since accounts
+  start anonymous). Create Account adds a confirm-password field, the button says "Create
+  account". Placeholders are just "Email" / "Password" (user's call, not Figma's "Enter …"/"Write …").
+  Sign-in/merge logic is unchanged.
+
 ## Open items / decisions for later chats
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
   returns the Cover page, so ask the user for a node link per screen.
-- **Button height 56 vs 60.** The Button component in Figma is 56 tall; the handoff doc says
-  primary buttons are 60. `sizes.button` is 56 — check against the first real screen (Auth) and
-  change that one token if screens use 60.
-- **Still to build from screens:** the 44×44 round Back button (handoff "Leading/Back Button",
-  first needed in Auth) and the "X% confidence" pill (Capture & identify). They aren't on the
-  Components page, so take them from the screen frames.
+- **Still to build from screens:** the "X% confidence" pill (Capture & identify). It isn't on the
+  Components page, so take it from the screen frame.
+- **Placeholder colour.** Figma draws input placeholders in full dark; `Input` uses 60% so typed
+  text and hints look different. Revisit if the designer wants the exact Figma look.
+- **Account screen (`app/account.tsx`)** links to the auth screens but isn't rebuilt yet — it
+  belongs with section 5 (profile).
 - **Locked badge colour.** The badge component uses grey (dark 10%) for locked; the handoff also
   mentions a red "attention" tint (`colors.warningTint`). Check which one the Home screen uses.
 - **Badges aren't mapped to milestones yet.** `lib/milestones.ts` has 6 milestones; Figma has 13
