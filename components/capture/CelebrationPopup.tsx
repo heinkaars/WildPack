@@ -1,12 +1,11 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { SvgXml } from 'react-native-svg';
 import { BoltIcon, Button, Docent, docentFromLook, Popup, SpeciesIcon, StarIcon, Wash } from '../ui';
 import { useLifelist } from '../../lib/lifelist-store';
 import { useRewardFeedback } from '../../lib/use-reward';
 import { CelebrationPayload } from '../../lib/types';
 import { colors, fonts, type } from '../../lib/theme';
-import { CONFETTI_XML } from './confetti';
+import { ConfettiBurst } from './ConfettiBurst';
 
 type Props = {
   payload: CelebrationPayload;
@@ -47,7 +46,7 @@ export function CelebrationPopup({ payload, visible, onContinue, onDismissed }: 
       <View style={styles.header}>
         <View style={styles.docent}>
           <Docent animal={docentFromLook(profile.look)} width={74} />
-          <SvgXml xml={CONFETTI_XML} width={159.785} height={91.2} style={styles.confetti} pointerEvents="none" />
+          <ConfettiBurst style={styles.confetti} />
         </View>
         <Text style={[type.headingM, styles.center]} accessibilityRole="header">
           Congratulations!
