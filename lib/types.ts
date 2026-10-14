@@ -5,6 +5,15 @@ export type Profile = {
   look: string;
 };
 
+/** One capture of a species, as the species page shows it. */
+export type Sighting = {
+  id: string;
+  /** Empty while the photo is still on its way down from the server. */
+  photoUri: string;
+  location: string | null;
+  seenAt: string;
+};
+
 export type LifelistEntry = {
   id: string;
   commonName: string;
@@ -12,6 +21,8 @@ export type LifelistEntry = {
   description: string;
   categoryId: string;
   photoUri: string;
+  /** The capture `photoUri` belongs to (the species' cover photo). */
+  coverSightingId?: string | null;
   firstSeenAt: string;
   lastSeenAt: string;
   sightingCount: number;

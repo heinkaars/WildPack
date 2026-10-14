@@ -2,7 +2,7 @@
 // expo-sqlite's web build cannot load during Expo's Node server render.
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { resolvePhotoUri } from './photos';
-import { AmaMessage, LifelistEntry, Profile } from './types';
+import { AmaMessage, LifelistEntry, Profile, Sighting } from './types';
 import type { Activity } from './xp';
 
 const DATABASE_NAME = 'wildpack.db';
@@ -163,7 +163,9 @@ join (
 left join sightings photo on photo.id = (
   select id from sightings
   where species_slug = sp.slug and (photo_local_uri is not null or photo_path is not null)
-  order by seen_at asc limit 1
+  -- The cover photo chosen on the species page first, otherwise the first capture.
+  order by id = (select value from meta where key = 'cover_photo:' || species_slug) desc, seen_at asc
+  limit 1
 )
 left join sightings loc on loc.id = (
   select id from sightings
@@ -184,6 +186,7 @@ export async function readLifelist(): Promise<LifelistEntry[]> {
 
   return rows.map(({ photoSightingId, photoLocalUri, ...entry }) => ({
     ...entry,
+    coverSightingId: photoSightingId,
     // Only a file that is on this device can be rendered. Anything else is
     // empty until sync fetches the photo back from the server.
     photoUri: photoSightingId ? resolvePhotoUri(photoSightingId, photoLocalUri) ?? '' : '',
@@ -283,39 +286,48 @@ export async function insertSighting(sighting: {
 }
 
 /**
- * Changes the date or place shown on a species page. The date shown is the
- * first sighting's, the place is the latest one that has a place (or the first
- * sighting when none does), so those are the sightings changed. Returns the
- * edited row for the outbox.
+ * Changes the date or place of one capture, the one showing on the species
+ * page. Returns the edited row for the outbox.
  */
 export async function editSighting(
-  speciesSlug: string,
+  sightingId: string,
   change: { seenAt: string } | { location: string | null },
 ): Promise<{ id: string; speciesSlug: string; location: string | null; seenAt: string } | null> {
   const db = await getDb();
-  const target = await db.getFirstAsync<{ id: string }>(
-    'seenAt' in change
-      ? 'select id from sightings where species_slug = ? order by seen_at asc limit 1'
-      : `select id from sightings where species_slug = ?
-         order by location is not null desc,
-                  case when location is not null then seen_at end desc,
-                  seen_at asc
-         limit 1`,
-    speciesSlug,
-  );
-  if (!target) return null;
-
   if ('seenAt' in change) {
-    await db.runAsync('update sightings set seen_at = ? where id = ?', change.seenAt, target.id);
+    await db.runAsync('update sightings set seen_at = ? where id = ?', change.seenAt, sightingId);
   } else {
-    await db.runAsync('update sightings set location = ? where id = ?', change.location, target.id);
+    await db.runAsync('update sightings set location = ? where id = ?', change.location, sightingId);
   }
 
-  const row = await db.getFirstAsync<{ location: string | null; seen_at: string }>(
-    'select location, seen_at from sightings where id = ?',
-    target.id,
+  const row = await db.getFirstAsync<{ species_slug: string; location: string | null; seen_at: string }>(
+    'select species_slug, location, seen_at from sightings where id = ?',
+    sightingId,
   );
-  return row ? { id: target.id, speciesSlug, location: row.location, seenAt: row.seen_at } : null;
+  return row ? { id: sightingId, speciesSlug: row.species_slug, location: row.location, seenAt: row.seen_at } : null;
+}
+
+/** Every capture of one species, oldest first, for the species page's photo carousel. */
+export async function readSightings(speciesSlug: string): Promise<Sighting[]> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<{ id: string; photo_local_uri: string | null; location: string | null; seen_at: string }>(
+    'select id, photo_local_uri, location, seen_at from sightings where species_slug = ? order by seen_at asc',
+    speciesSlug,
+  );
+  return rows.map((row) => ({
+    id: row.id,
+    photoUri: resolvePhotoUri(row.id, row.photo_local_uri) ?? '',
+    location: row.location,
+    seenAt: row.seen_at,
+  }));
+}
+
+/**
+ * The capture whose photo a species shows on the life list: the one last
+ * looked at on its species page. Kept on this phone only.
+ */
+export async function setCoverPhoto(speciesSlug: string, sightingId: string): Promise<void> {
+  await setMeta(`cover_photo:${speciesSlug}`, sightingId);
 }
 
 /** Every sighting that claims a photo, for the sync engine's repair pass. */

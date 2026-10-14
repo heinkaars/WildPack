@@ -226,6 +226,15 @@ Figma: species-Details `88384:3654`, species-Details-Ask `88384:3692`, -ifNotRel
   `chatOffTopic`, `typingDot`.
 - `/dev/species?screen=species|ask|ask-empty|ask-off-topic|ask-error` previews each state.
 
+## Multiple captures of one species
+
+- The species page photo is a carousel when a species has 2+ captures (`PhotoCarousel`): swipe or
+  use the arrows, dots underneath. The date and place under it belong to the capture showing, and
+  editing them changes that capture only (`db.editSighting(sightingId, …)`).
+- The life list card shows the photo last looked at on the species page (`cover_photo:<slug>` in the
+  meta table, this phone only); until then, the first capture's.
+- `/dev/species?screen=species-captures` previews it with three sample captures.
+
 ## Open items / decisions for later chats
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only

@@ -10,7 +10,7 @@ import { slugify } from './slug';
 import { uuid } from './uuid';
 import { badgeUnlocked } from './badges';
 import { computeStats, Stats } from './xp';
-import { CelebrationPayload, LifelistEntry, Profile, SpeciesGuess } from './types';
+import { CelebrationPayload, LifelistEntry, Profile, Sighting, SpeciesGuess } from './types';
 import { DEFAULT_LOOK } from '../components/Avatar';
 
 // A friendly stand-in until the user picks a name on A4. The suffix is drawn
@@ -71,7 +71,12 @@ type LifelistContextValue = Omit<LifelistState, 'lastActivityDate'> & {
   addSighting: (guess: SpeciesGuess, photoBase64: string, location: string | null) => Promise<CelebrationPayload>;
   updateProfile: (profile: Partial<Profile>) => Promise<void>;
   /** The date or place on a species page, corrected by the user. */
-  editSighting: (speciesId: string, change: { seenAt: string } | { location: string | null }) => Promise<void>;
+  /** Every capture of a species, oldest first. */
+  getSightings: (speciesId: string) => Promise<Sighting[]>;
+  /** Changes the date or place of one capture. */
+  editSighting: (sightingId: string, change: { seenAt: string } | { location: string | null }) => Promise<void>;
+  /** Makes this capture's photo the one the life list shows for its species. */
+  setCoverPhoto: (speciesId: string, sightingId: string) => Promise<void>;
 };
 
 const LifelistContext = createContext<LifelistContextValue | null>(null);
@@ -185,8 +190,16 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
         if (userId) sync(userId);
       },
 
-      editSighting: async (speciesId, change) => {
-        const row = await db.editSighting(speciesId, change);
+      getSightings: (speciesId) => db.readSightings(speciesId),
+
+      setCoverPhoto: async (speciesId, sightingId) => {
+        await db.setCoverPhoto(speciesId, sightingId);
+        const entries = await db.readLifelist();
+        setState((prev) => ({ ...prev, entries }));
+      },
+
+      editSighting: async (sightingId, change) => {
+        const row = await db.editSighting(sightingId, change);
         if (!row) return;
         // The insert job is an upsert by id, so it carries the correction too.
         await db.enqueue('sighting.insert', row);

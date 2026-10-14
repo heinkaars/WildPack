@@ -4,9 +4,17 @@ import { Asset } from 'expo-asset';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { SpeciesView } from '../../components/species/SpeciesView';
 import { AskView, ChatMessage } from '../../components/species/AskView';
-import { LifelistEntry } from '../../lib/types';
+import { LifelistEntry, Sighting } from '../../lib/types';
 
 const RACCOON = Asset.fromModule(require('../../assets/dev/raccoon.jpg')).uri;
+const RACCOON_2 = Asset.fromModule(require('../../assets/lifelist/raccoon.jpg')).uri;
+
+// Three captures of the same raccoon, for the photo carousel.
+const CAPTURES: Sighting[] = [
+  { id: 'a', photoUri: RACCOON, location: 'Utrecht, Utrecht', seenAt: new Date(2026, 7, 26, 10).toISOString() },
+  { id: 'b', photoUri: RACCOON_2, location: null, seenAt: new Date(2026, 8, 3, 18).toISOString() },
+  { id: 'c', photoUri: RACCOON, location: 'Amsterdam, North Holland', seenAt: new Date(2026, 9, 12, 9).toISOString() },
+];
 
 const SAMPLE: LifelistEntry = {
   id: 'procyon-lotor',
@@ -42,12 +50,12 @@ const OFF_TOPIC: ChatMessage[] = [
   },
 ];
 
-type Screen = 'species' | 'ask' | 'ask-empty' | 'ask-off-topic' | 'ask-error';
+type Screen = 'species' | 'species-captures' | 'ask' | 'ask-empty' | 'ask-off-topic' | 'ask-error';
 
 /**
  * The species page and the Ask chat with sample data, reachable without a
  * server. Dev builds only.
- * `/dev/species?screen=species|ask|ask-empty|ask-off-topic|ask-error` (default species).
+ * `/dev/species?screen=species|species-captures|ask|ask-empty|ask-off-topic|ask-error` (default species).
  */
 export default function SpeciesPreview() {
   const { screen = 'species' } = useLocalSearchParams<{ screen?: Screen }>();
@@ -55,13 +63,35 @@ export default function SpeciesPreview() {
   const [entry, setEntry] = useState(SAMPLE);
   const [extra, setExtra] = useState<ChatMessage[]>([]);
   const [sending, setSending] = useState(false);
+  const [captures, setCaptures] = useState(CAPTURES);
+  const [index, setIndex] = useState(0);
 
   if (!__DEV__) return <Redirect href="/" />;
+
+  if (screen === 'species-captures') {
+    const edit = (change: Partial<Sighting>) =>
+      setCaptures((list) => list.map((sighting, i) => (i === index ? { ...sighting, ...change } : sighting)));
+    return (
+      <SpeciesView
+        entry={{ ...entry, sightingCount: captures.length }}
+        sightings={captures}
+        index={index}
+        onIndexChange={setIndex}
+        onBack={() => {}}
+        onAsk={() => {}}
+        onChangeDate={async (seenAt) => edit({ seenAt })}
+        onChangeLocation={async (location) => edit({ location })}
+      />
+    );
+  }
 
   if (screen === 'species') {
     return (
       <SpeciesView
         entry={entry}
+        sightings={[]}
+        index={0}
+        onIndexChange={() => {}}
         onBack={() => {}}
         onAsk={() => router.push('/dev/species?screen=ask')}
         onChangeDate={async (seenAt) => setEntry((e) => ({ ...e, firstSeenAt: seenAt }))}
@@ -76,6 +106,9 @@ export default function SpeciesPreview() {
     <View style={StyleSheet.absoluteFill}>
       <SpeciesView
         entry={entry}
+        sightings={[]}
+        index={0}
+        onIndexChange={() => {}}
         onBack={() => {}}
         onAsk={() => {}}
         onChangeDate={async () => {}}
