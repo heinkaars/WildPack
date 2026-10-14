@@ -1,18 +1,25 @@
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BackButton, CalendarIcon, EditIcon, Gradient, LocationIcon, SendIcon } from '../ui';
 import { categoryById } from '../../lib/categories';
-import { LifelistEntry } from '../../lib/types';
+import { LifelistEntry, Sighting } from '../../lib/types';
 import { colors, radii, spacing, type } from '../../lib/theme';
 import { EditDatePopup, EditPlacePopup } from './EditSightingPopups';
+import { PhotoCarousel } from './PhotoCarousel';
 
 type Props = {
   entry: LifelistEntry;
+  /** Every capture of the species, oldest first; empty until loaded. */
+  sightings: Sighting[];
+  /** The capture showing in the photo; its date and place fill the details card. */
+  index: number;
+  onIndexChange: (index: number) => void;
   onBack: () => void;
   /** Opens the Ask chat sheet. */
   onAsk: () => void;
+  /** Both change the capture currently showing. */
   onChangeDate: (seenAt: string) => Promise<void>;
   onChangeLocation: (location: string | null) => Promise<void>;
 };
@@ -22,12 +29,19 @@ type Props = {
  * sighting pills, description, the date/location card with edit icons, and
  * the "Ask about this …" field pinned to the bottom, which opens the chat.
  */
-export function SpeciesView({ entry, onBack, onAsk, onChangeDate, onChangeLocation }: Props) {
+export function SpeciesView({ entry, sightings, index, onIndexChange, onBack, onAsk, onChangeDate, onChangeLocation }: Props) {
   const insets = useSafeAreaInsets();
   const [editing, setEditing] = useState<'date' | 'place' | null>(null);
 
   const category = categoryById(entry.categoryId);
-  const firstSeen = new Date(entry.firstSeenAt).toLocaleDateString(undefined, {
+  // Until the captures have loaded, the species' own summary stands in.
+  const current: Sighting = sightings[index] ?? {
+    id: '',
+    photoUri: entry.photoUri,
+    location: entry.location,
+    seenAt: entry.firstSeenAt,
+  };
+  const seenOn = new Date(current.seenAt).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -37,7 +51,13 @@ export function SpeciesView({ entry, onBack, onAsk, onChangeDate, onChangeLocati
     <View style={styles.screen}>
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Image source={{ uri: entry.photoUri }} style={styles.photo} accessibilityIgnoresInvertColors />
+        {/* Re-mounted once the captures arrive, so it opens on the right one. */}
+        <PhotoCarousel
+          key={sightings.length > 0 ? 'captures' : 'summary'}
+          sightings={sightings.length > 0 ? sightings : [current]}
+          index={sightings.length > 0 ? index : 0}
+          onIndexChange={onIndexChange}
+        />
 
         <View style={styles.body}>
           <View style={styles.header}>
@@ -68,14 +88,14 @@ export function SpeciesView({ entry, onBack, onAsk, onChangeDate, onChangeLocati
           <View style={styles.details}>
             <DetailRow
               icon={<CalendarIcon />}
-              text={firstSeen}
+              text={seenOn}
               editLabel="Change date"
               onEdit={() => setEditing('date')}
             />
             <View style={styles.divider} />
             <DetailRow
               icon={<LocationIcon />}
-              text={entry.location ?? 'Location not recorded'}
+              text={current.location ?? 'Location not recorded'}
               editLabel="Change location"
               onEdit={() => setEditing('place')}
             />
@@ -103,13 +123,13 @@ export function SpeciesView({ entry, onBack, onAsk, onChangeDate, onChangeLocati
 
       <EditDatePopup
         visible={editing === 'date'}
-        value={entry.firstSeenAt}
+        value={current.seenAt}
         onSave={onChangeDate}
         onClose={() => setEditing(null)}
       />
       <EditPlacePopup
         visible={editing === 'place'}
-        value={entry.location}
+        value={current.location}
         onSave={onChangeLocation}
         onClose={() => setEditing(null)}
       />
@@ -152,7 +172,6 @@ function DetailRow({
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 100 },
-  photo: { width: '100%', height: 375, borderRadius: 30, backgroundColor: colors.fill },
   back: { position: 'absolute', left: spacing.screen },
   body: { paddingHorizontal: spacing.screen, paddingTop: 20 },
 
