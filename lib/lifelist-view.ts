@@ -1,38 +1,47 @@
 import { LifelistEntry } from './types';
 
-export type SortOrder = 'newest' | 'oldest' | 'name' | 'most-seen';
+export type SortOrder = 'newest' | 'name' | 'name-desc' | 'most-captured';
 
 /** What the life list's Filter pop-up sets. */
 export type LifelistView = {
-  /** A category id from `lib/categories.ts`, or null for all. */
-  category: string | null;
+  /** Category ids from `lib/categories.ts`; empty means all. */
+  categories: string[];
   sort: SortOrder;
 };
 
-export const DEFAULT_VIEW: LifelistView = { category: null, sort: 'newest' };
+export const DEFAULT_VIEW: LifelistView = { categories: [], sort: 'newest' };
 
 export const SORT_OPTIONS: { id: SortOrder; label: string }[] = [
-  { id: 'newest', label: 'Recently seen' },
-  { id: 'oldest', label: 'First found' },
+  { id: 'newest', label: 'Recently captured' },
   { id: 'name', label: 'A to Z' },
-  { id: 'most-seen', label: 'Most seen' },
+  { id: 'name-desc', label: 'Z to A' },
+  { id: 'most-captured', label: 'Most captured' },
 ];
 
 export function isDefaultView(view: LifelistView): boolean {
-  return view.category === DEFAULT_VIEW.category && view.sort === DEFAULT_VIEW.sort;
+  return view.categories.length === 0 && view.sort === DEFAULT_VIEW.sort;
+}
+
+/** Adds the category if it isn't picked yet, removes it if it is. */
+export function toggleCategory(view: LifelistView, id: string): LifelistView {
+  const categories = view.categories.includes(id)
+    ? view.categories.filter((picked) => picked !== id)
+    : [...view.categories, id];
+  return { ...view, categories };
 }
 
 export function applyView(entries: LifelistEntry[], view: LifelistView): LifelistEntry[] {
-  const shown = view.category ? entries.filter((entry) => entry.categoryId === view.category) : [...entries];
+  const shown =
+    view.categories.length > 0 ? entries.filter((entry) => view.categories.includes(entry.categoryId)) : [...entries];
 
   switch (view.sort) {
     case 'newest':
       return shown.sort((a, b) => b.lastSeenAt.localeCompare(a.lastSeenAt));
-    case 'oldest':
-      return shown.sort((a, b) => a.firstSeenAt.localeCompare(b.firstSeenAt));
     case 'name':
       return shown.sort((a, b) => a.commonName.localeCompare(b.commonName));
-    case 'most-seen':
+    case 'name-desc':
+      return shown.sort((a, b) => b.commonName.localeCompare(a.commonName));
+    case 'most-captured':
       return shown.sort((a, b) => b.sightingCount - a.sightingCount || b.lastSeenAt.localeCompare(a.lastSeenAt));
   }
 }
