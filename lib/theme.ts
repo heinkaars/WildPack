@@ -15,6 +15,7 @@ export const palette = {
   cream: '#FFEBCC',
   progressTrack: '#C2A264',
   badgeIcon: '#FF4C00',
+  green: '#22C55E',
 };
 
 export const colors = {
@@ -48,6 +49,14 @@ export const colors = {
   warningStroke: 'rgba(249, 79, 64, 0.5)',
   /** Handoff "badge locked/attention tint". */
   warningTint: 'rgba(249, 79, 64, 0.2)',
+  /** Figma "brand" green: the confidence pill on species-ID cards. */
+  success: palette.green,
+  successFill: 'rgba(34, 197, 94, 0.1)',
+  successStroke: 'rgba(34, 197, 94, 0.2)',
+  /** The lit lens factor in the camera's lens switcher. */
+  lensActive: '#F8CB58',
+  /** Pop-up backdrop (Figma "Overlay", black 70%). */
+  overlay: 'rgba(0, 0, 0, 0.7)',
   /** Switch track when off (Figma "black/10", a warm brown at 10%). */
   switchTrack: 'rgba(110, 66, 0, 0.1)',
 

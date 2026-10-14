@@ -62,6 +62,7 @@ export default function RootLayout() {
                   <Stack.Screen name="ama/[id]" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="dev/components" />
                   <Stack.Screen name="dev/auth" />
+                  <Stack.Screen name="dev/capture" />
                 </Stack>
                 {/* Sits above the stack so the lifelist cannot flash before we
                     know whether this user still owes us onboarding. */}

@@ -2,8 +2,6 @@ import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLifelist } from '../lib/lifelist-store';
-import { useCaptureSession } from '../lib/capture-session';
-import { CelebrationModal } from '../components/CelebrationModal';
 import { MILESTONES } from '../lib/milestones';
 import { Avatar } from '../components/Avatar';
 import { SyncIndicator } from '../components/SyncIndicator';
@@ -15,15 +13,7 @@ import { LifelistEntry } from '../lib/types';
 export default function LifelistScreen() {
   const router = useRouter();
   const { ready, profile, entries, streak } = useLifelist();
-  const { celebration, reset } = useCaptureSession();
   const { resetOnboarding } = useOnboarding();
-
-  function handleCelebrationContinue() {
-    if (!celebration) return;
-    const speciesId = celebration.entry.id;
-    reset();
-    router.push(`/species/${speciesId}`);
-  }
 
   if (!ready) {
     return (
@@ -118,10 +108,6 @@ export default function LifelistScreen() {
       >
         <Text style={styles.fabIcon}>📷</Text>
       </Pressable>
-
-      {celebration && (
-        <CelebrationModal payload={celebration} onContinue={handleCelebrationContinue} />
-      )}
 
       {/* Confirms a sign-in or a new account, both of which land here. */}
       <FlashBanner />

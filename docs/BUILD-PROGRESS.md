@@ -11,8 +11,8 @@ components `1:220`, icons `161:749`.
 | 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — merged to `master` |
 | 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
 | 3 | Onboarding | **Done** — merged to `master` |
-| 4 | Capture & identify | Next |
-| 5 | Home / profile / life list | — |
+| 4 | Capture & identify | **Done** — on branch `mvp/capture` (not merged yet) |
+| 5 | Home / profile / life list | Next |
 | 6 | Species detail + Ask chat | — |
 | 7 | "Looks" collection (new) | — |
 
@@ -113,12 +113,57 @@ Turn on Location `88384:3433`.
   `lib/onboarding*.ts` is now unused. Copy is Figma's, apart from "Waiting" → "waiting".
 - `/dev/onboarding?screen=welcome|look|name|pack|first-capture` previews each screen.
 
+## What Capture & identify added
+
+Figma: Capture-Camera-ON `88384:3811` (+ error overlay `88384:3839`), Captured-species `88384:3477`,
+confirmPopup `88384:3496`, otherOption `88384:3596` / `-GsOpossum 88384:3631`. species-Details
+`88384:3654` was handed over too but belongs to section 6.
+
+- **Camera** (`app/capture/index.tsx`): Figma's outlined close/flash buttons, lens switcher, shutter,
+  gallery + camera-swap buttons, darkened lower half. Pinch zoom, double-tap reset and the
+  off/auto/on/torch flash cycle are kept (an "Auto"/"On"/"Torch" chip shows next to the lit flash).
+  Lens buttons: 0.5 and 3 switch to the phone's ultra-wide / telephoto lens when iOS reports one
+  (matched on the English device names); otherwise only "1×" shows. **Not yet tried on a real
+  iPhone** — the simulator has no camera. The gallery button shows the latest capture's photo.
+  No camera permission → a pop-up ("Allow Camera" / "Open Settings" once refused for good, or
+  "Choose photo").
+- **Identifying** (`identify.tsx`): the photo dimmed with a spinner (not in Figma). Every failure —
+  including a guess under 30% confidence, which is the case Figma draws ("I have trouble
+  identifying this…") — is the error pop-up with the user's docent looking sad, "Retake photo" /
+  "Try Again" and a close cross back to the life list.
+- **Result** (`result.tsx`): photo, name, scientific name, green `ConfidencePill` ("Best guess" for
+  the top pick, "Good guess" for a picked alternative), description, `OtherMatches` accordion
+  (closed pill names the picked match, as in the Opossum frame), "Confirm" + "Not Quite, Try Again".
+- **Reward pop-up** (`components/capture/CelebrationPopup.tsx`): shown on the result screen after
+  Confirm saves the sighting (it used to be on the home screen; `CelebrationModal` and `Confetti`
+  are deleted). Docent with Figma's confetti, species card (NEW SPECIES / SEEN AGAIN), Species #N /
+  Seen N times, N-day streak, +XP. "Add To Life List" opens the species page over the life list.
+  Haptics + chime kept.
+- **XP rule (ours, Figma only shows "+70")** in `lib/xp.ts`: new species 50, repeat sighting 10,
+  +20 when a milestone is reached, so a first capture is +70. Derived from the life list, nothing
+  stored. Section 5 can total it the same way.
+- Shared: `Popup` / `PopupButtons` (white card on 70% black; only shows while its screen is in
+  front, so a pop-up can't follow the user onto the next screen; to open a sheet screen such as
+  the species page from a pop-up, hide the pop-up and navigate in `onDismissed`, or iOS freezes
+  the app behind an invisible pop-up), `ConfidencePill`, icons
+  (`CloseIcon`, `FlashIcon`, `CameraSwapIcon`, `ShutterIcon`, `LensTimesIcon`, `GalleryIcon`,
+  `SpeciesIcon`, `StarIcon`, `BoltIcon`, `ChevronUp`). Tokens `success*`, `lensActive`, `overlay`.
+- `/dev/capture?screen=camera|identifying|unsure|offline|result|celebration` previews each state
+  with a sample raccoon (`assets/dev/raccoon.jpg`). Confirm on `result` really saves the sample.
+
 ## Open items / decisions for later chats
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
   returns the Cover page, so ask the user for a node link per screen.
-- **Still to build from screens:** the "X% confidence" pill (Capture & identify). It isn't on the
-  Components page, so take it from the screen frame.
+- **OpenAI credits ran out (2026-10-14):** identification returns "Something went wrong" until
+  credits are added at platform.openai.com → Billing. The real capture → identify path wasn't
+  tested end to end because of it.
+- **Location pop-up** in `app/onboarding/first-capture.tsx` predates `Popup`; switch it over when
+  touched next.
+- **Milestone names** ("First Sighting" etc.) no longer show anywhere — the reward pop-up has no
+  slot for them. Section 5 decides how milestones map onto the 13 badges.
+- **Lens switcher** needs a check on a real iPhone (labels 0.5 / 3 are Figma's; a 2× or 5×
+  telephoto still says 3).
 - **Placeholder colour.** Figma draws input placeholders in full dark; `Input` uses 60% so typed
   text and hints look different. Revisit if the designer wants the exact Figma look.
 - **Account screen (`app/account.tsx`)** links to the auth screens but isn't rebuilt yet — it
