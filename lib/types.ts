@@ -1,3 +1,5 @@
+import type { Badge } from './badges';
+
 export type Profile = {
   name: string;
   look: string;
@@ -14,11 +16,6 @@ export type LifelistEntry = {
   lastSeenAt: string;
   sightingCount: number;
   location: string | null;
-};
-
-export type Milestone = {
-  threshold: number;
-  label: string;
 };
 
 /** A single candidate species returned by identification. */
@@ -40,7 +37,10 @@ export type CelebrationPayload = {
   entry: LifelistEntry;
   isNewSpecies: boolean;
   streak: number;
-  milestone: Milestone | null;
+  /** Explorer XP this capture earned (`lib/xp.ts`). */
+  xpEarned: number;
+  /** The badge this capture unlocked, if it crossed one. */
+  badge: Badge | null;
   speciesNumber: number;
 };
 

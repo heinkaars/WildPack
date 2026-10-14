@@ -14,3 +14,4 @@ export { Popup, PopupButtons } from './Popup';
 export { ScreenStatusBar } from './ScreenStatusBar';
 export { Checkbox, Radio, Switch } from './Toggles';
 export * from './icons';
+export { Wash } from './Wash';

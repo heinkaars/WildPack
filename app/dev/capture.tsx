@@ -65,7 +65,7 @@ export default function CapturePreview() {
     setPhoto(PHOTO, 'sample');
     setOutcome(OUTCOME);
     if (screen === 'celebration') {
-      setCelebration({ entry: ENTRY, isNewSpecies: true, streak: 1, milestone: { threshold: 1, label: 'First Sighting' }, speciesNumber: 1 });
+      setCelebration({ entry: ENTRY, isNewSpecies: true, streak: 1, xpEarned: 70, badge: null, speciesNumber: 1 });
     }
     setSeeded(true);
   }, [screen]);

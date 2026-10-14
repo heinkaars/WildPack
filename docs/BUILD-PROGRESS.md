@@ -12,9 +12,9 @@ components `1:220`, icons `161:749`.
 | 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
 | 3 | Onboarding | **Done** — merged to `master` |
 | 4 | Capture & identify | **Done** — merged to `master` |
-| 5 | Home / profile / life list | Next |
+| 5 | Home / profile / life list | **Done** — on branch `mvp/home`, not merged yet |
 | 6 | Species detail + Ask chat | — |
-| 7 | "Looks" collection (new) | — |
+| 7 | "Looks" collection | **Done** — it is the docent picker + naming flow, built in Onboarding (`app/onboarding/look.tsx`, `name.tsx`) |
 
 ## What Foundations gives the next sections
 
@@ -151,29 +151,65 @@ confirmPopup `88384:3496`, otherOption `88384:3596` / `-GsOpossum 88384:3631`. s
 - `/dev/capture?screen=camera|identifying|unsure|offline|result|celebration` previews each state
   with a sample raccoon (`assets/dev/raccoon.jpg`). Confirm on `result` really saves the sample.
 
+## What Home / profile / life list added
+
+Figma: Home `88384:2943`, Home-Profile `88384:3300`.
+
+- **Explorer XP** (`lib/xp.ts`, user's rule: XP comes from streaks, new species, repeat sightings
+  and chat questions). New species 50, repeat sighting 10, first capture of a day 20 + 10 per streak
+  day before it (max +60), chat question 5 (first 3 per species). First capture = 70, as in Figma.
+  `computeStats()` works it all out from local sightings + chat messages (`db.readActivity()`), so
+  nothing new is stored or synced. It also gives the capture count, the live streak (0 once a day is
+  missed; the stored profile streak is no longer shown) and the days with a capture.
+  `useLifelist()` now exposes `stats` and `refresh()`; a chat question refreshes it.
+- **Badges** (`lib/badges.ts`): the 13 badges unlock at 50 / 150 / 300 / 600 / 1000 / 1500 / 2200 /
+  3000 / 4000 / 5200 / 6500 / 8000 / 10000 XP. Only "Safari Starter" (badge 4) is a Figma name; the
+  rest are ours. `lib/milestones.ts` is gone; the reward pop-up's XP is now the XP the capture really
+  earned (`xpEarned` on the payload, plus `badge` when one was unlocked — no slot shows it yet).
+  Locked badges use grey (dark 10%); the red tint in Figma isn't used.
+- **Home** (`components/home/HomeView.tsx`, used by `app/index.tsx`): greeting by time of day,
+  avatar → profile, streak pill, this week's capture days, XP bar "N XP more to unlock <badge>",
+  badge row (tap a badge → pop-up with its name and XP), life list, bottom nav.
+- **Life list:** own finds first, then "Not found yet" teasers (`lib/teasers.ts`, the 9 Figma animal
+  photos in `assets/lifelist/`). A teaser disappears once a found species has that animal's name in
+  it ("Red Fox" hides the fox). **Filter** pop-up (not in Figma): category + sort (recently seen,
+  first found, A–Z, most seen); teasers hide while it is changed. `lib/lifelist-view.ts`.
+- **Profile** (`components/profile/ProfileView.tsx`, used by `app/account.tsx`, now a normal pushed
+  screen with Figma's back button instead of a modal): docent, tap-to-edit name, email when signed
+  in, 4 stats, docent picker (check on the chosen one), Location switch, account rows. Signed in:
+  Log out (confirm pop-up). Account only on this phone: "Create an account" / "I have an account"
+  plus a note that the list only lives on this phone. Dev builds: "Replay onboarding" moved here.
+- **Location switch** (`lib/location.ts`): on = new sightings save a place name ("City, Region",
+  or coordinates if offline). Turning it on asks for permission; if the phone has refused for good, a
+  pop-up offers Open Settings. The choice is kept per phone (meta table); until flipped it follows the
+  phone's permission. The result screen looks the place up while the user reads, and Confirm waits at
+  most 2.5 s for it.
+- **Delete account:** confirm pop-up (sad docent) → `app/api/delete-account+api.ts` removes the
+  user's photos from storage, then the auth user; the database cascade removes profile, sightings
+  and chats. The app then signs out (fresh anonymous account, local data cleared) and restarts
+  onboarding. Tested against Supabase with a throwaway account.
+- Shared: `Wash` (the orange/lime card wash, also used by the reward pop-up now), icons
+  `FilterIcon`, `LockIcon`, `SpeciesStatIcon`, `CaptureStatIcon`, `LogoutIcon`, `TrashIcon`; tokens
+  `dayPill`, `wash`, `destructive*`, `chevron`.
+- `/dev/home?screen=home|empty|profile|profile-signed-in` previews both screens with sample data.
+
 ## Open items / decisions for later chats
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
   returns the Cover page, so ask the user for a node link per screen.
 - **Location pop-up** in `app/onboarding/first-capture.tsx` predates `Popup`; switch it over when
   touched next.
-- **Milestone names** ("First Sighting" etc.) no longer show anywhere — the reward pop-up has no
-  slot for them. Section 5 decides how milestones map onto the 13 badges.
 - **Lens switcher** needs a check on a real iPhone (labels 0.5 / 3 are Figma's; a 2× or 5×
   telephoto still says 3).
 - **Placeholder colour.** Figma draws input placeholders in full dark; `Input` uses 60% so typed
   text and hints look different. Revisit if the designer wants the exact Figma look.
-- **Account screen (`app/account.tsx`)** links to the auth screens but isn't rebuilt yet — it
-  belongs with section 5 (profile).
-- **Locked badge colour.** The badge component uses grey (dark 10%) for locked; the handoff also
-  mentions a red "attention" tint (`colors.warningTint`). Check which one the Home screen uses.
-- **Badges aren't mapped to milestones yet.** `lib/milestones.ts` has 6 milestones; Figma has 13
-  badges. Decide the mapping in section 5 (profile).
-- **Account screen's look picker** (`app/account.tsx`) still offers the old emoji looks, and
-  picking one replaces the docent. Swap it for the docent picker when section 5 rebuilds it.
 - **Location pop-up copy** is the designer's draft ("only used while the app is in use only for
   your better experience…"); worth a tidy with the designer.
 - **Preview pane can't sign in:** the in-app browser can't reach Supabase, so normal screens sit
   on the "WildPack" cover there. Use `/dev/components`, a phone, or a regular browser.
-- Design gaps still to ask about when reached: delete-account confirmation, loading/error
+- **Badge names / XP numbers** are ours apart from "Safari Starter" — worth a look with the designer.
+- **Not tried yet:** a real capture with Location on (the place lookup), and Delete account from the
+  app itself (the server route was tested directly).
+- **Avatar.tsx** (old emoji looks) is now only used for `DEFAULT_LOOK`; tidy when convenient.
+- Design gaps still to ask about when reached: loading/error
   states, "Looks" data model, off-topic chat handling.
