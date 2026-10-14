@@ -1,4 +1,4 @@
-import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { colors, gradient } from '../../lib/theme';
 
 // Paths are the Figma exports (Component page 1:220), drawn on a 24×24 grid.
@@ -153,6 +153,138 @@ export function SparkIcon({ size = 16 }: { size?: number }) {
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function ChevronUp({ color = colors.text, size = 24 }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M6 15L12 9L18 15" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** Pop-up close cross (Figma "Close Button Icon"). */
+export function CloseIcon({ color = colors.text, size = 24, strokeWidth = 1.5 }: IconProps & { strokeWidth?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M18 6L6 18M6 6L18 18" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** Camera flash bolt, drawn inside the 32px camera button (Capture-Camera-ON 88384:3813). */
+export function FlashIcon({ color = colors.textOnPrimary, size = 32 }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <Path
+        d="M10.3877 16.3204L18.3538 6.58408C18.7047 6.15523 19.39 6.52454 19.2247 7.05342L17.143 13.7147H22.353C22.7802 13.7147 23.0135 14.213 22.7401 14.5411L13.9747 25.0595C13.6092 25.4981 12.9111 25.0865 13.1181 24.5544L16.0002 17.1433H10.7777C10.3526 17.1433 10.1186 16.6494 10.3877 16.3204Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+/** Camera swap arrows (Capture-Camera-ON 88384:3837). */
+export function CameraSwapIcon({ color = colors.textOnPrimary, size = 24 }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M16.9767 19.5C19.4017 17.8876 21 15.1305 21 12C21 7.02944 16.9706 3 12 3C11.3126 3 10.6432 3.07706 10 3.22302M20.5 19.5H16.9767V16M7 4.51555C4.58803 6.13007 3 8.87958 3 12C3 16.9706 7.02944 21 12 21C12.6874 21 13.3568 20.9229 14 20.777M3.5 4.51555H7V8"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** The shutter: a white disc inside a 4px ring, drawn 82px over a 78px button (88384:3821). */
+export function ShutterIcon({ size = 82 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 82 82" fill="none">
+      <Circle cx={41} cy={41} r={33.9351} fill={colors.textOnPrimary} />
+      <Circle cx={41} cy={41} r={39} stroke={colors.textOnPrimary} strokeWidth={4} />
+    </Svg>
+  );
+}
+
+/** The small "×" after the selected lens factor (88384:3830). */
+export function LensTimesIcon({ color = '#F8CB58' }: { color?: string }) {
+  return (
+    <Svg width={7.27} height={7.28} viewBox="0 0 7.27131 7.28245" fill="none">
+      <Path d="M0.712081 0.713102L0 1.4262L5.84731 7.28245L7.27131 5.85626L1.42408 0L0.712081 0.713102Z" fill={color} />
+      <Path d="M6.55923 0.713095L5.84723 0L0 5.85625L1.42399 7.28244L7.27122 1.42619L6.55923 0.713095Z" fill={color} />
+    </Svg>
+  );
+}
+
+/**
+ * Photo-library glyph for the gallery button when there is no capture yet to
+ * show there. Not a Figma export (Figma shows a photo in that slot); drawn to
+ * match the camera icons' 1.5 stroke.
+ */
+export function GalleryIcon({ color = colors.textOnPrimary, size = 24 }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M3 16L7.5 11.5C8.3 10.7 9.7 10.7 10.5 11.5L16 17M14 15L15.5 13.5C16.3 12.7 17.7 12.7 18.5 13.5L21 16M6 21H18C19.6569 21 21 19.6569 21 18V6C21 4.34315 19.6569 3 18 3H6C4.34315 3 3 4.34315 3 6V18C3 19.6569 4.34315 21 6 21ZM16.5 8.5C16.5 9.32843 15.8284 10 15 10C14.1716 10 13.5 9.32843 13.5 8.5C13.5 7.67157 14.1716 7 15 7C15.8284 7 16.5 7.67157 16.5 8.5Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** Squirrel — "Species #N" on the capture reward card (88384:3580), Figma orange/100. */
+export function SpeciesIcon({ size = 20 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 20 19.9957" fill="none">
+      <Path
+        d="M7.6546 19.9957H16.4418V18.8241H14.3556C14.9464 18.1665 15.2702 17.3269 15.2702 16.4418C15.2702 16.0877 15.2173 15.7457 15.1194 15.4231C15.2194 14.9907 15.2702 14.546 15.2702 14.0985C15.2702 13.8516 15.2528 13.5905 15.2257 13.3707C16.1362 13.8459 17.1531 14.0985 18.1992 14.0985H18.785V13.3988C18.785 12.0958 18.0409 10.909 16.7946 10.2242C16.4243 10.0208 16.106 9.74314 15.8572 9.41204H20L19.9957 8.82193C19.9773 6.27049 18.8786 3.09605 16.256 2.49087C15.9647 1.7112 15.3662 1.21068 14.6844 1.21068C13.7722 1.21068 13.0429 2.09244 12.9395 3.26567C12.1835 3.93279 11.7553 4.87692 11.7553 5.89717C11.7553 7.08832 10.8617 8.07401 9.70979 8.22085C10.2748 7.36861 10.5837 6.36238 10.5837 5.31136C10.5837 2.3964 8.18656 0 5.2723 0C2.36516 0 0 2.38265 0 5.31136C0 6.45768 0.371405 7.56482 1.0536 8.47396C0.363008 9.64297 0 10.9709 0 12.3411C0 16.5511 3.44512 19.9957 7.6546 19.9957ZM12.9269 5.89717C12.9269 4.51512 14.0285 3.92443 14.0985 3.84636V3.55373C14.0985 2.83865 14.4455 2.3823 14.6843 2.3823C14.8693 2.3823 15.1222 2.66134 15.225 3.12831L15.3131 3.52854L15.7193 3.58298C18.0983 3.90186 18.6555 6.93664 18.7851 8.24042H14.0563L14.3335 9.02201C14.6706 9.97259 15.3443 10.7642 16.2305 11.2511C16.9232 11.6316 17.3926 12.2216 17.5527 12.8873C16.4665 12.7534 15.447 12.2838 14.6308 11.5319L14.6306 11.5317C14.1143 11.8999 14.2133 11.8293 13.6971 12.1976C13.7531 12.3256 13.7649 12.3563 13.7918 12.4267C13.9623 12.8721 14.0619 13.3378 14.0901 13.8168C13.4688 13.2636 12.6507 12.9269 11.7554 12.9269C9.81727 12.9269 8.24049 14.5037 8.24049 16.4418H9.41212C9.41212 15.1268 10.5008 14.0614 11.8242 14.0995C13.0869 14.1359 14.1037 15.1885 14.0986 16.4518C14.0933 17.7608 13.0441 18.8241 11.7554 18.8241C11.1571 18.8241 10.0091 18.8241 9.41216 18.8241C6.80647 18.8241 4.68661 16.7042 4.68661 14.0985C4.68661 11.5144 6.80647 9.41204 9.41216 9.41204C12.84 9.41204 12.925 5.90108 12.9269 5.89717ZM5.07707 5.15905C3.79723 5.61141 2.64982 6.41343 1.77595 7.45406C1.3831 6.81358 1.17162 6.07373 1.17162 5.31136C1.17162 3.02869 3.01119 1.17162 5.2723 1.17162C7.55498 1.17162 9.41204 3.02869 9.41204 5.31136C9.41204 6.50798 8.89774 7.63012 7.99617 8.41105C5.42594 9.04251 3.51487 11.353 3.51487 14.0985C3.51487 15.7472 4.19945 17.2968 5.4261 18.4294C2.94585 17.5187 1.17162 15.1332 1.17162 12.3411C1.17162 9.54088 2.96042 7.14983 5.46754 6.26369L5.07707 5.15905Z"
+        fill={colors.wordmark}
+      />
+      <Path d="M14.8539 5.72754L15.6823 4.8992L16.8537 6.07064L16.0254 6.89897L14.8539 5.72754Z" fill={colors.wordmark} />
+    </Svg>
+  );
+}
+
+/** Gradient star — the streak row on the capture reward card (88384:3586). */
+export function StarIcon({ size = 20 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 20 20" fill="none">
+      <Defs>
+        <LinearGradient id="star" x1="10.668" y1="0.5" x2="10.668" y2="20" gradientUnits="userSpaceOnUse">
+          <Stop stopColor={gradient.colors[0]} />
+          <Stop offset="1" stopColor={gradient.colors[1]} />
+        </LinearGradient>
+      </Defs>
+      <Path
+        d="M11.4344 1.90807L13.1502 5.36806C13.3842 5.8497 14.0081 6.31168 14.5346 6.40014L17.6445 6.9211C19.6333 7.25531 20.1013 8.71008 18.6681 10.1452L16.2504 12.5829C15.8409 12.9957 15.6168 13.7919 15.7434 14.3621L16.4357 17.3797C16.9816 19.7682 15.7239 20.6922 13.628 19.4439L10.713 17.7041C10.1866 17.3895 9.31895 17.3895 8.7827 17.7041L5.86781 19.4439C3.78153 20.6922 2.51418 19.7584 3.06012 17.3797L3.75229 14.3621C3.87902 13.7919 3.6548 12.9957 3.24534 12.5829L0.827618 10.1452C-0.595725 8.71008 -0.137524 7.25531 1.85125 6.9211L4.96116 6.40014C5.47785 6.31168 6.10178 5.8497 6.33575 5.36806L8.05154 1.90807C8.98745 0.0306424 10.5083 0.0306424 11.4344 1.90807Z"
+        fill="url(#star)"
+      />
+    </Svg>
+  );
+}
+
+/** Gradient bolt — the XP row on the capture reward card (88384:3592), on a 20 box. */
+export function BoltIcon({ size = 20 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="-1.8828 0 20 20" fill="none">
+      <Defs>
+        <LinearGradient id="bolt" x1="8.8815" y1="0" x2="8.8815" y2="20" gradientUnits="userSpaceOnUse">
+          <Stop stopColor={gradient.colors[0]} />
+          <Stop offset="1" stopColor={gradient.colors[1]} />
+        </LinearGradient>
+      </Defs>
+      <Path
+        d="M4.97897 20C4.57339 20 4.32433 19.6176 4.41073 19.2719L6.11155 12.4688H0.585967C0.352022 12.4688 0.140498 12.3296 0.0478812 12.1148C-0.044736 11.9 -0.000673531 11.6506 0.159991 11.4805L10.8292 0.183664C11.0122 -0.0100863 11.3029 -0.0559847 11.5366 0.0720231C11.7703 0.199992 11.8883 0.469562 11.8237 0.728078L10.1229 7.53128H15.6485C15.8824 7.53128 16.0939 7.67042 16.1866 7.88527C16.2792 8.10011 16.2351 8.34945 16.0744 8.51952L5.40519 19.8164C5.29151 19.9368 5.13628 20 4.97897 20Z"
+        fill="url(#bolt)"
       />
     </Svg>
   );
