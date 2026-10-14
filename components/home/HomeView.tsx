@@ -68,7 +68,10 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
     return chunked;
   }, [entries, view, filtered]);
 
-  const category = view.category ? categoryById(view.category) : null;
+  const categoryLabels = view.categories
+    .map((id) => categoryById(id)?.label)
+    .filter(Boolean)
+    .join(', ');
 
   const header = (
     <View>
@@ -108,13 +111,13 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
       <BadgeShelf xp={stats.xp} />
 
       <View style={styles.lifelistHeading}>
-        <View>
+        <View style={styles.lifelistInfo}>
           <Text style={type.headingM} accessibilityRole="header">
             Life list
           </Text>
-          <Text style={[type.bodySm, styles.muted]}>
+          <Text style={[type.bodySm, styles.muted]} numberOfLines={1}>
             {entries.length} in the Pack
-            {category ? ` · ${category.label}` : ''}
+            {categoryLabels ? ` · ${categoryLabels}` : ''}
           </Text>
         </View>
         <Pressable
@@ -142,7 +145,7 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <Text style={[type.bodyLg, styles.muted, styles.empty]}>
-            Nothing here yet{category ? ` in ${category.label}` : ''}.
+            Nothing here yet{categoryLabels ? ` in ${categoryLabels}` : ''}.
           </Text>
         }
         renderItem={({ item: row }) => (
@@ -233,6 +236,10 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 12,
     paddingHorizontal: spacing.screen,
+  },
+  lifelistInfo: {
+    flexShrink: 1,
+    marginRight: 12,
   },
   filter: {
     flexDirection: 'row',

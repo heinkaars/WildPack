@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button, Gradient, Popup, PopupButtons, Radio } from '../ui';
 import { CATEGORIES } from '../../lib/categories';
-import { DEFAULT_VIEW, LifelistView, SORT_OPTIONS } from '../../lib/lifelist-view';
+import { DEFAULT_VIEW, LifelistView, SORT_OPTIONS, toggleCategory } from '../../lib/lifelist-view';
 import { colors, radii, type } from '../../lib/theme';
 
 type Props = {
@@ -12,12 +12,21 @@ type Props = {
 };
 
 /**
- * Behind the life list's Filter button: a category and a sort order. Not in
- * Figma (only the button is), so it reuses the pop-up card and the controls
- * from the Components page. Changes apply as they are tapped.
+ * Behind the life list's Filter button: any number of categories and a sort
+ * order. Not in Figma (only the button is), so it reuses the pop-up card and
+ * the controls from the Components page. Changes apply as they are tapped.
  */
 export function FilterPopup({ visible, view, onChange, onClose }: Props) {
-  const categories = [{ id: null, label: 'All' }, ...CATEGORIES];
+  // "All" is simply no category picked; tapping it clears the rest.
+  const chips = [
+    { key: 'all', label: 'All', selected: view.categories.length === 0, onPress: () => onChange({ ...view, categories: [] }) },
+    ...CATEGORIES.map((category) => ({
+      key: category.id,
+      label: category.label,
+      selected: view.categories.includes(category.id),
+      onPress: () => onChange(toggleCategory(view, category.id)),
+    })),
+  ];
 
   return (
     <Popup visible={visible} onClose={onClose} style={styles.card}>
@@ -28,23 +37,22 @@ export function FilterPopup({ visible, view, onChange, onClose }: Props) {
       <View style={styles.section}>
         <Text style={type.levelSemiBold}>Category</Text>
         <View style={styles.chips}>
-          {categories.map((category) => {
-            const selected = view.category === category.id;
+          {chips.map(({ key, label, selected, onPress }) => {
             return (
               <Pressable
-                key={category.label}
-                onPress={() => onChange({ ...view, category: category.id })}
-                accessibilityRole="radio"
-                accessibilityState={{ selected }}
+                key={key}
+                onPress={onPress}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected }}
                 style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
               >
                 {selected ? (
                   <Gradient style={styles.chipFill}>
-                    <Text style={[type.label, styles.chipTextSelected]}>{category.label}</Text>
+                    <Text style={[type.label, styles.chipTextSelected]}>{label}</Text>
                   </Gradient>
                 ) : (
                   <View style={[styles.chipFill, styles.chipIdle]}>
-                    <Text style={type.label}>{category.label}</Text>
+                    <Text style={type.label}>{label}</Text>
                   </View>
                 )}
               </Pressable>

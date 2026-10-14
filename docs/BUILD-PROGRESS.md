@@ -172,8 +172,9 @@ Figma: Home `88384:2943`, Home-Profile `88384:3300`.
   badge row (tap a badge → pop-up with its name and XP), life list, bottom nav.
 - **Life list:** own finds first, then "Not found yet" teasers (`lib/teasers.ts`, the 9 Figma animal
   photos in `assets/lifelist/`). A teaser disappears once a found species has that animal's name in
-  it ("Red Fox" hides the fox). **Filter** pop-up (not in Figma): category + sort (recently seen,
-  first found, A–Z, most seen); teasers hide while it is changed. `lib/lifelist-view.ts`.
+  it ("Red Fox" hides the fox). **Filter** pop-up (not in Figma): pick any number of categories
+  ("All" clears them) + sort (recently captured, A–Z, Z–A, most captured); teasers hide while it is
+  changed. `lib/lifelist-view.ts`.
 - **Profile** (`components/profile/ProfileView.tsx`, used by `app/account.tsx`, now a normal pushed
   screen with Figma's back button instead of a modal): docent, tap-to-edit name, email when signed
   in, 4 stats, docent picker (check on the chosen one), Location switch, account rows. Signed in:
