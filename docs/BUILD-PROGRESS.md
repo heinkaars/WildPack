@@ -12,7 +12,7 @@ components `1:220`, icons `161:749`.
 | 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
 | 3 | Onboarding | **Done** — merged to `master` |
 | 4 | Capture & identify | **Done** — merged to `master` |
-| 5 | Home / profile / life list | **Done** — on branch `mvp/home`, not merged yet |
+| 5 | Home / profile / life list | **Done** — merged to `master` |
 | 6 | Species detail + Ask chat | — |
 | 7 | "Looks" collection | **Done** — it is the docent picker + naming flow, built in Onboarding (`app/onboarding/look.tsx`, `name.tsx`) |
 
