@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Asset } from 'expo-asset';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { SpeciesView } from '../../components/species/SpeciesView';
@@ -70,22 +71,42 @@ export default function SpeciesPreview() {
   }
 
   const base = screen === 'ask' ? CHAT : screen === 'ask-off-topic' ? OFF_TOPIC : [];
+  // The real chat is a see-through screen over the species page; here both are drawn on one.
   return (
-    <AskView
-      speciesName="Raccoon"
-      docent="lion"
-      messages={[...base, ...extra]}
-      sending={screen === 'ask' || sending}
-      error={screen === 'ask-error' ? 'Could not get an answer right now. Try again in a moment.' : null}
-      onSend={(question) => {
-        setExtra((prev) => [...prev, { id: String(Date.now()), role: 'user', text: question }]);
-        setSending(true);
-        setTimeout(() => {
-          setSending(false);
-          setExtra((prev) => [...prev, { id: `${Date.now()}a`, role: 'assistant', text: 'Preview only: no answer here.' }]);
-        }, 1500);
-      }}
-      onClose={() => router.replace('/dev/species')}
-    />
+    <View style={StyleSheet.absoluteFill}>
+      <SpeciesView
+        entry={entry}
+        onBack={() => {}}
+        onAsk={() => {}}
+        onChangeDate={async () => {}}
+        onChangeLocation={async () => {}}
+      />
+      <View style={StyleSheet.absoluteFill}>
+        <AskView
+          speciesName="Raccoon"
+          userName="Hein"
+          docent="lion"
+          messages={[...base, ...extra]}
+          sending={screen === 'ask' || sending}
+          error={screen === 'ask-error' ? 'Could not get an answer right now. Try again in a moment.' : null}
+          onSend={(question) => {
+            setExtra((prev) => [...prev, { id: String(Date.now()), role: 'user', text: question }]);
+            setSending(true);
+            setTimeout(() => {
+              setSending(false);
+              setExtra((prev) => [
+                ...prev,
+                {
+                  id: `${Date.now()}a`,
+                  role: 'assistant',
+                  text: 'Preview only: no answer here.',
+                },
+              ]);
+            }, 1500);
+          }}
+          onClose={() => router.replace('/dev/species')}
+        />
+      </View>
+    </View>
   );
 }

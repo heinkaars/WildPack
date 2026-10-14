@@ -59,7 +59,15 @@ export default function RootLayout() {
                   <Stack.Screen name="capture/identify" />
                   <Stack.Screen name="capture/result" />
                   <Stack.Screen name="species/[id]" />
-                  <Stack.Screen name="ama/[id]" options={{ presentation: 'modal' }} />
+                  <Stack.Screen
+                    name="ama/[id]"
+                    options={{
+                      // The species page stays in place behind the chat's glass sheet (AskView draws the sheet).
+                      presentation: 'transparentModal',
+                      animation: 'slide_from_bottom',
+                      contentStyle: { backgroundColor: 'transparent' },
+                    }}
+                  />
                   <Stack.Screen name="dev/components" />
                   <Stack.Screen name="dev/auth" />
                   <Stack.Screen name="dev/capture" />

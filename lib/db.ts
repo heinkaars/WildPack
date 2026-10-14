@@ -81,6 +81,13 @@ async function connect(): Promise<SQLiteDatabase> {
   } catch {
     // Column is already there.
   }
+  // Whether an answer declined an off-topic question (shown red). Kept on this
+  // phone only; the server copy of the chat has no such column.
+  try {
+    await db.execAsync('alter table ama_messages add column off_topic integer not null default 0');
+  } catch {
+    // Column is already there.
+  }
 
   return db;
 }
@@ -198,11 +205,11 @@ export async function readProfile(): Promise<(Profile & { streak: number; lastAc
 
 export async function readAmaMessages(speciesSlug: string): Promise<AmaMessage[]> {
   const db = await getDb();
-  const rows = await db.getAllAsync<{ id: string; role: 'user' | 'assistant'; body: string }>(
-    'select id, role, body from ama_messages where species_slug = ? order by created_at asc',
+  const rows = await db.getAllAsync<{ id: string; role: 'user' | 'assistant'; body: string; off_topic: number }>(
+    'select id, role, body, off_topic from ama_messages where species_slug = ? order by created_at asc',
     speciesSlug,
   );
-  return rows.map((row) => ({ id: row.id, role: row.role, text: row.body }));
+  return rows.map((row) => ({ id: row.id, role: row.role, text: row.body, offTopic: row.off_topic === 1 }));
 }
 
 /** What Explorer XP, the streak and the capture count are worked out from (`lib/xp.ts`). */
@@ -362,17 +369,19 @@ export async function insertAmaMessage(message: {
   role: 'user' | 'assistant';
   body: string;
   createdAt: string;
+  offTopic?: boolean;
 }): Promise<void> {
   const db = await getDb();
   await db.runAsync(
-    `insert into ama_messages (id, species_slug, role, body, created_at)
-     values (?, ?, ?, ?, ?)
+    `insert into ama_messages (id, species_slug, role, body, created_at, off_topic)
+     values (?, ?, ?, ?, ?, ?)
      on conflict (id) do nothing`,
     message.id,
     message.speciesSlug,
     message.role,
     message.body,
     message.createdAt,
+    message.offTopic ? 1 : 0,
   );
 }
 

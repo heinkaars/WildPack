@@ -19,9 +19,6 @@ export default function AskScreen() {
   // A refused question used to fail silently: the message appeared, no answer
   // ever came, and nothing said why. Now the reason is shown above the field.
   const [error, setError] = useState<string | null>(null);
-  // Which answers were redirections. Kept for this visit only — the stored
-  // chat has no column for it, so a reopened chat shows them as plain answers.
-  const [offTopic, setOffTopic] = useState<Set<string>>(() => new Set());
 
   if (!entry) {
     return (
@@ -39,8 +36,7 @@ export default function AskScreen() {
     try {
       await append('user', question);
       const reply = await askAma(entry, question, history);
-      const answer = await append('assistant', reply.answer);
-      if (reply.offTopic) setOffTopic((prev) => new Set(prev).add(answer.id));
+      await append('assistant', reply.answer, reply.offTopic);
     } catch (e) {
       // The question stays in the thread, so asking again is one tap away.
       setError(e instanceof Error ? e.message : 'Could not get an answer right now.');
@@ -52,8 +48,9 @@ export default function AskScreen() {
   return (
     <AskView
       speciesName={entry.commonName}
+      userName={profile.name}
       docent={docentFromLook(profile.look)}
-      messages={messages.map((message) => ({ ...message, offTopic: offTopic.has(message.id) }))}
+      messages={messages}
       sending={sending}
       error={error}
       onSend={handleSend}
