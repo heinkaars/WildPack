@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import type { Session } from '@supabase/supabase-js';
+import { isAuthRetryableFetchError, type Session } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import { beginAccountSwitch, cancelAccountSwitch } from './account-switch';
 
@@ -178,7 +178,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // database. Held only for the length of the attempt.
     await beginAccountSwitch(state.userId);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    let { error } = await supabase.auth.signInWithPassword({ email, password });
+    // After the app has sat idle, iOS can hand the first request a stale
+    // connection that hangs and then fails, while the next one goes straight
+    // through. One quiet retry on a network failure saves the user from
+    // tapping twice; a wrong password is not retryable and fails at once.
+    if (error && isAuthRetryableFetchError(error)) {
+      ({ error } = await supabase.auth.signInWithPassword({ email, password }));
+    }
     if (error) {
       cancelAccountSwitch();
       fail(error.message);

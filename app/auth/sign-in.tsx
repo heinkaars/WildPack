@@ -17,7 +17,7 @@ import { showFlash } from '../../lib/flash';
 export default function SignInScreen() {
   const router = useRouter();
   const { signIn } = useAuth();
-  const { markComplete } = useOnboarding();
+  const { markComplete, needsOnboarding } = useOnboarding();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -76,7 +76,11 @@ export default function SignInScreen() {
               loading={busy}
               style={styles.button}
             />
-            <TextLink label="Create an account instead" onPress={() => router.replace('/auth/create-account')} />
+            {/* Reached from onboarding's "I have an account", this is for existing
+                accounts only; creating one comes later, from the profile. */}
+            {!needsOnboarding && (
+              <TextLink label="Create an account instead" onPress={() => router.replace('/auth/create-account')} />
+            )}
           </ActionGroup>
           {carrying && (
             <MessageBox>
