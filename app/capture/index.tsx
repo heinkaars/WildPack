@@ -316,11 +316,14 @@ export default function CaptureScreen() {
         <View style={styles.bottomRow} pointerEvents="box-none">
           <Pressable
             onPress={handleUpload}
-            style={({ pressed }) => [styles.gallery, !latestPhoto && styles.roundOutline, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.gallery, styles.roundOutline, pressed && styles.pressed]}
             accessibilityRole="button"
             accessibilityLabel="Choose a photo from your library"
           >
-            {latestPhoto ? <Image source={{ uri: latestPhoto }} style={styles.galleryPhoto} /> : <GalleryIcon />}
+            {/* The icon stays underneath, so a photo that is missing or still
+                loading never leaves an invisible button. */}
+            <GalleryIcon />
+            {latestPhoto && <Image source={{ uri: latestPhoto }} style={styles.galleryPhoto} />}
           </Pressable>
 
           <Pressable
@@ -424,6 +427,6 @@ const styles = StyleSheet.create({
   },
   roundOutline: { borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.5)' },
   gallery: { width: 50, height: 50, borderRadius: 25, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  galleryPhoto: { width: 50, height: 50 },
+  galleryPhoto: { ...StyleSheet.absoluteFillObject },
   swap: { width: 50, height: 50, borderRadius: 25, alignItems: 'center', justifyContent: 'center' },
 });
