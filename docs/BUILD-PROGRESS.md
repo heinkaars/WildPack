@@ -215,7 +215,7 @@ Figma: species-Details `88384:3654`, species-Details-Ask `88384:3692`, -ifNotRel
   docent (sized so the hat isn't clipped), cream user bubbles, white answers, animated three-dot
   typing bubble, error box above the field. The docent greets by name ("Hi Hein! …", not stored).
 - **Off-topic answers:** `app/api/ama+api.ts` asks OpenAI for JSON `{answer, off_topic}` and returns
-  `offTopic`; such answers get Figma's red wash + red dot. The prompt ties the flag to "declined and
+  `offTopic`; such answers get Figma's red wash (Figma's red corner dot is left out, user's call). The prompt ties the flag to "declined and
   steered back", because a looser wording flagged answered-but-unusual questions (pets, zoos, the
   name) about 1 in 3 times; tested 0/20 false flags, 10/10 real ones. The flag is stored in the
   phone's database (`ama_messages.off_topic`, added on launch) so it survives reopening; Supabase

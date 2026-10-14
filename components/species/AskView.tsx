@@ -43,7 +43,7 @@ type Props = {
  * which stays in place behind its frosted glass: grabber, close cross and
  * title, the user's questions on the right in cream,
  * the docent's answers on the left in white, a three-dot typing bubble, and
- * the chat field at the bottom. An off-topic answer gets the red wash and dot
+ * the chat field at the bottom. An off-topic answer gets the red wash
  * from 88384:3751.
  */
 export function AskView({ speciesName, userName, docent, messages, sending, error, onSend, onClose }: Props) {
@@ -168,15 +168,13 @@ function Bubble({ message, docent }: { message: ChatMessage; docent: DocentAnima
   return (
     <View style={styles.answerItem}>
       <View style={[styles.bubble, styles.answerBubble]}>
+        {/* Figma also puts a red dot in the corner; left out at the user's request. */}
         {message.offTopic && (
-          <>
-            <LinearGradient
-              colors={[colors.chatOffTopic, 'rgba(153, 0, 3, 0)']}
-              style={StyleSheet.absoluteFill}
-              pointerEvents="none"
-            />
-            <View style={styles.offTopicDot} accessibilityLabel="Off topic" />
-          </>
+          <LinearGradient
+            colors={[colors.chatOffTopic, 'rgba(153, 0, 3, 0)']}
+            style={StyleSheet.absoluteFill}
+            pointerEvents="none"
+          />
         )}
         <Text style={styles.bubbleText}>{message.text}</Text>
       </View>
@@ -310,15 +308,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     letterSpacing: -0.2,
     color: colors.textSecondary,
-  },
-  offTopicDot: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.warning,
   },
   typingBubble: {
     flexDirection: 'row',

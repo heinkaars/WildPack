@@ -77,7 +77,7 @@ export const colors = {
   grabber: '#CCCCCC',
   /** The user's chat bubbles (handoff "badge unlocked" tint #FBE6C2). */
   chatUser: '#FBE6C2',
-  /** Off-topic answer: red wash fading into the white bubble, plus a warning dot. */
+  /** Off-topic answer: red wash fading into the white bubble. */
   chatOffTopic: 'rgba(255, 0, 4, 0.2)',
   /** The resting dots of the chat's typing indicator (Figma Gray/400). */
   typingDot: '#98A2B3',
