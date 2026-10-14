@@ -139,6 +139,10 @@ confirmPopup `88384:3496`, otherOption `88384:3596` / `-GsOpossum 88384:3631`. s
   are deleted). Docent with Figma's confetti, species card (NEW SPECIES / SEEN AGAIN), Species #N /
   Seen N times, N-day streak, +XP. "Add To Life List" opens the species page over the life list.
   Haptics + chime kept.
+- **Confetti animation** (`components/capture/ConfettiBurst.tsx`): Figma's confetti is split into its
+  five colours; each colour is a view that bursts out from the docent when the pop-up lands, then
+  drifts out of step with the others. Holds still when the phone's Reduce Motion is on. (Animating
+  the SVG shapes themselves did not take effect on react-native-svg, so it animates views.)
 - **XP rule (ours, Figma only shows "+70")** in `lib/xp.ts`: new species 50, repeat sighting 10,
   +20 when a milestone is reached, so a first capture is +70. Derived from the life list, nothing
   stored. Section 5 can total it the same way.

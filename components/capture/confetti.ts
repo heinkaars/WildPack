@@ -1,6 +1,7 @@
 // Figma Captured-species-confirmPopup (88384:3522) confetti burst around the
 // docent, unchanged apart from dropping the web-only attributes and layer ids.
 // Drawn 159.785 × 91.2, offset 43.2px left and 4.6px up from the 72 × 82 docent.
+// ConfettiBurst splits it into pieces and animates them.
 export const CONFETTI_XML = `<svg width="159.785" height="91.1999" viewBox="0 0 159.785 91.1999" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g>
 <path d="M119.811 60.8225C119.548 60.6043 119.384 60.2758 119.327 59.4414C118.961 59.5448 118.667 59.7302 118.349 60.0821C118.48 60.6917 118.61 61.0414 118.99 61.5082C119.197 61.1813 119.398 61.0412 119.811 60.8225Z" fill="#FFAF00"/>
