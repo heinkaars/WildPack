@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Docent, docentFromLook, Gradient, PinIcon, SparkIcon } from '../../components/ui';
@@ -12,47 +12,79 @@ const LOCATION_PERKS = [
   'Earn location-based badges & challenges',
 ];
 
+/**
+ * True while the phone has never been asked for location — the only time the
+ * pop-up should come up. Once the user has answered the system prompt either
+ * way, it stays away.
+ */
+async function locationNeverAsked(): Promise<boolean> {
+  try {
+    // Loaded here rather than at the top: route files also run on the server
+    // for the web build, and native modules don't belong there.
+    const Location = await import('expo-location');
+    const { status, canAskAgain } = await Location.getForegroundPermissionsAsync();
+    return status === 'undetermined' && canAskAgain;
+  } catch {
+    // No location support here (an old browser, say): carry on without asking.
+    return false;
+  }
+}
+
 /** Figma Get-Start 88384:3416, with the Turn on Location pop-up 88384:3433 over it. */
 export default function FirstCaptureScreen() {
   const router = useRouter();
   const { profile } = useLifelist();
   const [askLocation, setAskLocation] = useState(false);
+  // The check can take a moment (in development the module loads on demand),
+  // so "Let's Capture" waits for it rather than slipping past the pop-up.
+  const shouldAsk = useRef<Promise<boolean>>(Promise.resolve(false));
+  // Set when "Let's Capture" brought the pop-up up: closing it goes on to the camera.
+  const captureAfterAsking = useRef(false);
 
-  // The pop-up comes up only while the phone has never been asked. Once the
-  // user has answered the system prompt either way, it stays away.
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        // Loaded here rather than at the top: route files also run on the
-        // server for the web build, and native modules don't belong there.
-        const Location = await import('expo-location');
-        const { status, canAskAgain } = await Location.getForegroundPermissionsAsync();
-        if (!cancelled && status === 'undetermined' && canAskAgain) setAskLocation(true);
-      } catch {
-        // No location support here (an old browser, say): carry on without asking.
-      }
-    })();
+    shouldAsk.current = locationNeverAsked();
+    shouldAsk.current.then((ask) => {
+      if (!cancelled && ask) setAskLocation(true);
+    });
     return () => {
       cancelled = true;
     };
   }, []);
 
+  // The lifelist has to sit under the camera: closing capture, and finishing a
+  // capture, both return to it.
+  function goToCapture() {
+    router.replace('/');
+    router.push('/capture');
+  }
+
+  async function handleCapture() {
+    if (await shouldAsk.current) {
+      captureAfterAsking.current = true;
+      setAskLocation(true);
+      return;
+    }
+    goToCapture();
+  }
+
+  /** Both pop-up buttons end here: it is asked once, whatever the answer. */
+  function finishAsking() {
+    shouldAsk.current = Promise.resolve(false);
+    setAskLocation(false);
+    if (captureAfterAsking.current) goToCapture();
+  }
+
   async function handleAllowLocation() {
     setAskLocation(false);
     try {
       const Location = await import('expo-location');
+      // Waits for the user's answer, so the camera's own prompt doesn't pile on top.
       await Location.requestForegroundPermissionsAsync();
     } catch {
       // A refusal or a missing module both leave the app working without location.
     }
-  }
-
-  // The lifelist has to sit under the camera: closing capture, and finishing a
-  // capture, both return to it.
-  function handleCapture() {
-    router.replace('/');
-    router.push('/capture');
+    finishAsking();
   }
 
   return (
@@ -83,7 +115,7 @@ export default function FirstCaptureScreen() {
         transparent
         animationType="fade"
         statusBarTranslucent
-        onRequestClose={() => setAskLocation(false)}
+        onRequestClose={finishAsking}
       >
         <View style={styles.overlay}>
           <View style={styles.popup} accessibilityViewIsModal>
@@ -118,7 +150,7 @@ export default function FirstCaptureScreen() {
                 label="Skip for Now"
                 variant="outline"
                 size="compact"
-                onPress={() => setAskLocation(false)}
+                onPress={finishAsking}
                 style={styles.flex}
               />
               <Button
