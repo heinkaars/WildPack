@@ -23,6 +23,8 @@ export default function ResultScreen() {
   const [picked, setPicked] = useState<SpeciesGuess | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
+  // Set by "Add To Life List": the pop-up closes first, then the species page opens.
+  const [finishing, setFinishing] = useState(false);
 
   const retake = () => router.replace('/capture');
 
@@ -59,8 +61,11 @@ export default function ResultScreen() {
     }
   }
 
-  /** The species page opens over the life list, so closing it lands there. */
-  function handleFinish() {
+  /**
+   * The species page opens over the life list, so closing it lands there. It
+   * is a sheet, so it waits for the reward pop-up to finish closing.
+   */
+  function handlePopupClosed() {
     if (!celebration) return;
     const speciesId = celebration.entry.id;
     reset();
@@ -110,7 +115,14 @@ export default function ResultScreen() {
         <Button label="Not Quite, Try Again" variant="outline" onPress={retake} />
       </View>
 
-      {celebration && <CelebrationPopup payload={celebration} onContinue={handleFinish} />}
+      {celebration && (
+        <CelebrationPopup
+          payload={celebration}
+          visible={!finishing}
+          onContinue={() => setFinishing(true)}
+          onDismissed={handlePopupClosed}
+        />
+      )}
     </View>
   );
 }

@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Modal, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Modal, Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 import { useFocusEffect } from 'expo-router';
 import { colors, spacing } from '../../lib/theme';
@@ -11,6 +11,13 @@ type Props = {
   onClose?: () => void;
   /** Springs the card in, for reward moments. */
   pop?: boolean;
+  /**
+   * Called once the pop-up has fully closed after `visible` turns false. Open
+   * another sheet (a `presentation: 'modal'` screen) from here, not alongside
+   * hiding the pop-up: iOS refuses to present over a sheet that is still
+   * closing, and the half-closed pop-up then swallows every tap.
+   */
+  onDismissed?: () => void;
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 };
@@ -20,7 +27,7 @@ type Props = {
  * Capture-Camera-ON 88384:3868 and Captured-species-confirmPopup 88384:3517):
  * 350 wide, radius 16, 30px top and bottom, 20px between blocks.
  */
-export function Popup({ visible, onClose, pop, children, style }: Props) {
+export function Popup({ visible, onClose, pop, onDismissed, children, style }: Props) {
   // A Modal floats above every screen, so one left open on a screen the user
   // has moved on from would cover the next. It shows only while its screen is
   // the one in front.
@@ -31,8 +38,25 @@ export function Popup({ visible, onClose, pop, children, style }: Props) {
       return () => setFocused(false);
     }, []),
   );
+  const shown = visible && focused;
+
+  // Modal's onDismiss only exists on iOS; elsewhere the pop-up is gone as soon
+  // as it is hidden.
+  const wasShown = useRef(shown);
+  useEffect(() => {
+    if (wasShown.current && !shown && Platform.OS !== 'ios') onDismissed?.();
+    wasShown.current = shown;
+  }, [shown]);
+
   return (
-    <Modal visible={visible && focused} transparent animationType="fade" statusBarTranslucent onRequestClose={onClose}>
+    <Modal
+      visible={shown}
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+      onDismiss={onDismissed}
+    >
       <View style={styles.overlay}>
         <Animated.View
           entering={pop ? ZoomIn.springify().damping(13).mass(0.85) : undefined}

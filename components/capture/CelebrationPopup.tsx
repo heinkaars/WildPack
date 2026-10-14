@@ -12,7 +12,11 @@ import { CONFETTI_XML } from './confetti';
 
 type Props = {
   payload: CelebrationPayload;
+  /** False once "Add To Life List" is tapped, so the pop-up closes before anything opens. */
+  visible: boolean;
   onContinue: () => void;
+  /** The pop-up has finished closing; safe to open the next screen. */
+  onDismissed: () => void;
 };
 
 /** Plays the haptics and chime once, when the pop-up appears. */
@@ -25,7 +29,7 @@ function RewardFeedback() {
  * Figma Captured-species-confirmPopup 88384:3517: the docent in confetti, the
  * species card and three stat rows, over the result screen.
  */
-export function CelebrationPopup({ payload, onContinue }: Props) {
+export function CelebrationPopup({ payload, visible, onContinue, onDismissed }: Props) {
   const { profile } = useLifelist();
   const { entry, isNewSpecies, streak, milestone, speciesNumber } = payload;
   const xp = xpForCapture(isNewSpecies, milestone !== null);
@@ -40,7 +44,7 @@ export function CelebrationPopup({ payload, onContinue }: Props) {
   ];
 
   return (
-    <Popup visible pop>
+    <Popup visible={visible} pop onDismissed={onDismissed}>
       <RewardFeedback />
 
       <View style={styles.header}>
