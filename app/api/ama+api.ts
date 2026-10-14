@@ -59,6 +59,7 @@ async function answer(request: Request): Promise<Response> {
   const completion = await client.chat.completions.create({
     model: 'gpt-4o-mini',
     max_tokens: MAX_ANSWER_TOKENS,
+    response_format: { type: 'json_object' },
     messages: [
       {
         role: 'system',
@@ -67,17 +68,29 @@ async function answer(request: Request): Promise<Response> {
           `${commonName} (${scientificName}). Stick to identification help and factual information about ` +
           `this species — behavior, habitat, diet, look-alikes, conservation status, and similar. Keep answers ` +
           `conversational and concise (2-4 sentences unless the question needs more). If asked something unrelated ` +
-          `to this species or wildlife identification, politely redirect to the topic.`,
+          `to this species or wildlife identification, politely redirect to the topic. ` +
+          `Reply with a JSON object: {"answer": string, "off_topic": boolean}, where off_topic is true only ` +
+          `when the question was not about this species or wildlife identification and the answer redirects.`,
       },
       ...safeHistory,
       { role: 'user', content: question.slice(0, MAX_QUESTION_CHARS) },
     ],
   });
 
-  const reply = completion.choices[0]?.message?.content;
-  if (!reply) {
+  // The model is asked for JSON; plain text still makes a usable answer.
+  const content = completion.choices[0]?.message?.content;
+  let reply: unknown = content;
+  let offTopic = false;
+  try {
+    const parsed = JSON.parse(content ?? '');
+    reply = parsed.answer;
+    offTopic = parsed.off_topic === true;
+  } catch {
+    // keep the raw text
+  }
+  if (typeof reply !== 'string' || reply.trim().length === 0) {
     return Response.json({ error: 'No answer returned' }, { status: 502 });
   }
 
-  return Response.json({ answer: reply });
+  return Response.json({ answer: reply, offTopic });
 }

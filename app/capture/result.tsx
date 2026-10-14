@@ -71,8 +71,8 @@ export default function ResultScreen() {
   }
 
   /**
-   * The species page opens over the life list, so closing it lands there. It
-   * is a sheet, so it waits for the reward pop-up to finish closing.
+   * The species page opens over the life list, so going back lands there. It
+   * waits for the reward pop-up to finish closing before navigating.
    */
   function handlePopupClosed() {
     if (!celebration) return;

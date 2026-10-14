@@ -275,6 +275,42 @@ export async function insertSighting(sighting: {
   );
 }
 
+/**
+ * Changes the date or place shown on a species page. The date shown is the
+ * first sighting's, the place is the latest one that has a place (or the first
+ * sighting when none does), so those are the sightings changed. Returns the
+ * edited row for the outbox.
+ */
+export async function editSighting(
+  speciesSlug: string,
+  change: { seenAt: string } | { location: string | null },
+): Promise<{ id: string; speciesSlug: string; location: string | null; seenAt: string } | null> {
+  const db = await getDb();
+  const target = await db.getFirstAsync<{ id: string }>(
+    'seenAt' in change
+      ? 'select id from sightings where species_slug = ? order by seen_at asc limit 1'
+      : `select id from sightings where species_slug = ?
+         order by location is not null desc,
+                  case when location is not null then seen_at end desc,
+                  seen_at asc
+         limit 1`,
+    speciesSlug,
+  );
+  if (!target) return null;
+
+  if ('seenAt' in change) {
+    await db.runAsync('update sightings set seen_at = ? where id = ?', change.seenAt, target.id);
+  } else {
+    await db.runAsync('update sightings set location = ? where id = ?', change.location, target.id);
+  }
+
+  const row = await db.getFirstAsync<{ location: string | null; seen_at: string }>(
+    'select location, seen_at from sightings where id = ?',
+    target.id,
+  );
+  return row ? { id: target.id, speciesSlug, location: row.location, seenAt: row.seen_at } : null;
+}
+
 /** Every sighting that claims a photo, for the sync engine's repair pass. */
 export async function readPhotoRecords(): Promise<
   { id: string; photoLocalUri: string | null; photoPath: string | null }[]
