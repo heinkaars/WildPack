@@ -155,9 +155,6 @@ confirmPopup `88384:3496`, otherOption `88384:3596` / `-GsOpossum 88384:3631`. s
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
   returns the Cover page, so ask the user for a node link per screen.
-- **OpenAI credits ran out (2026-10-14):** identification returns "Something went wrong" until
-  credits are added at platform.openai.com → Billing. The real capture → identify path wasn't
-  tested end to end because of it.
 - **Location pop-up** in `app/onboarding/first-capture.tsx` predates `Popup`; switch it over when
   touched next.
 - **Milestone names** ("First Sighting" etc.) no longer show anywhere — the reward pop-up has no
