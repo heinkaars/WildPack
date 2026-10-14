@@ -228,8 +228,8 @@ Figma: species-Details `88384:3654`, species-Details-Ask `88384:3692`, -ifNotRel
 
 ## Multiple captures of one species
 
-- The species page photo is a carousel when a species has 2+ captures (`PhotoCarousel`): swipe or
-  use the arrows, dots underneath. The date and place under it belong to the capture showing, and
+- The species page photo is a carousel when a species has 2+ captures (`PhotoCarousel`): swipe,
+  with dots underneath (no arrows — user's call, the dots say it swipes). The date and place under it belong to the capture showing, and
   editing them changes that capture only (`db.editSighting(sightingId, …)`).
 - The life list card shows the photo last looked at on the species page (`cover_photo:<slug>` in the
   meta table, this phone only); until then, the first capture's.
