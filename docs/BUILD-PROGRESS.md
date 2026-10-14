@@ -143,7 +143,9 @@ confirmPopup `88384:3496`, otherOption `88384:3596` / `-GsOpossum 88384:3631`. s
   +20 when a milestone is reached, so a first capture is +70. Derived from the life list, nothing
   stored. Section 5 can total it the same way.
 - Shared: `Popup` / `PopupButtons` (white card on 70% black; only shows while its screen is in
-  front, so a pop-up can't follow the user onto the next screen), `ConfidencePill`, icons
+  front, so a pop-up can't follow the user onto the next screen; to open a sheet screen such as
+  the species page from a pop-up, hide the pop-up and navigate in `onDismissed`, or iOS freezes
+  the app behind an invisible pop-up), `ConfidencePill`, icons
   (`CloseIcon`, `FlashIcon`, `CameraSwapIcon`, `ShutterIcon`, `LensTimesIcon`, `GalleryIcon`,
   `SpeciesIcon`, `StarIcon`, `BoltIcon`, `ChevronUp`). Tokens `success*`, `lensActive`, `overlay`.
 - `/dev/capture?screen=camera|identifying|unsure|offline|result|celebration` previews each state
