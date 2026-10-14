@@ -15,7 +15,6 @@ export const palette = {
   cream: '#FFEBCC',
   progressTrack: '#C2A264',
   badgeIcon: '#FF4C00',
-  docentSelected: '#5D492A',
 };
 
 export const colors = {
@@ -39,6 +38,8 @@ export const colors = {
   strokeStrong: 'rgba(33, 38, 46, 0.8)',
   /** "soft orange/10" — the info message box on auth screens. */
   primaryFill: 'rgba(255, 153, 0, 0.1)',
+  /** "soft orange/20" — the selected docent card (Choose your Docent 88384:3901). */
+  primaryFillStrong: 'rgba(255, 153, 0, 0.2)',
   /** The WildPack wordmark (Figma "orange/100"). */
   wordmark: palette.badgeIcon,
   /** iOS "fill/tertiary" behind the round back button. */

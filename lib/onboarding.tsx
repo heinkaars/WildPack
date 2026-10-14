@@ -91,13 +91,15 @@ export function OnboardingGate() {
   const router = useRouter();
   const segments = useSegments();
   const inOnboarding = segments[0] === 'onboarding';
+  // "I have an account" on A1 leads to sign-in, which has to stay reachable.
+  const inAuth = segments[0] === 'auth';
   // The dev component gallery stays reachable before onboarding, in dev builds only.
   const inDevGallery = __DEV__ && segments[0] === 'dev';
 
   useEffect(() => {
-    if (!ready || !needsOnboarding || inOnboarding || inDevGallery) return;
+    if (!ready || !needsOnboarding || inOnboarding || inAuth || inDevGallery) return;
     router.replace('/onboarding/welcome');
-  }, [ready, needsOnboarding, inOnboarding, inDevGallery, router]);
+  }, [ready, needsOnboarding, inOnboarding, inAuth, inDevGallery, router]);
 
   if (ready || inDevGallery) return null;
 

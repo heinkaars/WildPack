@@ -1,5 +1,5 @@
-import Svg, { Path } from 'react-native-svg';
-import { colors } from '../../lib/theme';
+import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import { colors, gradient } from '../../lib/theme';
 
 // Paths are the Figma exports (Component page 1:220), drawn on a 24×24 grid.
 
@@ -118,6 +118,39 @@ export function EyeOffIcon({ color = colors.text, size = 24 }: IconProps) {
         d="M10.7429 5.09232C11.1494 5.03223 11.5686 5 12.0004 5C17.1054 5 20.4553 9.50484 21.5807 11.2868C21.7169 11.5025 21.785 11.6103 21.8231 11.7767C21.8518 11.9016 21.8517 12.0987 21.8231 12.2236C21.7849 12.3899 21.7164 12.4985 21.5792 12.7156C21.2793 13.1901 20.8222 13.8571 20.2165 14.5805M6.72432 6.71504C4.56225 8.1817 3.09445 10.2194 2.42111 11.2853C2.28428 11.5019 2.21587 11.6102 2.17774 11.7765C2.1491 11.9014 2.14909 12.0984 2.17771 12.2234C2.21583 12.3897 2.28393 12.4975 2.42013 12.7132C3.54554 14.4952 6.89541 19 12.0004 19C14.0588 19 15.8319 18.2676 17.2888 17.2766M3.00042 3L21.0004 21M9.8791 9.87868C9.3362 10.4216 9.00042 11.1716 9.00042 12C9.00042 13.6569 10.3436 15 12.0004 15C12.8288 15 13.5788 14.6642 14.1217 14.1213"
         stroke={color}
         strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** Figma location pin (Turn on Location pop-up), drawn on a 68 grid. */
+export function PinIcon({ color = colors.textOnPrimary, size = 68 }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 68 68" fill="none">
+      <Path
+        d="M34.0036 5.66699C44.0413 5.66718 53.5859 11.6146 57.5621 20.9092C64.9065 38.0781 49.8639 49.9771 38.5836 60.54C37.3552 61.6903 35.7127 62.3329 34.0036 62.333C32.2942 62.333 30.6513 61.6904 29.4225 60.54C18.17 49.9406 3.09032 38.0995 10.444 20.9092C14.4202 11.6144 23.9657 5.66699 34.0036 5.66699ZM33.9996 21.25C28.523 21.2502 24.0836 25.6903 24.0836 31.167C24.0838 36.6436 28.5231 41.0828 33.9996 41.083C39.4764 41.083 43.9165 36.6437 43.9166 31.167C43.9166 25.6902 39.4765 21.25 33.9996 21.25Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+/** Figma asterisk bullet with the brand gradient stroke (location pop-up), on a 16 grid. */
+export function SparkIcon({ size = 16 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <Defs>
+        <LinearGradient id="spark" x1="8.5" y1="2.66667" x2="8.5" y2="13.3333" gradientUnits="userSpaceOnUse">
+          <Stop stopColor={gradient.colors[0]} />
+          <Stop offset="1" stopColor={gradient.colors[1]} />
+        </LinearGradient>
+      </Defs>
+      <Path
+        d="M8 2.66667V13.3333M12 4L4 12M13.3333 8H2.66667M12 12L4 4"
+        stroke="url(#spark)"
+        strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
       />

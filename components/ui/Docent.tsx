@@ -1,10 +1,18 @@
 import { Image, ImageSourcePropType, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { palette, radii } from '../../lib/theme';
+import { colors, radii } from '../../lib/theme';
 import { Gradient } from './Gradient';
 import { CheckCircleIcon } from './icons';
 
 export type DocentAnimal = 'lion' | 'rhino' | 'gecko' | 'raccoon';
 export const DOCENT_ANIMALS: DocentAnimal[] = ['lion', 'rhino', 'gecko', 'raccoon'];
+
+/**
+ * The chosen docent is kept in the profile's `look`. Profiles from before the
+ * docents hold an emoji look ("fox", "owl", …) and get the lion.
+ */
+export function docentFromLook(look: string): DocentAnimal {
+  return (DOCENT_ANIMALS as string[]).includes(look) ? (look as DocentAnimal) : 'lion';
+}
 
 type Art = { source: ImageSourcePropType; aspect: number };
 const art = (source: ImageSourcePropType, w: number, h: number): Art => ({ source, aspect: h / w });
@@ -65,7 +73,7 @@ type CardProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Full-body docent for the onboarding picker; selected adds the brown card and check. */
+/** Full-body docent for the onboarding picker; selected adds the soft orange card and check. */
 export function DocentCard({ animal, selected, onPress, width = 171, style }: CardProps) {
   const scale = width / 171;
   return (
@@ -102,7 +110,7 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   cardSelected: {
-    backgroundColor: palette.docentSelected,
+    backgroundColor: colors.primaryFillStrong,
   },
   fullBody: {
     flex: 1,
@@ -111,6 +119,8 @@ const styles = StyleSheet.create({
   check: {
     position: 'absolute',
     borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },

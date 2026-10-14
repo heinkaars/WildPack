@@ -15,8 +15,12 @@ export const LOOKS: { id: string; emoji: string; label: string }[] = [
 
 export const DEFAULT_LOOK = LOOKS[0].id;
 
+// Onboarding now stores a docent in `look`; until the screens showing this
+// avatar are rebuilt, each docent gets its animal's emoji.
+const DOCENT_EMOJI: Record<string, string> = { lion: '🦁', rhino: '🦏', gecko: '🦎', raccoon: '🦝' };
+
 export function lookEmoji(look: string): string {
-  return LOOKS.find((option) => option.id === look)?.emoji ?? LOOKS[0].emoji;
+  return DOCENT_EMOJI[look] ?? LOOKS.find((option) => option.id === look)?.emoji ?? LOOKS[0].emoji;
 }
 
 export function Avatar({ look, size = 56 }: { look: string; size?: number }) {

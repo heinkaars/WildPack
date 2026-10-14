@@ -1,73 +1,96 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { PrimaryButton } from '../../components/PrimaryButton';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Button, Docent, docentFromLook, Input } from '../../components/ui';
+import { OnboardingScreen } from '../../components/onboarding/OnboardingScreen';
 import { useLifelist } from '../../lib/lifelist-store';
 import { useOnboarding } from '../../lib/onboarding';
-import { colors, radii, spacing } from '../../lib/theme';
+import { colors, fonts, spacing, type } from '../../lib/theme';
 
 export default function ChooseNameScreen() {
   const router = useRouter();
-  const { updateProfile } = useLifelist();
+  const { profile, updateProfile } = useLifelist();
   const { markComplete } = useOnboarding();
   const [name, setName] = useState('');
 
-  async function handleNext() {
-    const trimmed = name.trim();
-    // Left blank, the generated Explorer_NN name already on the profile stands.
-    if (trimmed) await updateProfile({ name: trimmed });
-    // Look and name are saved, so quitting on A5 should not restart the flow.
+  const trimmed = name.trim();
+
+  async function handleContinue() {
+    if (!trimmed) return;
+    await updateProfile({ name: trimmed });
+    // Docent and name are saved, so leaving on a later screen should not
+    // restart the flow.
     await markComplete();
-    router.push('/onboarding/first-capture');
+    router.push('/onboarding/pack');
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView
-        style={styles.fill}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    <OnboardingScreen
+      wash={false}
+      footer={<Button label="Continue" onPress={handleContinue} disabled={!trimmed} />}
+    >
+      <ScrollView
+        contentContainerStyle={styles.body}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.body}>
-          <Text style={styles.title}>Choose your name</Text>
+        <Docent animal={docentFromLook(profile.look)} width={78} style={styles.docent} />
+        {/* Figma "Description Container": 138.5° green wash, text sitting at the bottom. */}
+        <LinearGradient
+          colors={['rgba(144, 184, 0, 0.2)', 'rgba(46, 105, 15, 0.2)']}
+          locations={[0.351, 1]}
+          start={{ x: 0.169, y: -0.33 }}
+          end={{ x: 0.831, y: 1.33 }}
+          style={styles.bubble}
+        >
+          <Text style={styles.bubbleText}>
+            I am your docent and here to help you learn more about the wildlife you encounter. Did
+            you know that there are over 1.5 million unique wildlife species on this planet. And
+            they’re waiting to be discovered by you! Before we start
+          </Text>
+        </LinearGradient>
 
-          <TextInput
-            style={styles.input}
+        <View style={styles.field}>
+          <Text style={type.headingM} nativeID="name-label">
+            what’s your name?
+          </Text>
+          <Input
             value={name}
             onChangeText={setName}
-            placeholder="Enter your name"
-            placeholderTextColor={colors.inkMuted}
+            placeholder="Write your Name"
+            accessibilityLabel="Your name"
+            accessibilityLabelledBy="name-label"
             autoCapitalize="words"
+            autoComplete="name"
             autoCorrect={false}
             maxLength={24}
             returnKeyType="done"
-            onSubmitEditing={handleNext}
+            onSubmitEditing={handleContinue}
           />
         </View>
-
-        <View style={styles.actions}>
-          <PrimaryButton label="Next" onPress={handleNext} />
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </ScrollView>
+    </OnboardingScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  fill: { flex: 1 },
-  body: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.xl },
-  title: { fontSize: 24, fontWeight: '700', color: colors.ink },
-  input: {
-    marginTop: spacing.xl,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    fontSize: 16,
-    color: colors.ink,
+  body: { paddingHorizontal: spacing.screen, paddingTop: 20, paddingBottom: spacing.lg },
+  // Figma: the portrait sits 22px in from the bubble's edge and overlaps its top by 31px.
+  docent: { marginLeft: 22, zIndex: 1 },
+  bubble: {
+    marginTop: -31,
+    minHeight: 160,
+    padding: 12,
+    borderRadius: 12,
+    justifyContent: 'flex-end',
   },
-  actions: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
+  bubbleText: {
+    fontFamily: fonts.body,
+    fontSize: 14,
+    lineHeight: 22,
+    letterSpacing: -0.2,
+    color: colors.text,
+  },
+  field: { marginTop: 20, gap: 12 },
 });
