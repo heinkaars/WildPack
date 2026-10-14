@@ -48,4 +48,6 @@ export type AmaMessage = {
   id: string;
   role: 'user' | 'assistant';
   text: string;
+  /** An answer that declined an off-topic question (shown red in the chat). */
+  offTopic?: boolean;
 };

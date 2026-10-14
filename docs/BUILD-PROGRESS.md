@@ -13,7 +13,7 @@ components `1:220`, icons `161:749`.
 | 3 | Onboarding | **Done** — merged to `master` |
 | 4 | Capture & identify | **Done** — merged to `master` |
 | 5 | Home / profile / life list | **Done** — merged to `master` |
-| 6 | Species detail + Ask chat | — |
+| 6 | Species detail + Ask chat | **Built** on `mvp/species` — not merged yet |
 | 7 | "Looks" collection | **Done** — it is the docent picker + naming flow, built in Onboarding (`app/onboarding/look.tsx`, `name.tsx`) |
 
 ## What Foundations gives the next sections
@@ -193,6 +193,38 @@ Figma: Home `88384:2943`, Home-Profile `88384:3300`.
   `dayPill`, `wash`, `destructive*`, `chevron`.
 - `/dev/home?screen=home|empty|profile|profile-signed-in` previews both screens with sample data.
 
+## What Species detail + Ask chat added
+
+Figma: species-Details `88384:3654`, species-Details-Ask `88384:3692`, -ifNotReleventQuestion `88384:3751`.
+
+- **Species page** (`components/species/SpeciesView.tsx`, used by `app/species/[id].tsx`): photo with the
+  round back button over it, name + scientific name, category and sighting pills, description, the
+  date/location card, "Ask about this …" field pinned at the bottom (opens the chat). It is now a
+  normal pushed screen (was a modal), as in Figma.
+- **Edit date / place** (`EditSightingPopups.tsx`, not in Figma — only the edit icons are): a month
+  calendar (no future days) and a free-text place field (empty = "Location not recorded").
+  `db.editSighting()` changes the first sighting's date, or the place on the sighting that is shown
+  (the first one if none has a place); the change goes out through the existing `sighting.insert`
+  outbox job (an upsert), so no new sync code or Supabase change. Changing a date can move the
+  streak/XP, since those come from sighting dates. **Limit:** another phone already signed in to the
+  same account won't pick up the edit (sync only pulls *new* sightings); a fresh sign-in does.
+- **Ask chat** (`components/species/AskView.tsx`, used by `app/ama/[id].tsx`): a see-through
+  screen (`transparentModal`) so the species page stays in place, with AskView drawing Figma's glass
+  sheet over it — `expo-blur` plus the 60% light layer, 34px top corners, starting 84pt below the
+  safe area. Grabber/title drag down or a tap above the sheet closes it. Docent avatar = the user's
+  docent (sized so the hat isn't clipped), cream user bubbles, white answers, animated three-dot
+  typing bubble, error box above the field. The docent greets by name ("Hi Hein! …", not stored).
+- **Off-topic answers:** `app/api/ama+api.ts` asks OpenAI for JSON `{answer, off_topic}` and returns
+  `offTopic`; such answers get Figma's red wash (Figma's red corner dot is left out, user's call). The prompt ties the flag to "declined and
+  steered back", because a looser wording flagged answered-but-unusual questions (pets, zoos, the
+  name) about 1 in 3 times; tested 0/20 false flags, 10/10 real ones. The flag is stored in the
+  phone's database (`ama_messages.off_topic`, added on launch) so it survives reopening; Supabase
+  has no such column, so a chat restored on another phone shows it white. An off-topic question
+  still counts for chat XP.
+- Shared: icons `CalendarIcon`, `LocationIcon`, `EditIcon`; tokens `sheet`, `sheetGlass`, `grabber`, `chatUser`,
+  `chatOffTopic`, `typingDot`.
+- `/dev/species?screen=species|ask|ask-empty|ask-off-topic|ask-error` previews each state.
+
 ## Open items / decisions for later chats
 
 - **Figma access:** now on a Full seat, so there's no tight call limit. The page listing only
@@ -211,5 +243,8 @@ Figma: Home `88384:2943`, Home-Profile `88384:3300`.
 - **Not tried yet:** a real capture with Location on (the place lookup), and Delete account from the
   app itself (the server route was tested directly).
 - **Avatar.tsx** (old emoji looks) is now only used for `DEFAULT_LOOK`; tidy when convenient.
-- Design gaps still to ask about when reached: loading/error
-  states, "Looks" data model, off-topic chat handling.
+- **Species page / chat:** user feedback round 1 (avatar, glass background, false red bubbles, red
+  lost on reopen, name in greeting) fixed and checked in the Simulator. Still to try by hand: the
+  keyboard pushing the chat field up, and editing date/place on a real sighting.
+- Design gaps still to ask about when reached: loading/error states. Off-topic copy is the AI's own
+  wording; the edit pop-ups are ours — worth showing the designer.

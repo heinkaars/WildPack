@@ -69,6 +69,18 @@ export const colors = {
   destructiveMuted: 'rgba(239, 68, 68, 0.4)',
   /** Chevrons on the profile's rows (dark 25%). */
   chevron: 'rgba(33, 38, 46, 0.25)',
+  /** Solid stand-in for the Ask chat sheet's glass (species-Details-Ask 88384:3719). */
+  sheet: '#F5F5F5',
+  /** The glass itself: Figma's "rgba(245,245,245,0.6)" layer over a blur of the species page. */
+  sheetGlass: 'rgba(245, 245, 245, 0.6)',
+  /** iOS grabber at the top of a sheet. */
+  grabber: '#CCCCCC',
+  /** The user's chat bubbles (handoff "badge unlocked" tint #FBE6C2). */
+  chatUser: '#FBE6C2',
+  /** Off-topic answer: red wash fading into the white bubble. */
+  chatOffTopic: 'rgba(255, 0, 4, 0.2)',
+  /** The resting dots of the chat's typing indicator (Figma Gray/400). */
+  typingDot: '#98A2B3',
 
   // Legacy names from the prototype theme, mapped onto the new palette so
   // screens not yet rebuilt keep working. Remove once every screen uses the

@@ -1,7 +1,10 @@
 import { supabase } from './supabase';
 import { AmaMessage, LifelistEntry } from './types';
 
-export async function askAma(entry: LifelistEntry, question: string, history: AmaMessage[]): Promise<string> {
+/** `offTopic`: the question wasn't about this species, and the answer steers back to it. */
+export type AmaAnswer = { answer: string; offTopic: boolean };
+
+export async function askAma(entry: LifelistEntry, question: string, history: AmaMessage[]): Promise<AmaAnswer> {
   // The server checks this before it spends anything at OpenAI.
   const { data } = await supabase.auth.getSession();
 
@@ -25,6 +28,6 @@ export async function askAma(entry: LifelistEntry, question: string, history: Am
     throw new Error('Could not get an answer right now. Try again in a moment.');
   }
 
-  const { answer } = await response.json();
-  return answer;
+  const { answer, offTopic } = await response.json();
+  return { answer, offTopic: offTopic === true };
 }

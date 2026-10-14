@@ -1,46 +1,42 @@
 import { useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLifelist } from '../../lib/lifelist-store';
 import { askAma } from '../../lib/ama-service';
 import { useAmaThread } from '../../lib/ama-store';
-import { colors, radii, spacing } from '../../lib/theme';
+import { AskView } from '../../components/species/AskView';
+import { docentFromLook } from '../../components/ui';
+import { colors, spacing, type } from '../../lib/theme';
 
-export default function AmaScreen() {
+export default function AskScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { getEntry } = useLifelist();
+  const { getEntry, profile } = useLifelist();
   const entry = getEntry(id);
 
   const { messages, append } = useAmaThread(id);
-  const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   // A refused question used to fail silently: the message appeared, no answer
-  // ever came, and nothing said why. Now the reason is shown under the thread.
+  // ever came, and nothing said why. Now the reason is shown above the field.
   const [error, setError] = useState<string | null>(null);
 
   if (!entry) {
     return (
-      <SafeAreaView style={styles.safe}>
-        <Text style={styles.notFound}>Species not found.</Text>
-      </SafeAreaView>
+      <View style={styles.missing}>
+        <Text style={[type.bodySm, styles.notFound]}>Species not found.</Text>
+      </View>
     );
   }
 
-  async function handleSend() {
-    const question = draft.trim();
-    if (!question || sending) return;
+  async function handleSend(question: string) {
     if (!entry) return;
-
     const history = messages;
-    setDraft('');
     setSending(true);
     setError(null);
     try {
       await append('user', question);
-      const answer = await askAma(entry, question, history);
-      await append('assistant', answer);
+      const reply = await askAma(entry, question, history);
+      await append('assistant', reply.answer, reply.offTopic);
     } catch (e) {
       // The question stays in the thread, so asking again is one tap away.
       setError(e instanceof Error ? e.message : 'Could not get an answer right now.');
@@ -50,110 +46,20 @@ export default function AmaScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Ask about {entry.commonName}</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text style={styles.close}>Close</Text>
-        </Pressable>
-      </View>
-
-      <FlatList
-        data={messages}
-        keyExtractor={(m) => m.id}
-        contentContainerStyle={styles.messages}
-        ListEmptyComponent={
-          <Text style={styles.hint}>Ask an identification question or a fact about the {entry.commonName}.</Text>
-        }
-        renderItem={({ item }) => (
-          <View style={[styles.bubble, item.role === 'user' ? styles.bubbleUser : styles.bubbleAssistant]}>
-            <Text style={item.role === 'user' ? styles.bubbleTextUser : styles.bubbleTextAssistant}>{item.text}</Text>
-          </View>
-        )}
-      />
-
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        {error ? (
-          <View style={styles.errorBox} accessibilityLiveRegion="polite">
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        ) : null}
-
-        <View style={styles.inputRow}>
-          <TextInput
-            value={draft}
-            onChangeText={setDraft}
-            placeholder="Ask a question…"
-            placeholderTextColor={colors.inkMuted}
-            style={styles.input}
-            onSubmitEditing={handleSend}
-            returnKeyType="send"
-          />
-          <Pressable style={styles.sendButton} onPress={handleSend} disabled={sending}>
-            <Text style={styles.sendLabel}>{sending ? '…' : 'Send'}</Text>
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <AskView
+      speciesName={entry.commonName}
+      userName={profile.name}
+      docent={docentFromLook(profile.look)}
+      messages={messages}
+      sending={sending}
+      error={error}
+      onSend={handleSend}
+      onClose={() => router.back()}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  notFound: { padding: spacing.lg, color: colors.inkMuted },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  title: { fontSize: 17, fontWeight: '700', color: colors.ink },
-  close: { color: colors.forest, fontWeight: '600' },
-  messages: { padding: spacing.lg, gap: spacing.sm, flexGrow: 1 },
-  hint: { color: colors.inkMuted, textAlign: 'center', marginTop: spacing.xl },
-  bubble: { maxWidth: '85%', borderRadius: radii.md, padding: spacing.sm },
-  bubbleUser: { backgroundColor: colors.forest, alignSelf: 'flex-end' },
-  bubbleAssistant: { backgroundColor: colors.surface, alignSelf: 'flex-start', borderWidth: 1, borderColor: colors.border },
-  bubbleTextUser: { color: colors.surface },
-  bubbleTextAssistant: { color: colors.ink },
-  // Same treatment as the auth screens, so a refusal looks the same everywhere.
-  errorBox: {
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.sm,
-    padding: spacing.sm,
-    borderRadius: radii.md,
-    backgroundColor: '#FBE9E7',
-    borderWidth: 1,
-    borderColor: colors.danger,
-  },
-  errorText: { color: colors.danger, fontSize: 13, fontWeight: '600' },
-  inputRow: {
-    flexDirection: 'row',
-    padding: spacing.md,
-    gap: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.background,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    color: colors.ink,
-  },
-  sendButton: {
-    backgroundColor: colors.forest,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendLabel: { color: colors.surface, fontWeight: '700' },
+  missing: { flex: 1, backgroundColor: colors.sheet, padding: spacing.screen },
+  notFound: { color: colors.textMuted },
 });

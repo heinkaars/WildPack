@@ -81,6 +81,13 @@ async function connect(): Promise<SQLiteDatabase> {
   } catch {
     // Column is already there.
   }
+  // Whether an answer declined an off-topic question (shown red). Kept on this
+  // phone only; the server copy of the chat has no such column.
+  try {
+    await db.execAsync('alter table ama_messages add column off_topic integer not null default 0');
+  } catch {
+    // Column is already there.
+  }
 
   return db;
 }
@@ -198,11 +205,11 @@ export async function readProfile(): Promise<(Profile & { streak: number; lastAc
 
 export async function readAmaMessages(speciesSlug: string): Promise<AmaMessage[]> {
   const db = await getDb();
-  const rows = await db.getAllAsync<{ id: string; role: 'user' | 'assistant'; body: string }>(
-    'select id, role, body from ama_messages where species_slug = ? order by created_at asc',
+  const rows = await db.getAllAsync<{ id: string; role: 'user' | 'assistant'; body: string; off_topic: number }>(
+    'select id, role, body, off_topic from ama_messages where species_slug = ? order by created_at asc',
     speciesSlug,
   );
-  return rows.map((row) => ({ id: row.id, role: row.role, text: row.body }));
+  return rows.map((row) => ({ id: row.id, role: row.role, text: row.body, offTopic: row.off_topic === 1 }));
 }
 
 /** What Explorer XP, the streak and the capture count are worked out from (`lib/xp.ts`). */
@@ -275,6 +282,42 @@ export async function insertSighting(sighting: {
   );
 }
 
+/**
+ * Changes the date or place shown on a species page. The date shown is the
+ * first sighting's, the place is the latest one that has a place (or the first
+ * sighting when none does), so those are the sightings changed. Returns the
+ * edited row for the outbox.
+ */
+export async function editSighting(
+  speciesSlug: string,
+  change: { seenAt: string } | { location: string | null },
+): Promise<{ id: string; speciesSlug: string; location: string | null; seenAt: string } | null> {
+  const db = await getDb();
+  const target = await db.getFirstAsync<{ id: string }>(
+    'seenAt' in change
+      ? 'select id from sightings where species_slug = ? order by seen_at asc limit 1'
+      : `select id from sightings where species_slug = ?
+         order by location is not null desc,
+                  case when location is not null then seen_at end desc,
+                  seen_at asc
+         limit 1`,
+    speciesSlug,
+  );
+  if (!target) return null;
+
+  if ('seenAt' in change) {
+    await db.runAsync('update sightings set seen_at = ? where id = ?', change.seenAt, target.id);
+  } else {
+    await db.runAsync('update sightings set location = ? where id = ?', change.location, target.id);
+  }
+
+  const row = await db.getFirstAsync<{ location: string | null; seen_at: string }>(
+    'select location, seen_at from sightings where id = ?',
+    target.id,
+  );
+  return row ? { id: target.id, speciesSlug, location: row.location, seenAt: row.seen_at } : null;
+}
+
 /** Every sighting that claims a photo, for the sync engine's repair pass. */
 export async function readPhotoRecords(): Promise<
   { id: string; photoLocalUri: string | null; photoPath: string | null }[]
@@ -326,17 +369,19 @@ export async function insertAmaMessage(message: {
   role: 'user' | 'assistant';
   body: string;
   createdAt: string;
+  offTopic?: boolean;
 }): Promise<void> {
   const db = await getDb();
   await db.runAsync(
-    `insert into ama_messages (id, species_slug, role, body, created_at)
-     values (?, ?, ?, ?, ?)
+    `insert into ama_messages (id, species_slug, role, body, created_at, off_topic)
+     values (?, ?, ?, ?, ?, ?)
      on conflict (id) do nothing`,
     message.id,
     message.speciesSlug,
     message.role,
     message.body,
     message.createdAt,
+    message.offTopic ? 1 : 0,
   );
 }
 

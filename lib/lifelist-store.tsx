@@ -70,6 +70,8 @@ type LifelistContextValue = Omit<LifelistState, 'lastActivityDate'> & {
   /** Takes the photo's base64 so the sighting keeps a durable local copy. */
   addSighting: (guess: SpeciesGuess, photoBase64: string, location: string | null) => Promise<CelebrationPayload>;
   updateProfile: (profile: Partial<Profile>) => Promise<void>;
+  /** The date or place on a species page, corrected by the user. */
+  editSighting: (speciesId: string, change: { seenAt: string } | { location: string | null }) => Promise<void>;
 };
 
 const LifelistContext = createContext<LifelistContextValue | null>(null);
@@ -179,6 +181,18 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
         };
         await db.writeProfile(row);
         await db.enqueue('profile.update', row);
+
+        if (userId) sync(userId);
+      },
+
+      editSighting: async (speciesId, change) => {
+        const row = await db.editSighting(speciesId, change);
+        if (!row) return;
+        // The insert job is an upsert by id, so it carries the correction too.
+        await db.enqueue('sighting.insert', row);
+
+        const [entries, activity] = await Promise.all([db.readLifelist(), db.readActivity()]);
+        setState((prev) => ({ ...prev, entries, stats: computeStats(activity) }));
 
         if (userId) sync(userId);
       },

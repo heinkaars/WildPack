@@ -26,13 +26,13 @@ export function useAmaThread(speciesSlug: string) {
   }, [speciesSlug]);
 
   const append = useCallback(
-    async (role: 'user' | 'assistant', text: string): Promise<AmaMessage> => {
-      const message: AmaMessage = { id: uuid(), role, text };
+    async (role: 'user' | 'assistant', text: string, offTopic = false): Promise<AmaMessage> => {
+      const message: AmaMessage = { id: uuid(), role, text, offTopic };
       const createdAt = new Date().toISOString();
 
       setMessages((prev) => [...prev, message]);
 
-      await db.insertAmaMessage({ id: message.id, speciesSlug, role, body: text, createdAt });
+      await db.insertAmaMessage({ id: message.id, speciesSlug, role, body: text, createdAt, offTopic });
       await db.enqueue('ama.insert', { id: message.id, speciesSlug, role, body: text, createdAt });
       // A question is worth Explorer XP, so the home screen's total moves with it.
       if (role === 'user') refresh();
