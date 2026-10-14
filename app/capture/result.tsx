@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -8,6 +8,7 @@ import { CelebrationPopup } from '../../components/capture/CelebrationPopup';
 import { OtherMatches } from '../../components/capture/OtherMatches';
 import { useCaptureSession } from '../../lib/capture-session';
 import { useLifelist } from '../../lib/lifelist-store';
+import { currentPlace, placeWithin } from '../../lib/location';
 import { SpeciesGuess } from '../../lib/types';
 import { colors, spacing, type } from '../../lib/theme';
 import { FAILURES, FailurePopup } from './identify';
@@ -25,6 +26,13 @@ export default function ResultScreen() {
   const [saveFailed, setSaveFailed] = useState(false);
   // Set by "Add To Life List": the pop-up closes first, then the species page opens.
   const [finishing, setFinishing] = useState(false);
+
+  // Where the photo was taken, looked up while the user reads the result so
+  // Confirm rarely has to wait. Null when the profile's Location switch is off.
+  const place = useRef<Promise<string | null>>(Promise.resolve(null));
+  useEffect(() => {
+    place.current = currentPlace();
+  }, []);
 
   const retake = () => router.replace('/capture');
 
@@ -53,7 +61,8 @@ export default function ResultScreen() {
     setConfirming(true);
     setSaveFailed(false);
     try {
-      setCelebration(await addSighting(selected, photoBase64!, null));
+      const location = await placeWithin(place.current);
+      setCelebration(await addSighting(selected, photoBase64!, location));
     } catch {
       setSaveFailed(true);
     } finally {

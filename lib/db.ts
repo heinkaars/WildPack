@@ -3,6 +3,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { resolvePhotoUri } from './photos';
 import { AmaMessage, LifelistEntry, Profile } from './types';
+import type { Activity } from './xp';
 
 const DATABASE_NAME = 'wildpack.db';
 
@@ -202,6 +203,25 @@ export async function readAmaMessages(speciesSlug: string): Promise<AmaMessage[]
     speciesSlug,
   );
   return rows.map((row) => ({ id: row.id, role: row.role, text: row.body }));
+}
+
+/** What Explorer XP, the streak and the capture count are worked out from (`lib/xp.ts`). */
+export async function readActivity(): Promise<Activity> {
+  const db = await getDb();
+  const [sightings, questions] = await Promise.all([
+    db.getAllAsync<{ speciesSlug: string; seenAt: string }>(
+      'select species_slug as speciesSlug, seen_at as seenAt from sightings order by seen_at asc',
+    ),
+    db.getAllAsync<{ speciesSlug: string; count: number }>(
+      `select species_slug as speciesSlug, count(*) as count
+       from ama_messages where role = 'user' group by species_slug`,
+    ),
+  ]);
+
+  return {
+    sightings,
+    questionsBySpecies: Object.fromEntries(questions.map((row) => [row.speciesSlug, row.count])),
+  };
 }
 
 // --- writes -----------------------------------------------------------------

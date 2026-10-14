@@ -1,11 +1,9 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
-import { BoltIcon, Button, Docent, docentFromLook, Popup, SpeciesIcon, StarIcon } from '../ui';
+import { BoltIcon, Button, Docent, docentFromLook, Popup, SpeciesIcon, StarIcon, Wash } from '../ui';
 import { useLifelist } from '../../lib/lifelist-store';
 import { useRewardFeedback } from '../../lib/use-reward';
-import { xpForCapture } from '../../lib/xp';
 import { CelebrationPayload } from '../../lib/types';
 import { colors, fonts, type } from '../../lib/theme';
 import { CONFETTI_XML } from './confetti';
@@ -31,8 +29,7 @@ function RewardFeedback() {
  */
 export function CelebrationPopup({ payload, visible, onContinue, onDismissed }: Props) {
   const { profile } = useLifelist();
-  const { entry, isNewSpecies, streak, milestone, speciesNumber } = payload;
-  const xp = xpForCapture(isNewSpecies, milestone !== null);
+  const { entry, isNewSpecies, streak, xpEarned: xp, speciesNumber } = payload;
 
   const stats = [
     {
@@ -57,24 +54,7 @@ export function CelebrationPopup({ payload, visible, onContinue, onDismissed }: 
         </Text>
       </View>
 
-      {/* Figma layers three fills: soft orange 30%, a lime glow from the
-          bottom and a white sheen from the bottom left. */}
-      <View style={styles.stats}>
-        <LinearGradient
-          colors={['rgba(174, 255, 0, 0)', 'rgba(174, 255, 0, 0.3)']}
-          locations={[0.36, 1]}
-          start={{ x: 0.58, y: 0 }}
-          end={{ x: 0.42, y: 1.15 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <LinearGradient
-          colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.61)']}
-          locations={[0.41, 0.98]}
-          start={{ x: 0.81, y: 0.11 }}
-          end={{ x: 0.19, y: 0.89 }}
-          style={StyleSheet.absoluteFill}
-        />
-
+      <Wash style={styles.stats}>
         <View style={styles.speciesCard}>
           {entry.photoUri ? <Image source={{ uri: entry.photoUri }} style={styles.speciesPhoto} /> : null}
           <View style={styles.speciesText}>
@@ -99,7 +79,7 @@ export function CelebrationPopup({ payload, visible, onContinue, onDismissed }: 
             </Animated.View>
           ))}
         </View>
-      </View>
+      </Wash>
 
       <Button label="Add To Life List" onPress={onContinue} style={styles.button} />
     </Popup>
@@ -120,8 +100,6 @@ const styles = StyleSheet.create({
     gap: 4,
     padding: 8,
     borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255, 153, 0, 0.3)',
   },
   speciesCard: {
     width: 129,

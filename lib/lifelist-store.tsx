@@ -8,7 +8,8 @@ import { completeAccountSwitch } from './account-switch';
 import { useAuth } from './auth';
 import { slugify } from './slug';
 import { uuid } from './uuid';
-import { milestoneForCount } from './milestones';
+import { badgeUnlocked } from './badges';
+import { computeStats, Stats } from './xp';
 import { CelebrationPayload, LifelistEntry, Profile, SpeciesGuess } from './types';
 import { DEFAULT_LOOK } from '../components/Avatar';
 
@@ -56,9 +57,15 @@ type LifelistState = {
   entries: LifelistEntry[];
   streak: number;
   lastActivityDate: string | null;
+  /** Explorer XP, capture count and the live streak, worked out from the local data. */
+  stats: Stats;
 };
 
+const EMPTY_STATS: Stats = { xp: 0, captures: 0, streak: 0, activeDays: new Set() };
+
 type LifelistContextValue = Omit<LifelistState, 'lastActivityDate'> & {
+  /** Re-reads the local database, e.g. after a chat question changed the XP. */
+  refresh: () => Promise<void>;
   getEntry: (id: string) => LifelistEntry | undefined;
   /** Takes the photo's base64 so the sighting keeps a durable local copy. */
   addSighting: (guess: SpeciesGuess, photoBase64: string, location: string | null) => Promise<CelebrationPayload>;
@@ -76,12 +83,17 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
     entries: [],
     streak: 0,
     lastActivityDate: null,
+    stats: EMPTY_STATS,
   });
 
   // Everything the screens show comes from the local database, so this is the
   // only thing that stands between launch and a rendered lifelist.
   const refresh = useCallback(async () => {
-    const [entries, profile] = await Promise.all([db.readLifelist(), db.readProfile()]);
+    const [entries, profile, activity] = await Promise.all([
+      db.readLifelist(),
+      db.readProfile(),
+      db.readActivity(),
+    ]);
     setState({
       ready: true,
       entries,
@@ -89,6 +101,7 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
       profileLoaded: profile !== null,
       streak: profile?.streak ?? 0,
       lastActivityDate: profile?.lastActivityDate ?? null,
+      stats: computeStats(activity),
     });
   }, []);
 
@@ -148,6 +161,8 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
 
     return {
       ...visible,
+
+      refresh,
 
       getEntry: (id) => state.entries.find((entry) => entry.id === id),
 
@@ -227,8 +242,9 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
           await db.enqueue('profile.update', profileRow);
         }
 
-        const entries = await db.readLifelist();
-        setState((prev) => ({ ...prev, entries, streak, lastActivityDate: todayKey }));
+        const [entries, activity] = await Promise.all([db.readLifelist(), db.readActivity()]);
+        const stats = computeStats(activity);
+        setState((prev) => ({ ...prev, entries, streak, lastActivityDate: todayKey, stats }));
 
         if (userId) sync(userId);
 
@@ -237,13 +253,14 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
         return {
           entry,
           isNewSpecies,
-          streak,
-          milestone: isNewSpecies ? milestoneForCount(entries.length) : null,
+          streak: stats.streak,
+          xpEarned: stats.xp - current.stats.xp,
+          badge: badgeUnlocked(current.stats.xp, stats.xp),
           speciesNumber: entries.length,
         };
       },
     };
-  }, [state, userId]);
+  }, [state, userId, refresh]);
 
   return <LifelistContext.Provider value={value}>{children}</LifelistContext.Provider>;
 }

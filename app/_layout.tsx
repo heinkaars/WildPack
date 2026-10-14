@@ -50,7 +50,7 @@ export default function RootLayout() {
                   <Stack.Screen name="onboarding/look" />
                   <Stack.Screen name="onboarding/name" />
                   <Stack.Screen name="onboarding/first-capture" />
-                  <Stack.Screen name="account" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="account" />
                   <Stack.Screen name="auth/sign-in" />
                   <Stack.Screen name="auth/create-account" />
                   <Stack.Screen name="auth/forgot-password" />
@@ -63,6 +63,7 @@ export default function RootLayout() {
                   <Stack.Screen name="dev/components" />
                   <Stack.Screen name="dev/auth" />
                   <Stack.Screen name="dev/capture" />
+                  <Stack.Screen name="dev/home" />
                 </Stack>
                 {/* Sits above the stack so the lifelist cannot flash before we
                     know whether this user still owes us onboarding. */}
