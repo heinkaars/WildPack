@@ -13,7 +13,7 @@ components `1:220`, icons `161:749`.
 | 3 | Onboarding | **Done** — merged to `master` |
 | 4 | Capture & identify | **Done** — merged to `master` |
 | 5 | Home / profile / life list | **Done** — merged to `master` |
-| 6 | Species detail + Ask chat | **Built** on `mvp/species` — not merged yet |
+| 6 | Species detail + Ask chat | **Done** — merged to `master` |
 | 7 | "Looks" collection | **Done** — it is the docent picker + naming flow, built in Onboarding (`app/onboarding/look.tsx`, `name.tsx`) |
 
 ## What Foundations gives the next sections
