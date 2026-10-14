@@ -11,7 +11,7 @@ components `1:220`, icons `161:749`.
 | 1 | Foundations (theme, fonts, gradient, shared components, artwork) | **Done** — merged to `master` |
 | 2 | Auth (sign in, create account, forgot password, verify code) | **Done** — merged to `master` |
 | 3 | Onboarding | **Done** — merged to `master` |
-| 4 | Capture & identify | **Done** — on branch `mvp/capture` (not merged yet) |
+| 4 | Capture & identify | **Done** — merged to `master` |
 | 5 | Home / profile / life list | Next |
 | 6 | Species detail + Ask chat | — |
 | 7 | "Looks" collection (new) | — |
