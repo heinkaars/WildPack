@@ -45,11 +45,11 @@ export default function ChooseNameScreen() {
           style={styles.bubble}
         >
           <Text style={styles.bubbleText}>
-            Excellent choice! I am your docent and will be your guide during your WildPack
-            adventure. I am here to help you learn more about the wildlife you encounter. You can
-            ask me anything about the wildlife you capture. Did you know that there are over 1.5
-            million unique wildlife species on this planet? And they’re waiting to be discovered by
-            you! Before we start exploring, what can I call you?
+            Excellent choice! I’m your docent, your guide on this WildPack adventure. Ask me
+            anything about the wildlife you capture, no question is too wild! Did you know there
+            are over 1.5 million wildlife species out there? And they’re all waiting to be
+            discovered by you! Together, we’ll build your lifelist. Before we start exploring, what
+            should I call you?
           </Text>
         </LinearGradient>
 
