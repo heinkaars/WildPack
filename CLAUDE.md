@@ -2,7 +2,7 @@
 
 **What:** Expo/React Native app for wildlife observation — capture, AI-identify, chat, build a lifelist.
 
-**Tech Stack:** Expo 54, React Native 0.81, Supabase + SQLite, OpenAI API.
+**Tech Stack:** Expo 57, React Native 0.86, Supabase + SQLite, OpenAI API.
 
 ## Before Writing Code
 - Read [`AGENTS.md`](AGENTS.md) for Expo version, dev server setup, and SSR/dev gotchas
@@ -24,7 +24,7 @@
 
 1. **Verify it works:** Always test in preview after changes (UI, API routes, data flow)
 2. **Check the data layer:** If touching `sightings`, `profiles`, or sync — verify RLS and offline behavior
-3. **Know which Expo version:** Reference v54 docs, not newer — APIs differ
+3. **Know which Expo version:** Reference v57 docs (the SDK in package.json), not newer — APIs differ
 4. **SSR in mind:** If adding network calls or module-level setup, guard browser globals
 
 ## When Something Breaks

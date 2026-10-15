@@ -23,7 +23,7 @@ import {
 import { useCaptureSession } from '../../lib/capture-session';
 import { useLifelist } from '../../lib/lifelist-store';
 import { normalizeWebImage } from '../../lib/photos';
-import { colors, fonts, spacing, type } from '../../lib/theme';
+import { absoluteFill, colors, fonts, spacing, type } from '../../lib/theme';
 
 // expo-camera's `zoom` is a 0-1 fraction of the device's max zoom, not a
 // scale factor, so a pinch has to be mapped into that range by hand.
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   },
   lightLabelText: { fontFamily: fonts.bodySemiBold, fontSize: 12, lineHeight: 20, color: colors.textOnPrimary },
 
-  bottom: { ...StyleSheet.absoluteFillObject, top: undefined, alignItems: 'center' },
+  bottom: { ...absoluteFill, top: undefined, alignItems: 'center' },
 
   uploadErrorPill: {
     marginBottom: spacing.md,
@@ -427,6 +427,6 @@ const styles = StyleSheet.create({
   },
   roundOutline: { borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.5)' },
   gallery: { width: 50, height: 50, borderRadius: 25, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  galleryPhoto: { ...StyleSheet.absoluteFillObject },
+  galleryPhoto: { ...absoluteFill },
   swap: { width: 50, height: 50, borderRadius: 25, alignItems: 'center', justifyContent: 'center' },
 });

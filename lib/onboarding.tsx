@@ -9,7 +9,7 @@ import {
   markOnboardingComplete as writeComplete,
   snoozeOnboarding,
 } from './onboarding-flags';
-import { colors } from './theme';
+import { absoluteFill, colors } from './theme';
 
 type OnboardingContextValue = {
   /** False until the flags have been read, so nothing renders too early. */
@@ -112,7 +112,7 @@ export function OnboardingGate() {
 
 const styles = StyleSheet.create({
   cover: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',

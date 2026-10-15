@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BackButton, ScreenStatusBar } from '../ui';
-import { colors, spacing, type } from '../../lib/theme';
+import { absoluteFill, colors, spacing, type } from '../../lib/theme';
 
 /**
  * The frame the onboarding screens after Welcome share (Figma 88384:3880 – 3433):
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
 
   wash: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     backgroundColor: 'rgba(255, 153, 0, 0.3)',
   },
 
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   wordmarkSlot: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
   },
