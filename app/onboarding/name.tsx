@@ -6,7 +6,7 @@ import { Button, Docent, docentFromLook, Input } from '../../components/ui';
 import { OnboardingScreen } from '../../components/onboarding/OnboardingScreen';
 import { useLifelist } from '../../lib/lifelist-store';
 import { useOnboarding } from '../../lib/onboarding';
-import { colors, fonts, spacing, type } from '../../lib/theme';
+import { colors, fonts, spacing } from '../../lib/theme';
 
 export default function ChooseNameScreen() {
   const router = useRouter();
@@ -45,22 +45,19 @@ export default function ChooseNameScreen() {
           style={styles.bubble}
         >
           <Text style={styles.bubbleText}>
-            I am your docent and here to help you learn more about the wildlife you encounter. Did
-            you know that there are over 1.5 million unique wildlife species on this planet. And
-            they’re waiting to be discovered by you! Before we start
+            Excellent choice! I’m your docent, your guide on this WildPack adventure. Ask me
+            anything about the wildlife you capture, no question is too wild! Did you know there
+            are over 1.5 million wildlife species out there? Let’s start exploring and build your
+            lifelist together!{'\n\n'}Before we head out, what should I call you?
           </Text>
         </LinearGradient>
 
         <View style={styles.field}>
-          <Text style={type.headingM} nativeID="name-label">
-            what’s your name?
-          </Text>
           <Input
             value={name}
             onChangeText={setName}
-            placeholder="Write your Name"
+            placeholder="Call me…"
             accessibilityLabel="Your name"
-            accessibilityLabelledBy="name-label"
             autoCapitalize="words"
             autoComplete="name"
             autoCorrect={false}
@@ -82,6 +79,8 @@ const styles = StyleSheet.create({
     marginTop: -31,
     minHeight: 160,
     padding: 12,
+    // Keep long copy clear of the portrait, which overlaps the top 31px.
+    paddingTop: 31 + 12,
     borderRadius: 12,
     justifyContent: 'flex-end',
   },
