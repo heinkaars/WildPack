@@ -7,9 +7,9 @@ import { useLifelist } from '../../lib/lifelist-store';
 import { colors, radii, spacing, type } from '../../lib/theme';
 
 const LOCATION_PERKS = [
-  'Show wildlife native to your region',
-  'Surface sightings and hotspots nearby',
-  'Earn location-based badges & challenges',
+  'Discover wildlife native to your region',
+  'See sightings and hotspots nearby',
+  'Earn location-based badges and challenges',
 ];
 
 /**
@@ -125,11 +125,11 @@ export default function FirstCaptureScreen() {
 
             <View style={styles.popupText}>
               <Text style={[type.headingM, styles.center]} accessibilityRole="header">
-                Where are you located?
+                Where are you exploring?
               </Text>
               <Text style={[type.bodySm, styles.muted, styles.center]}>
-                I need this to personalise your wildlife experience. Your location is only used
-                while the app is in use only for your better experience of the wildpack journey.
+                I use your location to personalize your WildPack adventure. It’s only used while the
+                app is open, for a better experience.
               </Text>
             </View>
 
@@ -147,14 +147,14 @@ export default function FirstCaptureScreen() {
 
             <View style={styles.popupButtons}>
               <Button
-                label="Skip for Now"
+                label="Maybe later"
                 variant="outline"
                 size="compact"
                 onPress={finishAsking}
                 style={styles.flex}
               />
               <Button
-                label="Allow Location"
+                label="Share location"
                 size="compact"
                 onPress={handleAllowLocation}
                 style={styles.flex}
