@@ -121,7 +121,7 @@ export default function WelcomeScreen() {
 
       <View style={[styles.actions, { paddingBottom: Math.max(insets.bottom, spacing.screen) }]}>
         <Button label="I have an account" onPress={() => router.push('/auth/sign-in')} />
-        <Button label="I’m first time here" variant="outline" onPress={() => router.push('/onboarding/look')} />
+        <Button label="I’m new here" variant="outline" onPress={() => router.push('/onboarding/look')} />
       </View>
     </View>
   );
