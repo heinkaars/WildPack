@@ -35,6 +35,43 @@ function catalog(): SupabaseClient | null {
 }
 
 /**
+ * Genus, then up to three lower-case parts: "Vulpes vulpes", "Canis lupus
+ * familiaris", "Platanus × acerifolia", "Larus sp.". Letters and spaces only, so
+ * a scientific name cannot carry a sentence, a link or anything else a printed
+ * note in a photo might talk the model into writing.
+ */
+const SCIENTIFIC_NAME = /^[A-Z][a-z]+(?: (?:×|[a-z]+(?:-[a-z]+)?\.?)){0,3}$/;
+const MAX_COMMON_NAME = 80;
+const MAX_DESCRIPTION = 600;
+const LINK = /https?:\/\/|www\.|\.(?:com|net|org|io|ly)\b/i;
+
+/**
+ * The guess trimmed to size, or null when it does not look like a species.
+ *
+ * The first description written for a species is the one every user reads,
+ * permanently, so the model's answer is checked rather than trusted: a photo
+ * can contain text, and text can steer the model.
+ */
+export function vetGuess(guess: SpeciesGuess | null | undefined): SpeciesGuess | null {
+  if (!guess || typeof guess !== 'object') return null;
+
+  const scientificName = typeof guess.scientificName === 'string' ? guess.scientificName.trim() : '';
+  const commonName = typeof guess.commonName === 'string' ? guess.commonName.trim() : '';
+  const description = typeof guess.description === 'string' ? guess.description.trim() : '';
+
+  if (!SCIENTIFIC_NAME.test(scientificName)) return null;
+  if (commonName.length === 0 || commonName.length > MAX_COMMON_NAME) return null;
+  if (LINK.test(commonName) || LINK.test(description)) return null;
+
+  return {
+    ...guess,
+    scientificName,
+    commonName,
+    description: description.slice(0, MAX_DESCRIPTION),
+  };
+}
+
+/**
  * Records every guess from one identification, so whichever the user picks
  * already exists by the time their sighting syncs.
  *
@@ -55,11 +92,12 @@ export async function recordSpecies(guesses: SpeciesGuess[]): Promise<void> {
   }
 
   const rows = guesses
-    .filter((guess) => guess?.scientificName || guess?.commonName)
+    .map(vetGuess)
+    .filter((guess): guess is SpeciesGuess => guess !== null)
     .map((guess) => ({
       // Must match the slug the client derives in lifelist-store, or the
       // sighting would point at a row that does not exist.
-      slug: slugify(guess.scientificName || guess.commonName),
+      slug: slugify(guess.scientificName),
       common_name: guess.commonName,
       scientific_name: guess.scientificName,
       description: guess.description,

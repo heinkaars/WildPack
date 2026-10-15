@@ -211,12 +211,28 @@ async function anyOverBudget(buckets: Bucket[]): Promise<boolean> {
   }
 }
 
+/**
+ * What the whole app may spend per minute, across every caller together.
+ *
+ * The per-account and per-address ceilings each hold one caller, but anonymous
+ * accounts are free to mint and addresses are cheap to rent, so on their own
+ * they put no upper bound on the OpenAI bill. This one does. When an attack
+ * reaches it, real users wait a minute too: a short outage instead of an
+ * open-ended bill is the trade being made.
+ */
+const GLOBAL_PER_MINUTE: Record<string, number> = {
+  identify: 120,
+  ama: 240,
+  'delete-account': 30,
+};
+const DEFAULT_GLOBAL_PER_MINUTE = 60;
+
 type Allowed = { userId: string; response?: undefined };
 type Refused = { userId?: undefined; response: Response };
 
 /**
  * One call at the top of a route: proves who is asking, then holds them to a
- * per-account and a per-address budget.
+ * per-account and a per-address budget, plus the app-wide one every caller shares.
  *
  * Both ceilings matter. The per-account one stops an ordinary user's runaway
  * loop; the per-address one is what an attacker hits, since signing up for a
@@ -242,6 +258,8 @@ export async function guard(
 
   const ip = callerIp(request);
   if (ip) buckets.push({ bucket: `${route}:ip:${ip}`, max: perIp });
+
+  buckets.push({ bucket: `${route}:global`, max: GLOBAL_PER_MINUTE[route] ?? DEFAULT_GLOBAL_PER_MINUTE });
 
   if (await anyOverBudget(buckets)) {
     return { response: Response.json({ error: 'Too many requests' }, { status: 429 }) };

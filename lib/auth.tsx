@@ -213,6 +213,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { error: updateError } = await supabase.auth.updateUser({ password });
     if (updateError) fail(updateError.message);
+
+    // Email confirmation is off, so anyone can attach an address they do not
+    // own. A reset is how the real owner takes it back, and every other device
+    // still holding this account, however it got there, is signed out of it now.
+    // Best effort: the new password is already set, which is what the user asked for.
+    await supabase.auth.signOut({ scope: 'others' }).catch(() => {});
   }, [state.userId]);
 
   const signOut = useCallback(async () => {

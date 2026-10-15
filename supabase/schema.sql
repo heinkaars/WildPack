@@ -75,6 +75,29 @@ create table if not exists public.api_usage (
 create index if not exists api_usage_bucket_idx on public.api_usage (bucket, created_at desc);
 
 -- ---------------------------------------------------------------------------
+-- Size limits behind the client. The app's own screens never come close to
+-- these, but anyone holding their own session can write to their own rows
+-- through the REST API directly, and on the free plan's 500MB database a few
+-- scripted accounts storing megabytes per row would stop writes for everyone.
+-- `not valid` skips checking rows already there, so this is safe on live data.
+-- ---------------------------------------------------------------------------
+
+alter table public.profiles drop constraint if exists profiles_name_len;
+alter table public.profiles add  constraint profiles_name_len     check (char_length(name) <= 40) not valid;
+alter table public.profiles drop constraint if exists profiles_look_len;
+alter table public.profiles add  constraint profiles_look_len     check (char_length(look) <= 32) not valid;
+alter table public.profiles drop constraint if exists profiles_streak_range;
+alter table public.profiles add  constraint profiles_streak_range check (streak between 0 and 100000) not valid;
+
+alter table public.sightings drop constraint if exists sightings_location_len;
+alter table public.sightings add  constraint sightings_location_len   check (char_length(location) <= 200) not valid;
+alter table public.sightings drop constraint if exists sightings_photo_path_len;
+alter table public.sightings add  constraint sightings_photo_path_len check (char_length(photo_path) <= 120) not valid;
+
+alter table public.ama_messages drop constraint if exists ama_messages_body_len;
+alter table public.ama_messages add  constraint ama_messages_body_len check (char_length(body) <= 8000) not valid;
+
+-- ---------------------------------------------------------------------------
 -- Lifelist view: the collapsed, one-row-per-species shape the app renders.
 -- security_invoker means it obeys the row rules of whoever is querying it.
 -- ---------------------------------------------------------------------------
