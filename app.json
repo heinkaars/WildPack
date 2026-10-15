@@ -21,9 +21,10 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.wildpack.app",
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.CAMERA"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -36,10 +37,18 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "WildPack uses your camera to photograph wildlife you spot."
+          "cameraPermission": "WildPack uses your camera to photograph wildlife you spot.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ],
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
       [
         "expo-location",
         {

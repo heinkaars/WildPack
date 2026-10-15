@@ -77,8 +77,10 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     storage: isServerRender ? noopStorage : Platform.OS === 'web' ? AsyncStorage : chunkedSecureStore,
     autoRefreshToken: !isServerRender,
     persistSession: !isServerRender,
-    // Only a real browser can receive a session in the page URL.
-    detectSessionInUrl: !isServerRender && Platform.OS === 'web',
+    // WildPack signs in with passwords and 6-digit codes, never a link, so no
+    // URL should ever be able to hand this browser a session. Left on, a link
+    // carrying someone else's tokens signs the visitor into *their* account.
+    detectSessionInUrl: false,
   },
 });
 
