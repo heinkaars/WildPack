@@ -6,7 +6,7 @@ import { Button, Docent, docentFromLook, Input } from '../../components/ui';
 import { OnboardingScreen } from '../../components/onboarding/OnboardingScreen';
 import { useLifelist } from '../../lib/lifelist-store';
 import { useOnboarding } from '../../lib/onboarding';
-import { colors, fonts, spacing, type } from '../../lib/theme';
+import { colors, fonts, spacing } from '../../lib/theme';
 
 export default function ChooseNameScreen() {
   const router = useRouter();
@@ -45,22 +45,20 @@ export default function ChooseNameScreen() {
           style={styles.bubble}
         >
           <Text style={styles.bubbleText}>
-            I am your docent and here to help you learn more about the wildlife you encounter. Did
-            you know that there are over 1.5 million unique wildlife species on this planet. And
-            they’re waiting to be discovered by you! Before we start
+            Excellent choice! I am your docent and will be your guide during your WildPack
+            adventure. I am here to help you learn more about the wildlife you encounter. You can
+            ask me anything about the wildlife you capture. Did you know that there are over 1.5
+            million unique wildlife species on this planet? And they’re waiting to be discovered by
+            you! Before we start exploring, what can I call you?
           </Text>
         </LinearGradient>
 
         <View style={styles.field}>
-          <Text style={type.headingM} nativeID="name-label">
-            what’s your name?
-          </Text>
           <Input
             value={name}
             onChangeText={setName}
             placeholder="Write your Name"
             accessibilityLabel="Your name"
-            accessibilityLabelledBy="name-label"
             autoCapitalize="words"
             autoComplete="name"
             autoCorrect={false}
