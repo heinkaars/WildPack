@@ -92,8 +92,8 @@ export default function FirstCaptureScreen() {
       wordmark={false}
       footer={
         <>
-          <Button label="Let’s Capture" onPress={handleCapture} />
-          <Button label="I’ll Do It Later" variant="outline" onPress={() => router.replace('/')} />
+          <Button label="Let’s capture!" onPress={handleCapture} />
+          <Button label="Maybe later" variant="outline" onPress={() => router.replace('/')} />
         </>
       }
     >
@@ -101,11 +101,11 @@ export default function FirstCaptureScreen() {
         <Docent animal={docentFromLook(profile.look)} width={195} />
         <View style={styles.guidance}>
           <Text style={[type.headingM, styles.center]} accessibilityRole="header">
-            Let&apos;s find your first species
+            Let’s spot your first wildlife!
           </Text>
           <Text style={[type.bodySm, styles.muted, styles.center]}>
-            Point your camera at any bird, insect, or plant nearby. We&apos;ll identify it and add
-            it to your collection.
+            Point your camera at any wildlife nearby. We’ll identify it and add it to your
+            lifelist.
           </Text>
         </View>
       </View>
