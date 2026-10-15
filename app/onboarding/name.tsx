@@ -57,7 +57,7 @@ export default function ChooseNameScreen() {
           <Input
             value={name}
             onChangeText={setName}
-            placeholder="Write your Name"
+            placeholder="Call me…"
             accessibilityLabel="Your name"
             autoCapitalize="words"
             autoComplete="name"
