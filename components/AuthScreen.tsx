@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BackButton, EyeIcon, EyeOffIcon, Input, ScreenStatusBar } from './ui';
-import { colors, spacing, type } from '../lib/theme';
+import { absoluteFill, colors, spacing, type } from '../lib/theme';
 
 /**
  * The frame every auth screen shares (Figma SignIn 88384:3985, SignUP 88384:4021):
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   wordmarkSlot: {
-    ...StyleSheet.absoluteFillObject,
+    ...absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
   },

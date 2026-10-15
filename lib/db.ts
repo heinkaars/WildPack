@@ -1,5 +1,5 @@
 // Type-only: the runtime module is imported lazily in connect() below, because
-// expo-sqlite's web build cannot load during Expo's Node server render.
+// expo-sqlite's web build cannot load or be bundled for Expo's Node server render.
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { resolvePhotoUri } from './photos';
 import { AmaMessage, LifelistEntry, Profile, Sighting } from './types';
@@ -69,7 +69,10 @@ create table if not exists meta (
 let dbPromise: Promise<SQLiteDatabase> | null = null;
 
 async function connect(): Promise<SQLiteDatabase> {
-  const SQLite: typeof import('expo-sqlite') = require('expo-sqlite');
+  // A dynamic import (not require) keeps expo-sqlite's web worker out of the
+  // main bundle graph. Since SDK 57, Metro's server render fails with
+  // "Worker chunk not found" when that worker is reachable synchronously.
+  const SQLite = await import('expo-sqlite');
   const db = await SQLite.openDatabaseAsync(DATABASE_NAME);
   await db.execAsync('pragma journal_mode = WAL;');
   await db.execAsync(SCHEMA);

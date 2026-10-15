@@ -11,7 +11,7 @@ import {
   LOW_CONFIDENCE_THRESHOLD,
   identifySpecies,
 } from '../../lib/identify-service';
-import { colors, fonts, type } from '../../lib/theme';
+import { absoluteFill, colors, fonts, type } from '../../lib/theme';
 
 export type Failure = { title: string; body: string };
 
@@ -168,9 +168,9 @@ export default function IdentifyScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   safe: { flex: 1, backgroundColor: '#000' },
-  photo: { ...StyleSheet.absoluteFillObject },
-  dim: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.55)' },
-  center: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', gap: 16 },
+  photo: { ...absoluteFill },
+  dim: { ...absoluteFill, backgroundColor: 'rgba(0, 0, 0, 0.55)' },
+  center: { ...absoluteFill, alignItems: 'center', justifyContent: 'center', gap: 16 },
   text: { fontFamily: fonts.bodyBold, fontSize: 18, lineHeight: 27, letterSpacing: -0.3, color: colors.textOnPrimary },
 
   popupText: { alignSelf: 'stretch', gap: 8 },

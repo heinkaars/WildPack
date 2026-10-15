@@ -102,6 +102,19 @@ export const gradient = {
   end: { x: 0, y: 1 },
 };
 
+/**
+ * Plain absolute-fill style for spreading (`{ ...absoluteFill, ... }`).
+ * RN 0.86 dropped StyleSheet.absoluteFillObject, and on web StyleSheet.absoluteFill
+ * is a precompiled style that can't be spread.
+ */
+export const absoluteFill = {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+} as const;
+
 export const spacing = {
   xs: 4,
   sm: 8,

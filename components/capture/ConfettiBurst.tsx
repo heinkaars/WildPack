@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
+import { absoluteFill } from '../../lib/theme';
 import { CONFETTI_XML } from './confetti';
 
 // Drawn on the same 159.785 × 91.2 box as Figma's confetti
@@ -116,5 +117,5 @@ export function ConfettiBurst({ style }: { style?: StyleProp<ViewStyle> }) {
 
 const styles = StyleSheet.create({
   box: { width: WIDTH, height: HEIGHT },
-  layer: { ...StyleSheet.absoluteFillObject },
+  layer: { ...absoluteFill },
 });
