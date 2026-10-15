@@ -5,6 +5,7 @@ import CaptureScreen from '../capture/index';
 import ResultScreen from '../capture/result';
 import { FAILURES, FailurePopup, IdentifyingView } from '../capture/identify';
 import { useCaptureSession } from '../../lib/capture-session';
+import { BADGE_LADDER } from '../../lib/badges';
 import { IdentifyOutcome, LifelistEntry } from '../../lib/types';
 
 const PHOTO = Asset.fromModule(require('../../assets/dev/raccoon.jpg')).uri;
@@ -46,12 +47,13 @@ const ENTRY: LifelistEntry = {
   location: null,
 };
 
-type Screen = 'camera' | 'identifying' | 'unsure' | 'offline' | 'result' | 'celebration';
+type Screen = 'camera' | 'identifying' | 'unsure' | 'offline' | 'result' | 'celebration' | 'badge';
 
 /**
  * The capture screens with a sample photo and identification, reachable without
  * a server — for checking the layout in the browser preview. Dev builds only.
- * `/dev/capture?screen=result` (default camera). Confirm on `result` really
+ * `/dev/capture?screen=result` (default camera); `badge` is the celebration
+ * with a badge unlocked, so its pop-up follows. Confirm on `result` really
  * saves the sample to the life list.
  */
 export default function CapturePreview() {
@@ -61,11 +63,19 @@ export default function CapturePreview() {
   const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
-    if (screen !== 'result' && screen !== 'celebration') return;
+    if (screen !== 'result' && screen !== 'celebration' && screen !== 'badge') return;
     setPhoto(PHOTO, 'sample');
     setOutcome(OUTCOME);
-    if (screen === 'celebration') {
-      setCelebration({ entry: ENTRY, isNewSpecies: true, streak: 1, xpEarned: 70, badge: null, speciesNumber: 1 });
+    if (screen === 'celebration' || screen === 'badge') {
+      setCelebration({
+        entry: ENTRY,
+        isNewSpecies: true,
+        streak: 1,
+        xpEarned: 70,
+        xpTotal: 70,
+        badge: screen === 'badge' ? BADGE_LADDER[0] : null,
+        speciesNumber: 1,
+      });
     }
     setSeeded(true);
   }, [screen]);
@@ -91,6 +101,7 @@ export default function CapturePreview() {
       );
     case 'result':
     case 'celebration':
+    case 'badge':
       return seeded && outcome ? <ResultScreen /> : null;
     default:
       return <CaptureScreen />;

@@ -282,6 +282,7 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
           isNewSpecies,
           streak: stats.streak,
           xpEarned: stats.xp - current.stats.xp,
+          xpTotal: stats.xp,
           badge: badgeUnlocked(current.stats.xp, stats.xp),
           speciesNumber: entries.length,
         };
