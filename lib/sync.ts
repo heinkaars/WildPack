@@ -44,9 +44,10 @@ function errorMessage(error: unknown): string {
 
 /**
  * Postgres codes that will never come good, however long the backoff waits:
- * a policy that refuses this write, or a row pointing at something absent.
+ * a policy that refuses this write, a row pointing at something absent, or a
+ * value a check constraint rejects.
  */
-const PERMANENT_CODES = new Set(['42501', '23503']);
+const PERMANENT_CODES = new Set(['42501', '23503', '23514']);
 
 /** A job that retrying cannot fix. It is dropped rather than left in the way. */
 class PermanentError extends Error {}
