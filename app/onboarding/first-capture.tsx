@@ -104,8 +104,8 @@ export default function FirstCaptureScreen() {
             Let’s spot your first wildlife!
           </Text>
           <Text style={[type.bodySm, styles.muted, styles.center]}>
-            Point your camera at any wildlife nearby. We’ll identify it and add it to your
-            lifelist.
+            Point your camera at any wildlife nearby. We’ll identify the species and add it
+            to your lifelist.
           </Text>
         </View>
       </View>
