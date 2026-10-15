@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BackButton, Button, ConfidencePill } from '../../components/ui';
+import { BadgePopup } from '../../components/capture/BadgePopup';
 import { CelebrationPopup } from '../../components/capture/CelebrationPopup';
 import { OtherMatches } from '../../components/capture/OtherMatches';
 import { useCaptureSession } from '../../lib/capture-session';
@@ -26,6 +27,8 @@ export default function ResultScreen() {
   const [saveFailed, setSaveFailed] = useState(false);
   // Set by "Add To Life List": the pop-up closes first, then the species page opens.
   const [finishing, setFinishing] = useState(false);
+  // A capture that unlocked a badge gets a second pop-up once the first has closed.
+  const [badgeStage, setBadgeStage] = useState<'none' | 'open' | 'closing'>('none');
 
   // Where the photo was taken, looked up while the user reads the result so
   // Confirm rarely has to wait. Null when the profile's Location switch is off.
@@ -70,11 +73,17 @@ export default function ResultScreen() {
     }
   }
 
+  /** Opens the badge pop-up if this capture unlocked one; otherwise moves on. */
+  function handlePopupClosed() {
+    if (celebration?.badge) setBadgeStage('open');
+    else openSpecies();
+  }
+
   /**
    * The species page opens over the life list, so going back lands there. It
-   * waits for the reward pop-up to finish closing before navigating.
+   * waits for the reward pop-ups to finish closing before navigating.
    */
-  function handlePopupClosed() {
+  function openSpecies() {
     if (!celebration) return;
     const speciesId = celebration.entry.id;
     reset();
@@ -130,6 +139,16 @@ export default function ResultScreen() {
           visible={!finishing}
           onContinue={() => setFinishing(true)}
           onDismissed={handlePopupClosed}
+        />
+      )}
+
+      {celebration?.badge && badgeStage !== 'none' && (
+        <BadgePopup
+          badge={celebration.badge}
+          xp={celebration.xpTotal}
+          visible={badgeStage === 'open'}
+          onContinue={() => setBadgeStage('closing')}
+          onDismissed={openSpecies}
         />
       )}
     </View>

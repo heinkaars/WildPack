@@ -50,6 +50,8 @@ export type CelebrationPayload = {
   streak: number;
   /** Explorer XP this capture earned (`lib/xp.ts`). */
   xpEarned: number;
+  /** Explorer XP in total after this capture. */
+  xpTotal: number;
   /** The badge this capture unlocked, if it crossed one. */
   badge: Badge | null;
   speciesNumber: number;
