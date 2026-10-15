@@ -12,12 +12,13 @@ export default function WelcomeToPackScreen() {
 
   return (
     <OnboardingScreen
-      footer={<Button label="Continue" onPress={() => router.push('/onboarding/first-capture')} />}
+      footer={<Button label="I’m ready!" onPress={() => router.push('/onboarding/first-capture')} />}
     >
       <View style={styles.body}>
         <Docent animal={docentFromLook(profile.look)} width={DOCENT_WIDTH} />
         <Text style={styles.message} accessibilityRole="header">
-          Welcome to the Pack {profile.name}, excited to be sharing this experience with you.
+          Welcome to the Pack, {profile.name}!{'\n'}I’m so excited to share this adventure with you.
+          Are you ready?
         </Text>
       </View>
     </OnboardingScreen>
