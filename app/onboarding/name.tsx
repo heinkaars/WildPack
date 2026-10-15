@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     marginTop: -31,
     minHeight: 160,
     padding: 12,
+    // Keep long copy clear of the portrait, which overlaps the top 31px.
+    paddingTop: 31 + 12,
     borderRadius: 12,
     justifyContent: 'flex-end',
   },
