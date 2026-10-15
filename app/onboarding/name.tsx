@@ -47,9 +47,8 @@ export default function ChooseNameScreen() {
           <Text style={styles.bubbleText}>
             Excellent choice! I’m your docent, your guide on this WildPack adventure. Ask me
             anything about the wildlife you capture, no question is too wild! Did you know there
-            are over 1.5 million wildlife species out there? And they’re all waiting to be
-            discovered by you! Together, we’ll build your lifelist. Before we start exploring, what
-            should I call you?
+            are over 1.5 million wildlife species out there? Let’s start exploring and build your
+            lifelist together!{'\n\n'}Before we head out, what should I call you?
           </Text>
         </LinearGradient>
 
