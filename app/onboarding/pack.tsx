@@ -17,8 +17,7 @@ export default function WelcomeToPackScreen() {
       <View style={styles.body}>
         <Docent animal={docentFromLook(profile.look)} width={DOCENT_WIDTH} />
         <Text style={styles.message} accessibilityRole="header">
-          Welcome to the Pack, {profile.name}!{'\n'}I’m so excited to share this adventure with you.
-          Are you ready?
+          Welcome to the Pack, {profile.name}!{'\n'}I’m so excited to share this adventure with you.{'\n'}Are you ready?
         </Text>
       </View>
     </OnboardingScreen>
