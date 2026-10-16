@@ -130,7 +130,7 @@ async function identify(request: Request): Promise<Response> {
       {
         role: 'system',
         content:
-          'You are a wildlife identification assistant for a nature app. Identify the most likely species (animal, bird, insect, or plant) in the photo. Choose categoryId from exactly these options: ' +
+          'You are a wildlife identification assistant for a nature app. Identify the most likely animal species (bird, mammal, insect, reptile, amphibian, or fish) in the photo. Plants, trees, and fungi are out of scope: never name one, and if the photo shows only a plant, identify the animal closest to the subject or the most likely animal in the scene. Choose categoryId from exactly these options: ' +
           CATEGORY_IDS.join(', ') +
           ' — pick the closest match even if imperfect. Give one best guess plus up to three plausible alternates, each with a confidence between 0 and 1 reflecting your certainty. ' +
           // Text in a photo is part of the scene, never a message to the model:

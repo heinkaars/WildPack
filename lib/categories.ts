@@ -4,11 +4,12 @@ export type Category = {
 };
 
 export const CATEGORIES: Category[] = [
-  { id: 'songbirds', label: 'Songbirds' },
-  { id: 'raptors', label: 'Raptors' },
-  { id: 'insects', label: 'Insects' },
-  { id: 'trees', label: 'Trees' },
+  { id: 'birds', label: 'Birds' },
   { id: 'mammals', label: 'Mammals' },
+  { id: 'insects', label: 'Insects' },
+  { id: 'reptiles', label: 'Reptiles' },
+  { id: 'amphibians', label: 'Amphibians' },
+  { id: 'fish', label: 'Fish' },
 ];
 
 export function categoryById(id: string): Category | null {
