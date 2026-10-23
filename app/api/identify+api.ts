@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { guard } from '../../lib/api-guard';
+import { guard, readJson } from '../../lib/api-guard';
 import { recordSpecies, vetGuess } from '../../lib/species-catalog';
 import { CATEGORIES } from '../../lib/categories';
 import { IdentifyOutcome, SpeciesGuess } from '../../lib/types';
@@ -59,47 +59,6 @@ export async function POST(request: Request) {
     console.error('[identify]', error);
     return Response.json({ error: 'Identification failed' }, { status: 500 });
   }
-}
-
-/**
- * The body as JSON, or null when it is larger than `maxBytes`.
- *
- * `request.json()` would buffer and parse the whole body before any size check
- * could run, so a caller sending hundreds of megabytes would be refused only
- * after the server had held all of it in memory. This stops reading the moment
- * the cap is passed, whatever Content-Length claimed.
- */
-async function readJson(request: Request, maxBytes: number): Promise<Record<string, unknown> | null> {
-  const declared = Number(request.headers.get('content-length') ?? 0);
-  if (declared > maxBytes) return null;
-
-  const reader = request.body?.getReader();
-  if (!reader) return null;
-
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (total > maxBytes) {
-      await reader.cancel();
-      return null;
-    }
-    chunks.push(value);
-  }
-
-  const bytes = new Uint8Array(total);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-
-  const parsed: unknown = JSON.parse(new TextDecoder().decode(bytes));
-  // `null` or a bare number is valid JSON but not a request; it fails the
-  // field checks below like any other empty body.
-  return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : {};
 }
 
 async function identify(request: Request): Promise<Response> {
