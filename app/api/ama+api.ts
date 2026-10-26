@@ -14,6 +14,19 @@ const MAX_NAME_CHARS = 120;
 const MAX_ANSWER_TOKENS = 500;
 const MAX_BODY_BYTES = 64 * 1024;
 
+/**
+ * Control and format characters, plus the Unicode line and paragraph
+ * separators. Stripping only \r\n\t left U+2028, U+0085, \v and \f, all of
+ * which still read as a line break, and bidi overrides that make a name look
+ * like something it is not.
+ */
+const NOT_ONE_LINE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+/** A name fit for the system prompt: one line, so it cannot start a new instruction. */
+function promptSafeName(value: unknown): string {
+  return String(value ?? '').replace(NOT_ONE_LINE, ' ').slice(0, MAX_NAME_CHARS);
+}
+
 export async function POST(request: Request) {
   try {
     return await answer(request);
@@ -37,9 +50,8 @@ async function answer(request: Request): Promise<Response> {
   }
 
   // Everything below crosses into the prompt, so nothing crosses unmeasured.
-  // Line breaks and tabs are stripped so a name cannot start a new instruction line.
-  const commonName = String(entry.commonName ?? '').replace(/[\r\n\t]/g, ' ').slice(0, MAX_NAME_CHARS);
-  const scientificName = String(entry.scientificName ?? '').replace(/[\r\n\t]/g, ' ').slice(0, MAX_NAME_CHARS);
+  const commonName = promptSafeName(entry.commonName);
+  const scientificName = promptSafeName(entry.scientificName);
 
   /**
    * The roles are rebuilt rather than passed through. A client that sends
