@@ -16,6 +16,7 @@
  * bundle even by accident.
  */
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { categoryById } from './categories';
 import { slugify } from './slug';
 import { SpeciesGuess } from './types';
 
@@ -62,6 +63,9 @@ export function vetGuess(guess: SpeciesGuess | null | undefined): SpeciesGuess |
   if (!SCIENTIFIC_NAME.test(scientificName)) return null;
   if (commonName.length === 0 || commonName.length > MAX_COMMON_NAME) return null;
   if (LINK.test(commonName) || LINK.test(description)) return null;
+  // The response schema already limits this to the list, but the row is
+  // permanent and shared, so the list is enforced here too rather than trusted.
+  if (typeof guess.categoryId !== 'string' || !categoryById(guess.categoryId)) return null;
 
   return {
     ...guess,
