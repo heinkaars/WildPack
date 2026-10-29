@@ -46,17 +46,28 @@ async function deleteAccount(request: Request): Promise<Response> {
 
   // Photos first: once the user is gone nothing points at their folder, and
   // an orphaned photo would be personal data nobody can reach to delete.
-  // Always read the first page, since each pass removes what it listed.
+  // Each pass removes the files it listed, so the next page starts after the
+  // folders it saw. A folder (id null) cannot be removed by name and would come
+  // back on every pass: without the offset, a caller who uploaded into 100 nested
+  // folders kept this loop running forever. The app itself never makes folders.
+  let offset = 0;
   for (;;) {
-    const { data: files, error: listError } = await admin.storage.from(BUCKET).list(userId, { limit: PAGE });
-    if (listError) throw listError;
-    if (!files || files.length === 0) break;
-
-    const { error: removeError } = await admin.storage
+    const { data: entries, error: listError } = await admin.storage
       .from(BUCKET)
-      .remove(files.map((file) => `${userId}/${file.name}`));
-    if (removeError) throw removeError;
-    if (files.length < PAGE) break;
+      .list(userId, { limit: PAGE, offset });
+    if (listError) throw listError;
+    if (!entries || entries.length === 0) break;
+
+    const files = entries.filter((entry) => entry.id !== null);
+    offset += entries.length - files.length;
+
+    if (files.length > 0) {
+      const { error: removeError } = await admin.storage
+        .from(BUCKET)
+        .remove(files.map((file) => `${userId}/${file.name}`));
+      if (removeError) throw removeError;
+    }
+    if (entries.length < PAGE) break;
   }
 
   const { error: deleteError } = await admin.auth.admin.deleteUser(userId);
