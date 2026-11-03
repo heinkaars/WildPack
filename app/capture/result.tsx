@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { ComponentRef, useEffect, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -21,7 +21,7 @@ export default function ResultScreen() {
   const { photoUri, photoBase64, outcome, celebration, setCelebration, reset } = useCaptureSession();
   const { addSighting } = useLifelist();
 
-  const scroll = useRef<ScrollView>(null);
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
   const [picked, setPicked] = useState<SpeciesGuess | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);

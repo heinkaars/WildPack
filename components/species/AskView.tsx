@@ -124,7 +124,7 @@ export function AskView({ speciesName, userName, docent, messages, sending, erro
             onContentSizeChange={() => list.current?.scrollToEnd({ animated: true })}
             keyboardDismissMode="interactive"
             renderItem={({ item }) => <Bubble message={item} docent={docent} />}
-            ListFooterComponent={sending ? <Typing docent={docent} /> : null}
+            ListFooterComponent={sending ? <Typing docent={docent} /> : undefined}
           />
 
           <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) + 4 }]}>

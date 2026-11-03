@@ -1,9 +1,10 @@
 # WildPack Development Guide
 
 ## Expo Setup
-- **Version:** SDK 57 (expo 57.0.30, React Native 0.86, React 19.2). Read docs at https://docs.expo.dev/versions/v57.0.0/
-- **Why 57:** the App Store's Expo Go only runs the newest SDK. When it moves on, the phone stops opening the project, so upgrade on a branch (`npm install expo@<new> && npx expo install --fix`, then `npx tsc --noEmit` and `npx expo-doctor`).
-- **RN 0.86:** `StyleSheet.absoluteFillObject` is gone. Spread `absoluteFill` from `lib/theme.ts` instead; on web, `StyleSheet.absoluteFill` is a precompiled style and can't be spread.
+- **Version:** SDK 58 (expo 58.0.23, React Native 0.88, React 19.3.0). Read docs at https://docs.expo.dev/versions/v58.0.0/
+- **Why 58:** the App Store's Expo Go only runs the newest SDK. When it moves on, the phone stops opening the project, so upgrade on a branch (`npm install expo@<new> && npx expo install --fix`, then `npx tsc --noEmit` and `npx expo-doctor`).
+- **`typedRoutes` stays off:** on SDK 58 it made the dev server rebuild in a loop until Node ran out of memory (about a minute after start). Only re-enable after checking the server stays up.
+- **RN 0.86+:** `StyleSheet.absoluteFillObject` is gone. Spread `absoluteFill` from `lib/theme.ts` instead; on web, `StyleSheet.absoluteFill` is a precompiled style and can't be spread.
 - **Dev server:** `npm start --port 8090` (port is required; passed in `.claude/launch.json`)
 - **Full restart needed:** when adding new `+api.ts` files — hot reload doesn't pick them up
 - **Android permissions:** Configured in `app.json` for camera, audio recording, and audio settings
