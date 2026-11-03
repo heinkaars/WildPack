@@ -1,4 +1,4 @@
-import { ScrollViewStyleReset } from 'expo-router/html';
+import { ScrollViewStyleReset, useServerDocumentContext } from 'expo-router/html';
 import { type PropsWithChildren } from 'react';
 
 /**
@@ -50,8 +50,12 @@ const policy = [
   .join('; ');
 
 export default function Root({ children }: PropsWithChildren) {
+  // Since SDK 58 Expo no longer injects the app's script and styles into this
+  // shell by itself: without these nodes the page renders but never starts.
+  const { bodyAttributes, bodyNodes, htmlAttributes, headNodes } = useServerDocumentContext();
+
   return (
-    <html lang="en">
+    <html lang="en" {...htmlAttributes}>
       <head>
         {/* First, so it governs everything that follows it. */}
         <meta httpEquiv="Content-Security-Policy" content={policy} />
@@ -61,8 +65,12 @@ export default function Root({ children }: PropsWithChildren) {
 
         {/* Keeps body scrolling off on web, matching native. */}
         <ScrollViewStyleReset />
+        {headNodes}
       </head>
-      <body>{children}</body>
+      <body {...bodyAttributes}>
+        {children}
+        {bodyNodes}
+      </body>
     </html>
   );
 }
