@@ -16,6 +16,7 @@
  * bundle even by accident.
  */
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { categoryById } from './categories';
 import { slugify } from './slug';
 import { SpeciesGuess } from './types';
 
@@ -46,6 +47,18 @@ const MAX_DESCRIPTION = 600;
 const LINK = /https?:\/\/|www\.|\.(?:com|net|org|io|ly)\b/i;
 
 /**
+ * Control and format characters, plus the Unicode line and paragraph
+ * separators — the same set app/api/ama+api.ts strips. Written into the shared
+ * catalog they would stay forever: a bidi override makes a name read as
+ * something it is not, and a line break splits it wherever it is shown.
+ */
+const NOT_PLAIN_TEXT = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+function plainText(value: unknown): string {
+  return typeof value === 'string' ? value.replace(NOT_PLAIN_TEXT, ' ').trim() : '';
+}
+
+/**
  * The guess trimmed to size, or null when it does not look like a species.
  *
  * The first description written for a species is the one every user reads,
@@ -56,12 +69,15 @@ export function vetGuess(guess: SpeciesGuess | null | undefined): SpeciesGuess |
   if (!guess || typeof guess !== 'object') return null;
 
   const scientificName = typeof guess.scientificName === 'string' ? guess.scientificName.trim() : '';
-  const commonName = typeof guess.commonName === 'string' ? guess.commonName.trim() : '';
-  const description = typeof guess.description === 'string' ? guess.description.trim() : '';
+  const commonName = plainText(guess.commonName);
+  const description = plainText(guess.description);
 
   if (!SCIENTIFIC_NAME.test(scientificName)) return null;
   if (commonName.length === 0 || commonName.length > MAX_COMMON_NAME) return null;
   if (LINK.test(commonName) || LINK.test(description)) return null;
+  // The response schema already limits this to the list, but the row is
+  // permanent and shared, so the list is enforced here too rather than trusted.
+  if (typeof guess.categoryId !== 'string' || !categoryById(guess.categoryId)) return null;
 
   return {
     ...guess,

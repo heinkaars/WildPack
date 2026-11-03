@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { guard } from '../../lib/api-guard';
+import { guard, readJson } from '../../lib/api-guard';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -12,6 +12,20 @@ const MAX_MESSAGE_CHARS = 2_000;
 const MAX_QUESTION_CHARS = 500;
 const MAX_NAME_CHARS = 120;
 const MAX_ANSWER_TOKENS = 500;
+const MAX_BODY_BYTES = 64 * 1024;
+
+/**
+ * Control and format characters, plus the Unicode line and paragraph
+ * separators. Stripping only \r\n\t left U+2028, U+0085, \v and \f, all of
+ * which still read as a line break, and bidi overrides that make a name look
+ * like something it is not.
+ */
+const NOT_ONE_LINE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+/** A name fit for the system prompt: one line, so it cannot start a new instruction. */
+function promptSafeName(value: unknown): string {
+  return String(value ?? '').replace(NOT_ONE_LINE, ' ').slice(0, MAX_NAME_CHARS);
+}
 
 export async function POST(request: Request) {
   try {
@@ -27,15 +41,17 @@ async function answer(request: Request): Promise<Response> {
   const caller = await guard(request, 'ama', PER_USER_PER_MINUTE, PER_IP_PER_MINUTE);
   if (caller.response) return caller.response;
 
-  const { entry, question, history } = (await request.json()) as Record<string, any>;
+  const body = (await readJson(request, MAX_BODY_BYTES)) as Record<string, any> | null;
+  if (!body) return Response.json({ error: 'Request too large' }, { status: 413 });
+  const { entry, question, history } = body;
 
   if (!entry || typeof question !== 'string' || question.trim().length === 0) {
     return Response.json({ error: 'entry and question are required' }, { status: 400 });
   }
 
   // Everything below crosses into the prompt, so nothing crosses unmeasured.
-  const commonName = String(entry.commonName ?? '').slice(0, MAX_NAME_CHARS);
-  const scientificName = String(entry.scientificName ?? '').slice(0, MAX_NAME_CHARS);
+  const commonName = promptSafeName(entry.commonName);
+  const scientificName = promptSafeName(entry.scientificName);
 
   /**
    * The roles are rebuilt rather than passed through. A client that sends
