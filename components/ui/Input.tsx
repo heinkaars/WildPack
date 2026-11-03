@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode, useState } from 'react';
+import { ComponentRef, forwardRef, ReactNode, useState } from 'react';
 import {
   Pressable,
   StyleProp,
@@ -28,7 +28,7 @@ type InputProps = Omit<TextInputProps, 'style' | 'editable'> & {
  * The 56px pill text field. Focus gives it the Figma "Selected" outline,
  * so the four Figma states come from props + focus rather than a variant prop.
  */
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+export const Input = forwardRef<ComponentRef<typeof TextInput>, InputProps>(function Input(
   { error, disabled, dropdown, trailing, style, onFocus, onBlur, ...rest },
   ref,
 ) {

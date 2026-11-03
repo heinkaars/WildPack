@@ -52,7 +52,7 @@ type Lens = { label: string; device: string | undefined };
 
 function lensesFor(available: string[]): Lens[] {
   const find = (word: string) => available.find((name) => name.includes(word));
-  const ultraWide = find('Ultra Wide');
+  const ultraWide = find('UltraWide');
   const telephoto = find('Telephoto');
   return [
     ...(ultraWide ? [{ label: '0.5', device: ultraWide }] : []),
@@ -221,7 +221,7 @@ export default function CaptureScreen() {
             flash={light === 'torch' ? 'off' : light}
             enableTorch={light === 'torch'}
             selectedLens={lens}
-            onAvailableLensesChanged={({ lenses: names }) => setAvailableLenses(names)}
+            onAvailableLensesChanged={({ lenses: found }) => setAvailableLenses(found.map((l) => l.deviceType))}
             onCameraReady={() => setReady(true)}
           />
           {/* Figma darkens the lower half so the controls read over any scene. */}
