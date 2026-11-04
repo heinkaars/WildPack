@@ -27,7 +27,6 @@ export default function ChooseNameScreen() {
 
   return (
     <OnboardingScreen
-      wash={false}
       footer={<Button label="Continue" onPress={handleContinue} disabled={!trimmed} />}
     >
       <ScrollView
@@ -36,9 +35,11 @@ export default function ChooseNameScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Docent animal={docentFromLook(profile.look)} width={78} style={styles.docent} />
-        {/* Figma "Description Container": 138.5° green wash, text sitting at the bottom. */}
+        {/* Figma "Description Container": 138.5° green wash, text sitting at the bottom.
+            Figma's 20% greens as seen on white, made solid so the orange background
+            doesn't turn them khaki. */}
         <LinearGradient
-          colors={['rgba(144, 184, 0, 0.2)', 'rgba(46, 105, 15, 0.2)']}
+          colors={['#E9F1CC', '#D5E1CF']}
           locations={[0.351, 1]}
           start={{ x: 0.169, y: -0.33 }}
           end={{ x: 0.831, y: 1.33 }}
