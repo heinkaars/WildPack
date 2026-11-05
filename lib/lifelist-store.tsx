@@ -61,7 +61,7 @@ type LifelistState = {
   stats: Stats;
 };
 
-const EMPTY_STATS: Stats = { xp: 0, captures: 0, streak: 0, activeDays: new Set() };
+const EMPTY_STATS: Stats = { xp: 0, captures: 0, streak: 0, activeDays: new Set(), quizScores: {} };
 
 type LifelistContextValue = Omit<LifelistState, 'lastActivityDate'> & {
   /** Re-reads the local database, e.g. after a chat question changed the XP. */

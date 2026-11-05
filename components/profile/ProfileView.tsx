@@ -292,14 +292,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   // A fixed height: iOS sizes a text field by the font's full ascent, which
-  // for Baloo leaves a tall empty band under the name.
+  // for the heading font leaves a tall empty band under the name.
   name: {
     height: 30,
     textAlign: 'center',
     minWidth: 160,
     paddingVertical: 0,
   },
-  // Baloo's glyphs sit high in their box; this pulls the address up to meet them.
+  // The heading font's glyphs sit high in their box; this pulls the address up to meet them.
   email: {
     marginTop: -6,
   },

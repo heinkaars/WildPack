@@ -3,6 +3,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { resolvePhotoUri } from './photos';
 import { AmaMessage, LifelistEntry, Profile, Sighting } from './types';
+import type { QuizQuestion } from './quiz';
 import type { Activity } from './xp';
 
 const DATABASE_NAME = 'wildpack.db';
@@ -48,6 +49,14 @@ create table if not exists profile (
   look               text not null,
   streak             integer not null default 0,
   last_activity_date text
+);
+
+create table if not exists quizzes (
+  quiz_date    text primary key,
+  questions    text,
+  answers      text not null default '[]',
+  score        integer,
+  completed_at text
 );
 
 create table if not exists outbox (
@@ -133,7 +142,7 @@ export async function claimForUser(userId: string): Promise<void> {
   const db = await getDb();
   if (owner !== null) {
     await db.execAsync(
-      'delete from sightings; delete from ama_messages; delete from profile; delete from outbox; delete from meta;',
+      'delete from sightings; delete from ama_messages; delete from quizzes; delete from profile; delete from outbox; delete from meta;',
     );
   }
   await setMeta('owner_user_id', userId);
@@ -221,7 +230,7 @@ export async function readAmaMessages(speciesSlug: string): Promise<AmaMessage[]
 /** What Explorer XP, the streak and the capture count are worked out from (`lib/xp.ts`). */
 export async function readActivity(): Promise<Activity> {
   const db = await getDb();
-  const [sightings, questions] = await Promise.all([
+  const [sightings, questions, quizzes] = await Promise.all([
     db.getAllAsync<{ speciesSlug: string; seenAt: string }>(
       'select species_slug as speciesSlug, seen_at as seenAt from sightings order by seen_at asc',
     ),
@@ -229,12 +238,91 @@ export async function readActivity(): Promise<Activity> {
       `select species_slug as speciesSlug, count(*) as count
        from ama_messages where role = 'user' group by species_slug`,
     ),
+    db.getAllAsync<{ date: string; score: number }>(
+      'select quiz_date as date, score from quizzes where score is not null',
+    ),
   ]);
 
   return {
     sightings,
     questionsBySpecies: Object.fromEntries(questions.map((row) => [row.speciesSlug, row.count])),
+    quizzes,
   };
+}
+
+// --- daily quiz -------------------------------------------------------------
+
+export type StoredQuiz = {
+  /** Null for a quiz finished on another phone: only its score travels. */
+  questions: QuizQuestion[] | null;
+  answers: number[];
+  score: number | null;
+};
+
+export async function readQuiz(date: string): Promise<StoredQuiz | null> {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ questions: string | null; answers: string; score: number | null }>(
+    'select questions, answers, score from quizzes where quiz_date = ?',
+    date,
+  );
+  if (!row) return null;
+  return {
+    questions: row.questions ? (JSON.parse(row.questions) as QuizQuestion[]) : null,
+    answers: JSON.parse(row.answers) as number[],
+    score: row.score,
+  };
+}
+
+/** The questions of recent quizzes, newest first, so tomorrow's can differ from them. */
+export async function readRecentQuizQuestions(days = 14): Promise<QuizQuestion[]> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<{ questions: string }>(
+    'select questions from quizzes where questions is not null order by quiz_date desc limit ?',
+    days,
+  );
+  return rows.flatMap((row) => JSON.parse(row.questions) as QuizQuestion[]);
+}
+
+export async function saveQuizQuestions(date: string, questions: QuizQuestion[]): Promise<void> {
+  const db = await getDb();
+  await db.runAsync(
+    `insert into quizzes (quiz_date, questions) values (?, ?)
+     on conflict (quiz_date) do update set questions = excluded.questions`,
+    date,
+    JSON.stringify(questions),
+  );
+}
+
+export async function saveQuizAnswers(date: string, answers: number[]): Promise<void> {
+  const db = await getDb();
+  await db.runAsync('update quizzes set answers = ? where quiz_date = ?', JSON.stringify(answers), date);
+}
+
+/** Forgets a day's quiz on this phone only, for the development replay button. */
+export async function deleteQuiz(date: string): Promise<void> {
+  const db = await getDb();
+  await db.runAsync('delete from quizzes where quiz_date = ?', date);
+}
+
+/** A finished quiz. Keeps any questions already on this phone. */
+export async function saveQuizResult(result: {
+  date: string;
+  score: number;
+  completedAt: string;
+  answers?: number[];
+}): Promise<void> {
+  const db = await getDb();
+  await db.runAsync(
+    `insert into quizzes (quiz_date, answers, score, completed_at) values (?, ?, ?, ?)
+     on conflict (quiz_date) do update set
+       answers      = excluded.answers,
+       score        = excluded.score,
+       completed_at = excluded.completed_at`,
+    result.date,
+    JSON.stringify(result.answers ?? []),
+    result.score,
+    result.completedAt,
+  );
 }
 
 // --- writes -----------------------------------------------------------------
@@ -407,7 +495,8 @@ export type OutboxKind =
   | 'sighting.insert'
   | 'photo.upload'
   | 'profile.update'
-  | 'ama.insert';
+  | 'ama.insert'
+  | 'quiz.insert';
 
 export type OutboxJob = {
   id: number;
@@ -526,12 +615,17 @@ export type LocalSnapshot = {
     body: string;
     createdAt: string;
   }[];
+  quizResults: {
+    date: string;
+    score: number;
+    completedAt: string;
+  }[];
 };
 
 export async function exportLocalData(): Promise<LocalSnapshot> {
   const db = await getDb();
 
-  const [species, sightings, amaMessages] = await Promise.all([
+  const [species, sightings, amaMessages, quizResults] = await Promise.all([
     db.getAllAsync<{
       slug: string;
       common_name: string;
@@ -559,6 +653,11 @@ export async function exportLocalData(): Promise<LocalSnapshot> {
       body: string;
       created_at: string;
     }>('select id, species_slug, role, body, created_at from ama_messages order by created_at asc'),
+
+    db.getAllAsync<{ date: string; score: number; completedAt: string }>(
+      `select quiz_date as date, score, completed_at as completedAt
+       from quizzes where score is not null and completed_at is not null`,
+    ),
   ]);
 
   return {
@@ -584,5 +683,6 @@ export async function exportLocalData(): Promise<LocalSnapshot> {
       body: row.body,
       createdAt: row.created_at,
     })),
+    quizResults,
   };
 }

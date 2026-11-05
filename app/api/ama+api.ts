@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { guard, readJson } from '../../lib/api-guard';
+import { guard, promptSafeName, readJson } from '../../lib/api-guard';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -10,22 +10,8 @@ const PER_IP_PER_MINUTE = 60;
 const MAX_HISTORY = 20;
 const MAX_MESSAGE_CHARS = 2_000;
 const MAX_QUESTION_CHARS = 500;
-const MAX_NAME_CHARS = 120;
 const MAX_ANSWER_TOKENS = 500;
 const MAX_BODY_BYTES = 64 * 1024;
-
-/**
- * Control and format characters, plus the Unicode line and paragraph
- * separators. Stripping only \r\n\t left U+2028, U+0085, \v and \f, all of
- * which still read as a line break, and bidi overrides that make a name look
- * like something it is not.
- */
-const NOT_ONE_LINE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
-
-/** A name fit for the system prompt: one line, so it cannot start a new instruction. */
-function promptSafeName(value: unknown): string {
-  return String(value ?? '').replace(NOT_ONE_LINE, ' ').slice(0, MAX_NAME_CHARS);
-}
 
 export async function POST(request: Request) {
   try {

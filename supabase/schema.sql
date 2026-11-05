@@ -59,6 +59,17 @@ create table if not exists public.ama_messages (
 
 create index if not exists ama_messages_thread_idx on public.ama_messages (user_id, species_slug, created_at);
 
+-- One row per finished daily quiz. Explorer XP is worked out from these scores,
+-- so they have to survive a new phone. The questions themselves stay on the phone.
+create table if not exists public.quiz_results (
+  user_id      uuid not null default auth.uid() references auth.users on delete cascade,
+  quiz_date    date not null,
+  score        smallint not null check (score between 0 and 3),
+  completed_at timestamptz not null default now(),
+  created_at   timestamptz not null default now(),
+  primary key (user_id, quiz_date)
+);
+
 -- Rate limiting for the OpenAI-backed API routes. One row per call, counted
 -- over the last minute. It lives here rather than in the server's memory so the
 -- ceiling survives a restart and is shared by every instance — a counter that
@@ -131,6 +142,7 @@ alter table public.profiles     enable row level security;
 alter table public.species      enable row level security;
 alter table public.sightings    enable row level security;
 alter table public.ama_messages enable row level security;
+alter table public.quiz_results enable row level security;
 alter table public.api_usage    enable row level security;
 
 -- api_usage gets NO policies, and that is the point rather than an oversight:
@@ -170,6 +182,10 @@ create policy "own sightings" on public.sightings for all
 
 drop policy if exists "own ama messages" on public.ama_messages;
 create policy "own ama messages" on public.ama_messages for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "own quiz results" on public.quiz_results;
+create policy "own quiz results" on public.quiz_results for all
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- ---------------------------------------------------------------------------

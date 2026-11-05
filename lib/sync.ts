@@ -153,6 +153,21 @@ async function runJob(job: db.OutboxJob, userId: string): Promise<void> {
       if (error) rethrow(error);
       return;
     }
+
+    case 'quiz.insert': {
+      // One quiz a day per account: a score already on the server stays.
+      const { error } = await supabase.from('quiz_results').upsert(
+        {
+          user_id: userId,
+          quiz_date: payload.date,
+          score: payload.score,
+          completed_at: payload.completedAt,
+        },
+        { onConflict: 'user_id,quiz_date', ignoreDuplicates: true },
+      );
+      if (error) rethrow(error);
+      return;
+    }
   }
 }
 
@@ -261,7 +276,28 @@ async function pull(): Promise<void> {
     });
   }
 
+  await pullQuizResults(since);
+
   await db.setMeta(LAST_PULL_KEY, startedAt);
+}
+
+/**
+ * Separate from the rest of the pull and allowed to fail: on a database that has
+ * not had the quiz table added yet, quiz scores must not stop sightings syncing.
+ */
+async function pullQuizResults(since: string | null): Promise<void> {
+  let query = supabase.from('quiz_results').select('quiz_date, score, completed_at');
+  if (since) query = query.gt('created_at', since);
+
+  const { data, error } = await query;
+  if (error) {
+    console.warn(`Could not fetch quiz results: ${error.message}`);
+    return;
+  }
+
+  for (const row of data ?? []) {
+    await db.saveQuizResult({ date: row.quiz_date, score: row.score, completedAt: row.completed_at });
+  }
 }
 
 /**

@@ -12,13 +12,10 @@ import { absoluteFill, colors, spacing, type } from '../../lib/theme';
  * and its buttons held at the bottom, above the keyboard when one is open.
  */
 export function OnboardingScreen({
-  wash = true,
   wordmark = true,
   children,
   footer,
 }: {
-  /** The warm "BG" wash. The name screen is plain white. */
-  wash?: boolean;
   wordmark?: boolean;
   children: ReactNode;
   footer: ReactNode;
@@ -28,7 +25,7 @@ export function OnboardingScreen({
 
   return (
     <View style={styles.screen}>
-      {wash && <OnboardingBackground />}
+      <OnboardingBackground />
       <ScreenStatusBar />
       <KeyboardAvoidingView
         style={styles.flex}

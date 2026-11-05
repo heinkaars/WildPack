@@ -1,17 +1,18 @@
 /**
  * Explorer XP. Figma shows the numbers ("+70 XP", "500 XP") but defines no
- * rule, so this is ours. XP comes from four things:
+ * rule, so this is ours. XP comes from five things:
  *
  * - a species new to the life list: 50
  * - seeing a species again: 10
  * - the first capture of each day: 20, plus 10 for every day of the streak
  *   before it, up to 60 — so keeping a streak going pays more each day
  * - asking a question in a species chat: 5, for the first 3 per species
+ * - finishing the daily quiz: 20, plus 10 for each right answer
  *
  * A first capture is therefore 50 + 20 = 70, as drawn.
  *
- * Everything follows from the life list itself (sightings and chat questions),
- * so the total can be recomputed at any time without storing XP anywhere.
+ * Everything follows from the user's own records (sightings, chat questions and
+ * quiz scores), so the total can be recomputed at any time without storing XP.
  */
 export const XP_NEW_SPECIES = 50;
 export const XP_REPEAT_SIGHTING = 10;
@@ -20,6 +21,13 @@ export const XP_PER_STREAK_DAY = 10;
 export const XP_STREAK_DAYS_COUNTED = 5;
 export const XP_QUESTION = 5;
 export const XP_QUESTIONS_PER_SPECIES = 3;
+export const XP_QUIZ_DONE = 20;
+export const XP_QUIZ_CORRECT = 10;
+
+/** What one finished daily quiz is worth. */
+export function quizXp(score: number): number {
+  return XP_QUIZ_DONE + XP_QUIZ_CORRECT * score;
+}
 
 /** What the XP total is computed from. */
 export type Activity = {
@@ -27,6 +35,8 @@ export type Activity = {
   sightings: { speciesSlug: string; seenAt: string }[];
   /** Questions the user asked in each species chat. */
   questionsBySpecies: Record<string, number>;
+  /** Finished daily quizzes: the local date and how many answers were right. */
+  quizzes: { date: string; score: number }[];
 };
 
 export type Stats = {
@@ -37,6 +47,8 @@ export type Stats = {
   streak: number;
   /** Local dates (YYYY-MM-DD) with at least one capture. */
   activeDays: Set<string>;
+  /** Right answers on each local date (YYYY-MM-DD) with a finished quiz. */
+  quizScores: Record<string, number>;
 };
 
 /** A local calendar date, so "today" means the user's today, not UTC's. */
@@ -76,11 +88,17 @@ export function computeStats(activity: Activity, now: Date = new Date()): Stats 
     xp += Math.min(count, XP_QUESTIONS_PER_SPECIES) * XP_QUESTION;
   }
 
+  const quizScores: Record<string, number> = {};
+  for (const quiz of activity.quizzes) {
+    xp += quizXp(quiz.score);
+    quizScores[quiz.date] = quiz.score;
+  }
+
   const today = localDateKey(now);
   const yesterday = previousDay(today);
   const streak = runOn.get(today) ?? runOn.get(yesterday) ?? 0;
 
-  return { xp, captures: activity.sightings.length, streak, activeDays };
+  return { xp, captures: activity.sightings.length, streak, activeDays, quizScores };
 }
 
 /** The bonus for the first capture on a day that is day `run` of a streak. */

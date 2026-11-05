@@ -74,7 +74,7 @@ export async function completeAccountSwitch(userId: string): Promise<MergeResult
 
   pending = null;
 
-  const { species, sightings, amaMessages } = current.snapshot;
+  const { species, sightings, amaMessages, quizResults } = current.snapshot;
   let photosLost = 0;
 
   // Someone with an account to sign into has been past onboarding already, and
@@ -127,6 +127,13 @@ export async function completeAccountSwitch(userId: string): Promise<MergeResult
     const message = { ...row, id: uuid() };
     await db.insertAmaMessage(message);
     await db.enqueue('ama.insert', message);
+  }
+
+  // Scores are Explorer XP, so they move too. Where the account already finished
+  // that day's quiz, the server keeps its own score and the next pull restores it.
+  for (const row of quizResults) {
+    await db.saveQuizResult(row);
+    await db.enqueue('quiz.insert', row);
   }
 
   // The profile is deliberately not carried over: the account being signed into

@@ -61,6 +61,19 @@ export async function requireUser(request: Request): Promise<string | null> {
   return error || !data.user ? null : data.user.id;
 }
 
+/**
+ * Control and format characters, plus the Unicode line and paragraph
+ * separators. Stripping only \r\n\t left U+2028, U+0085, \v and \f, all of
+ * which still read as a line break, and bidi overrides that make a name look
+ * like something it is not.
+ */
+const NOT_ONE_LINE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+/** Caller-sent text fit for a system prompt: one line, so it cannot start a new instruction. */
+export function promptSafeName(value: unknown, maxChars = 120): string {
+  return String(value ?? '').replace(NOT_ONE_LINE, ' ').slice(0, maxChars);
+}
+
 const WINDOW_MS = 60_000;
 /** Past this many tracked keys, drop the ones whose window has already passed. */
 const SWEEP_AT = 5_000;
@@ -223,6 +236,7 @@ async function anyOverBudget(buckets: Bucket[]): Promise<boolean> {
 const GLOBAL_PER_MINUTE: Record<string, number> = {
   identify: 120,
   ama: 240,
+  quiz: 120,
   'delete-account': 30,
 };
 const DEFAULT_GLOBAL_PER_MINUTE = 60;
