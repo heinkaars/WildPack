@@ -145,12 +145,11 @@ export const sizes = {
  * font's weight must come from the family name, not fontWeight, so each
  * weight is its own family.
  *
- * Figma's "Baloo" is the original single-weight Baloo, which Google replaced
- * with Baloo 2; Baloo 2 ExtraBold is the matching weight.
+ * Headings and titles share Fredoka One; everything else is Nunito.
  */
 export const fonts = {
   title: 'FredokaOne_400Regular',
-  heading: 'Baloo2_800ExtraBold',
+  heading: 'FredokaOne_400Regular',
   body: 'Nunito_400Regular',
   bodyMedium: 'Nunito_500Medium',
   bodySemiBold: 'Nunito_600SemiBold',
@@ -168,7 +167,7 @@ export const type = {
   headingXL: { fontFamily: fonts.title, fontSize: 48, lineHeight: 56, letterSpacing: -1, color: dark },
   /** Heading/L — Fredoka One 32/42. */
   headingL: { fontFamily: fonts.title, fontSize: 32, lineHeight: 42, letterSpacing: -0.5, color: dark },
-  /** Heading/M — Baloo 24/1.2, section titles. */
+  /** Heading/M — Fredoka One 24/1.2, section titles. */
   headingM: { fontFamily: fonts.heading, fontSize: 24, lineHeight: 29, letterSpacing: -0.4, color: dark },
   /** Level/Button-text — Nunito Bold 18/27. */
   button: { fontFamily: fonts.bodyBold, fontSize: 18, lineHeight: 27, letterSpacing: -0.3, color: dark },

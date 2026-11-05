@@ -42,7 +42,7 @@ export default function ComponentGallery() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={type.headingXL}>Foundations</Text>
         <Text style={[type.bodyLg, { color: colors.textMuted }]}>
-          Fredoka One for titles, Baloo for section headings, Nunito for body. Everything below is built from lib/theme.ts.
+          Fredoka One for titles and headings, Nunito for body. Everything below is built from lib/theme.ts.
         </Text>
 
         <Section title="Colour">

@@ -4,7 +4,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
-import { Baloo2_800ExtraBold } from '@expo-google-fonts/baloo-2';
 import { FredokaOne_400Regular } from '@expo-google-fonts/fredoka-one';
 import {
   Nunito_400Regular,
@@ -24,7 +23,6 @@ export default function RootLayout() {
   // Keys must match `fonts` in lib/theme.ts.
   const [fontsLoaded, fontError] = useFonts({
     FredokaOne_400Regular,
-    Baloo2_800ExtraBold,
     Nunito_400Regular,
     Nunito_500Medium,
     Nunito_600SemiBold,
