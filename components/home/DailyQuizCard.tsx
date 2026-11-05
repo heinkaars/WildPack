@@ -52,8 +52,8 @@ export function DailyQuizCard({ score, onOpen, onReplay }: Props) {
         <BoltIcon />
       </View>
       <View style={styles.text}>
-        <Text style={type.levelSemiBold}>Daily quiz</Text>
-        <Text style={[type.labelSm, styles.muted]}>
+        <Text style={[type.levelSemiBold, styles.title]}>Daily quiz</Text>
+        <Text style={[type.labelSm, styles.subtitle, styles.muted]}>
           {QUIZ_QUESTIONS} questions about your Pack, earn up to {quizXp(QUIZ_QUESTIONS)} XP
         </Text>
       </View>
@@ -89,6 +89,14 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
+  },
+  title: {
+    fontSize: 20,
+    lineHeight: 28,
+  },
+  subtitle: {
+    fontSize: 16,
+    lineHeight: 24,
   },
   muted: {
     color: colors.textMuted,

@@ -90,7 +90,7 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
           >
             <Docent animal={docentFromLook(profile.look)} width={64} />
             <View style={styles.userText}>
-              <Text style={[type.bodySm, styles.muted]} numberOfLines={1}>
+              <Text style={[type.bodySm, styles.greeting, styles.muted]} numberOfLines={1}>
                 {greeting(now)}
               </Text>
               <Text style={type.headingM} numberOfLines={1}>
@@ -263,8 +263,14 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     backgroundColor: colors.primaryFill,
   },
+  greeting: {
+    fontSize: 18,
+    lineHeight: 26,
+  },
   filterText: {
     ...type.labelSm,
+    fontSize: 16,
+    lineHeight: 24,
     fontFamily: fonts.bodyMedium,
     color: colors.textSecondary,
   },
