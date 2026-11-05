@@ -3,6 +3,7 @@ import { FlatList, ImageSourcePropType, Pressable, StyleSheet, Text, View } from
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomNav, Docent, docentFromLook, FilterIcon, ScreenStatusBar, StarIcon } from '../ui';
 import { BadgeShelf } from './BadgeShelf';
+import { DailyQuizCard } from './DailyQuizCard';
 import { FilterPopup } from './FilterPopup';
 import { LifelistCard, LifelistCardSpacer } from './LifelistCard';
 import { OverviewCard } from './OverviewCard';
@@ -10,7 +11,7 @@ import { categoryById } from '../../lib/categories';
 import { applyView, DEFAULT_VIEW, isDefaultView, LifelistView } from '../../lib/lifelist-view';
 import { teasersStillHidden } from '../../lib/teasers';
 import { LifelistEntry, Profile } from '../../lib/types';
-import { Stats } from '../../lib/xp';
+import { localDateKey, Stats } from '../../lib/xp';
 import { colors, fonts, spacing, type } from '../../lib/theme';
 
 type Props = {
@@ -20,6 +21,9 @@ type Props = {
   onOpenProfile: () => void;
   onOpenSpecies: (id: string) => void;
   onCapture: () => void;
+  onOpenQuiz: () => void;
+  /** Development only: throws away today's quiz result and starts a new one. */
+  onReplayQuiz?: () => void;
   /** Sync status and similar, shown under the overview card. */
   notices?: ReactNode;
   now?: Date;
@@ -46,7 +50,7 @@ function greeting(now: Date): string {
  * badges and the life list, with the bottom nav floating over it. Takes its
  * data as props so `/dev/home` can show it without an account.
  */
-export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies, onCapture, notices, now = new Date() }: Props) {
+export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies, onCapture, onOpenQuiz, onReplayQuiz, notices, now = new Date() }: Props) {
   const insets = useSafeAreaInsets();
   const [view, setView] = useState<LifelistView>(DEFAULT_VIEW);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -84,7 +88,7 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
             hitSlop={8}
             style={({ pressed }) => [styles.user, pressed && styles.pressed]}
           >
-            <Docent animal={docentFromLook(profile.look)} width={40} />
+            <Docent animal={docentFromLook(profile.look)} width={64} />
             <View style={styles.userText}>
               <Text style={[type.bodySm, styles.muted]} numberOfLines={1}>
                 {greeting(now)}
@@ -102,6 +106,10 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
         </View>
 
         <OverviewCard stats={stats} now={now} />
+        {/* The quiz asks about the life list, so it has nothing to offer until there is one. */}
+        {entries.length > 0 && (
+          <DailyQuizCard score={stats.quizScores[localDateKey(now)]} onOpen={onOpenQuiz} onReplay={onReplayQuiz} />
+        )}
         {notices}
       </View>
 

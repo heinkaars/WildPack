@@ -4,7 +4,7 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { HomeView } from '../../components/home/HomeView';
 import { ProfileView } from '../../components/profile/ProfileView';
 import type { DocentAnimal } from '../../components/ui';
-import { computeStats } from '../../lib/xp';
+import { computeStats, localDateKey } from '../../lib/xp';
 import { LifelistEntry } from '../../lib/types';
 
 const SQUIRREL = Asset.fromModule(require('../../assets/lifelist/squirrel.jpg')).uri;
@@ -52,16 +52,28 @@ const STATS = computeStats({
     { speciesSlug: 'sciurus-vulgaris', seenAt: daysAgo(0) },
   ],
   questionsBySpecies: { 'procyon-lotor': 2 },
+  quizzes: [],
 });
 
-const EMPTY_STATS = computeStats({ sightings: [], questionsBySpecies: {} });
+const EMPTY_STATS = computeStats({ sightings: [], questionsBySpecies: {}, quizzes: [] });
 
-type Screen = 'home' | 'empty' | 'profile' | 'profile-signed-in';
+// The same activity with today's quiz already finished, two answers right.
+const QUIZ_DONE_STATS = computeStats({
+  sightings: [
+    { speciesSlug: 'sciurus-vulgaris', seenAt: daysAgo(2) },
+    { speciesSlug: 'procyon-lotor', seenAt: daysAgo(1) },
+    { speciesSlug: 'sciurus-vulgaris', seenAt: daysAgo(0) },
+  ],
+  questionsBySpecies: { 'procyon-lotor': 2 },
+  quizzes: [{ date: localDateKey(new Date()), score: 2 }],
+});
+
+type Screen = 'home' | 'quiz-done' | 'empty' | 'profile' | 'profile-signed-in';
 
 /**
  * Home and Profile with sample data, reachable without a server — for checking
  * the layout in the browser preview. Dev builds only.
- * `/dev/home?screen=home|empty|profile|profile-signed-in` (default home).
+ * `/dev/home?screen=home|quiz-done|empty|profile|profile-signed-in` (default home).
  */
 export default function HomePreview() {
   const { screen = 'home' } = useLocalSearchParams<{ screen?: Screen }>();
@@ -104,9 +116,11 @@ export default function HomePreview() {
     <HomeView
       profile={profile}
       entries={empty ? [] : ENTRIES}
-      stats={empty ? EMPTY_STATS : STATS}
+      stats={empty ? EMPTY_STATS : screen === 'quiz-done' ? QUIZ_DONE_STATS : STATS}
       onOpenProfile={() => router.replace('/dev/home?screen=profile')}
       onOpenSpecies={() => {}}
+      onOpenQuiz={() => router.push('/dev/quiz')}
+      onReplayQuiz={() => router.push('/dev/quiz')}
       onCapture={() => router.push('/dev/capture')}
     />
   );

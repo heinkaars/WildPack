@@ -56,6 +56,7 @@ export default function RootLayout() {
                   <Stack.Screen name="capture/index" />
                   <Stack.Screen name="capture/identify" />
                   <Stack.Screen name="capture/result" />
+                  <Stack.Screen name="quiz" />
                   <Stack.Screen name="species/[id]" />
                   <Stack.Screen
                     name="ama/[id]"
@@ -71,6 +72,7 @@ export default function RootLayout() {
                   <Stack.Screen name="dev/capture" />
                   <Stack.Screen name="dev/home" />
                   <Stack.Screen name="dev/species" />
+                  <Stack.Screen name="dev/quiz" />
                 </Stack>
                 {/* Sits above the stack so the lifelist cannot flash before we
                     know whether this user still owes us onboarding. */}
