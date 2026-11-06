@@ -130,14 +130,14 @@ confirmPopup `88384:3496`, otherOption `88384:3596` / `-GsOpossum 88384:3631`. s
 - **Identifying** (`identify.tsx`): the photo dimmed with a spinner (not in Figma). Every failure —
   including a guess under 30% confidence, which is the case Figma draws ("I have trouble
   identifying this…") — is the error pop-up with the user's docent looking sad, "Retake photo" /
-  "Try Again" and a close cross back to the life list.
+  "Try again" and a close cross back to the life list.
 - **Result** (`result.tsx`): photo, name, scientific name, green `ConfidencePill` ("Best guess" for
   the top pick, "Good guess" for a picked alternative), description, `OtherMatches` accordion
-  (closed pill names the picked match, as in the Opossum frame), "Confirm" + "Not Quite, Try Again".
+  (closed pill names the picked match, as in the Opossum frame), "Confirm" + "Not quite, try again".
 - **Reward pop-up** (`components/capture/CelebrationPopup.tsx`): shown on the result screen after
   Confirm saves the sighting (it used to be on the home screen; `CelebrationModal` and `Confetti`
   are deleted). Docent with Figma's confetti, species card (NEW SPECIES / SEEN AGAIN), Species #N /
-  Seen N times, N-day streak, +XP. "Add To Life List" opens the species page over the life list.
+  Seen N times, N-day streak, +XP. "Add to life list" opens the species page over the life list.
   Haptics + chime kept.
 - **Confetti animation** (`components/capture/ConfettiBurst.tsx`): Figma's confetti is split into its
   five colours; each colour is a view that bursts out from the docent when the pop-up lands, then

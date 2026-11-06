@@ -71,7 +71,7 @@ export default function QuizPreview() {
     );
   }
   if (screen === 'done') {
-    return <QuizMessage docent={docent} title="Quiz done for today" body="2 of 3 right first try, +40 XP. New quiz tomorrow." onClose={close} />;
+    return <QuizMessage docent={docent} title="Quiz done for today" body="2 of 3 right on the first try, +40 XP. New quiz tomorrow." onClose={close} />;
   }
   if (screen === 'empty') {
     return <QuizMessage docent={docent} title="Nothing to ask yet" body="Capture your first animal and its quiz questions will follow." onClose={close} />;

@@ -113,7 +113,7 @@ export default function SignInScreen() {
         onSubmitEditing={canSubmit ? handleSubmit : undefined}
       />
       <View style={styles.forgot}>
-        <TextLink label="Forgot Password?" onPress={() => router.push('/auth/forgot-password')} />
+        <TextLink label="Forgot password?" onPress={() => router.push('/auth/forgot-password')} />
       </View>
     </AuthScreen>
   );

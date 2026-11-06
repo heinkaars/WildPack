@@ -25,7 +25,7 @@ export default function ResultScreen() {
   const [picked, setPicked] = useState<SpeciesGuess | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
-  // Set by "Add To Life List": the pop-up closes first, then the species page opens.
+  // Set by "Add to life list": the pop-up closes first, then the species page opens.
   const [finishing, setFinishing] = useState(false);
   // A capture that unlocked a badge gets a second pop-up once the first has closed.
   const [badgeStage, setBadgeStage] = useState<'none' | 'open' | 'closing'>('none');
@@ -130,7 +130,7 @@ export default function ResultScreen() {
           </Text>
         )}
         <Button label="Confirm" onPress={handleConfirm} loading={confirming} />
-        <Button label="Not Quite, Try Again" variant="outline" onPress={retake} />
+        <Button label="Not quite, try again" variant="outline" onPress={retake} />
       </View>
 
       {celebration && (

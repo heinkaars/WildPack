@@ -108,7 +108,7 @@ export function QuizView({ questions, answers, reward, docent, photoFor, onAnswe
         <View style={styles.header} onLayout={(event) => setHeaderHeight(event.nativeEvent.layout.height)}>
           <BackButton onPress={onClose} />
           <View style={styles.progress}>
-            <Text style={type.labelSm} accessibilityLiveRegion="polite">
+            <Text style={[type.labelSm, styles.progressText]} accessibilityLiveRegion="polite">
               Question {index + 1} of {questions.length}
             </Text>
             <View style={styles.segments}>
@@ -129,8 +129,8 @@ export function QuizView({ questions, answers, reward, docent, photoFor, onAnswe
 
         <View style={styles.below} onLayout={(event) => setBelowHeight(event.nativeEvent.layout.height)}>
           <View style={styles.prompt}>
-            <Text style={[type.labelSm, styles.muted]}>{question.speciesName}</Text>
-            <Text style={type.button} accessibilityRole="header">
+            <Text style={[type.labelSm, styles.species, styles.muted]}>{question.speciesName}</Text>
+            <Text style={[type.button, styles.question]} accessibilityRole="header">
               {question.question}
             </Text>
           </View>
@@ -168,10 +168,10 @@ export function QuizView({ questions, answers, reward, docent, photoFor, onAnswe
           {/* Only once found: the explanation usually gives the answer away. */}
           {solved && (
             <Wash style={styles.explanation}>
-              <Text style={type.label} accessibilityLiveRegion="polite">
+              <Text style={[type.label, styles.feedback]} accessibilityLiveRegion="polite">
                 {chosen === question.correctIndex ? 'That’s right!' : 'You found it!'}
               </Text>
-              <Text style={type.bodySm}>{question.explanation}</Text>
+              <Text style={[type.bodySm, styles.explanationText]}>{question.explanation}</Text>
             </Wash>
           )}
         </View>
@@ -180,10 +180,10 @@ export function QuizView({ questions, answers, reward, docent, photoFor, onAnswe
       {/* Always the same height, so a wrong tap moves nothing on the screen. */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, spacing.screen) }]}>
         {solved ? (
-          <Button label={last ? 'See Results' : 'Next Question'} loading={last && !reward} onPress={next} />
+          <Button label={last ? 'See results' : 'Next question'} loading={last && !reward} onPress={next} />
         ) : tapped.length > 0 ? (
           <Wash style={styles.tryAgain}>
-            <Text style={type.label} accessibilityLiveRegion="polite">
+            <Text style={[type.label, styles.feedback]} accessibilityLiveRegion="polite">
               Not quite, try another
             </Text>
           </Wash>
@@ -257,17 +257,17 @@ function ResultPopup({
       <Wash style={styles.resultStats}>
         <View style={styles.resultStat}>
           <StarIcon />
-          <Text style={type.bodySm}>
-            {reward.score} of {total} right first try
+          <Text style={[type.bodySm, styles.resultText]}>
+            {reward.score} of {total} right on the first try
           </Text>
         </View>
         <View style={styles.resultStat}>
           <BoltIcon />
-          <Text style={type.bodySm}>+{reward.xpEarned} XP earned</Text>
+          <Text style={[type.bodySm, styles.resultText]}>+{reward.xpEarned} XP earned</Text>
         </View>
       </Wash>
 
-      <Button label="Back To Life List" onPress={onContinue} style={styles.resultButton} />
+      <Button label="Back to life list" onPress={onContinue} style={styles.resultButton} />
     </Popup>
   );
 }
@@ -299,9 +299,9 @@ export function QuizMessage({
         <Text style={[type.headingM, styles.center]} accessibilityRole="header" accessibilityLiveRegion="polite">
           {title}
         </Text>
-        {body && <Text style={[type.bodyLg, styles.center, styles.muted]}>{body}</Text>}
+        {body && <Text style={[type.bodyLg, styles.messageBody, styles.center, styles.muted]}>{body}</Text>}
         {busy && <ActivityIndicator color={colors.primary} />}
-        {onRetry && <Button label="Try Again" onPress={onRetry} style={styles.resultButton} />}
+        {onRetry && <Button label="Try again" onPress={onRetry} style={styles.resultButton} />}
       </View>
     </View>
   );
@@ -315,6 +315,7 @@ const styles = StyleSheet.create({
 
   header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   progress: { flex: 1, gap: 4 },
+  progressText: { fontSize: 16, lineHeight: 24 },
   segments: { flexDirection: 'row', gap: 4 },
   segment: { flex: 1, height: 6, borderRadius: radii.pill, backgroundColor: colors.fillStrong },
   segmentOn: { backgroundColor: colors.primary },
@@ -323,6 +324,8 @@ const styles = StyleSheet.create({
   photoImage: { width: '100%', height: '100%' },
   below: { gap: CONTENT_GAP },
   prompt: { gap: 2 },
+  species: { fontSize: 16, lineHeight: 24 },
+  question: { fontSize: 20, lineHeight: 28 },
 
   options: { gap: 8 },
   option: {
@@ -337,13 +340,15 @@ const styles = StyleSheet.create({
     borderColor: colors.fillStrong,
     backgroundColor: colors.surface,
   },
-  optionText: { flex: 1 },
+  optionText: { flex: 1, fontSize: 18, lineHeight: 26 },
   optionPressed: { backgroundColor: colors.primaryFill },
   optionCorrect: { borderColor: colors.success, backgroundColor: colors.successFill },
   optionWrong: { borderColor: colors.warningStroke, backgroundColor: colors.warningFill },
   optionFaded: { opacity: 0.5 },
 
   explanation: { padding: 12, gap: 2, borderRadius: 16 },
+  feedback: { fontSize: 18, lineHeight: 26 },
+  explanationText: { fontSize: 18, lineHeight: 26 },
   footer: { paddingHorizontal: spacing.screen, paddingTop: spacing.sm },
   footerSlot: { height: sizes.button },
   tryAgain: { height: sizes.button, alignItems: 'center', justifyContent: 'center', borderRadius: 16 },
@@ -361,8 +366,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.surface,
   },
+  resultText: { fontSize: 18, lineHeight: 26 },
   resultButton: { alignSelf: 'stretch' },
 
+  messageBody: { fontSize: 18, lineHeight: 26 },
   messageBack: { marginLeft: spacing.screen, marginTop: CONTENT_TOP, alignSelf: 'flex-start' },
   message: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingHorizontal: spacing.screen, paddingBottom: 80 },
 });

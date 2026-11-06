@@ -23,7 +23,7 @@ type Props = {
   badge: Badge;
   /** Explorer XP in total, after the capture that unlocked the badge. */
   xp: number;
-  /** False once "Keep Exploring" is tapped, so the pop-up closes before anything opens. */
+  /** False once "Keep exploring" is tapped, so the pop-up closes before anything opens. */
   visible: boolean;
   onContinue: () => void;
   /** The pop-up has finished closing; safe to open the next screen. */
@@ -124,7 +124,7 @@ export function BadgePopup({ badge, xp, visible, onContinue, onDismissed }: Prop
         </Wash>
       </Animated.View>
 
-      <Button label="Keep Exploring" onPress={onContinue} style={styles.stretch} />
+      <Button label="Keep exploring" onPress={onContinue} style={styles.stretch} />
     </Popup>
   );
 }

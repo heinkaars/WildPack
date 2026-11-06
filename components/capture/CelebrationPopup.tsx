@@ -9,7 +9,7 @@ import { ConfettiBurst } from './ConfettiBurst';
 
 type Props = {
   payload: CelebrationPayload;
-  /** False once "Add To Life List" is tapped, so the pop-up closes before anything opens. */
+  /** False once "Add to life list" is tapped, so the pop-up closes before anything opens. */
   visible: boolean;
   onContinue: () => void;
   /** The pop-up has finished closing; safe to open the next screen. */
@@ -80,7 +80,7 @@ export function CelebrationPopup({ payload, visible, onContinue, onDismissed }: 
         </View>
       </Wash>
 
-      <Button label="Add To Life List" onPress={onContinue} style={styles.button} />
+      <Button label="Add to life list" onPress={onContinue} style={styles.button} />
     </Popup>
   );
 }
