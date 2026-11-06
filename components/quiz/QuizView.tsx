@@ -258,7 +258,7 @@ function ResultPopup({
         <View style={styles.resultStat}>
           <StarIcon />
           <Text style={[type.bodySm, styles.resultText]}>
-            {reward.score} of {total} right first try
+            {reward.score} of {total} right on the first try
           </Text>
         </View>
         <View style={styles.resultStat}>

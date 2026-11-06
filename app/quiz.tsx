@@ -26,7 +26,7 @@ export default function QuizScreen() {
         <QuizMessage
           docent={docent}
           title="Quiz done for today"
-          body={`${state.score} of ${QUIZ_QUESTIONS} right first try, +${quizXp(state.score)} XP. New quiz tomorrow.`}
+          body={`${state.score} of ${QUIZ_QUESTIONS} right on the first try, +${quizXp(state.score)} XP. New quiz tomorrow.`}
           onClose={close}
         />
       );
