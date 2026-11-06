@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Button, Docent, docentFromLook, Gradient, PinIcon, SparkIcon } from '../../components/ui';
 import { OnboardingScreen } from '../../components/onboarding/OnboardingScreen';
 import { useLifelist } from '../../lib/lifelist-store';
+import { LOCATION_FEATURE_ENABLED } from '../../lib/location';
 import { colors, radii, spacing, type } from '../../lib/theme';
 
 const LOCATION_PERKS = [
@@ -18,6 +19,7 @@ const LOCATION_PERKS = [
  * way, it stays away.
  */
 async function locationNeverAsked(): Promise<boolean> {
+  if (!LOCATION_FEATURE_ENABLED) return false;
   try {
     // Loaded here rather than at the top: route files also run on the server
     // for the web build, and native modules don't belong there.

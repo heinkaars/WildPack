@@ -8,6 +8,14 @@ import { getMeta, setMeta } from './db';
  */
 const SHARING_KEY = 'location_sharing';
 
+/**
+ * V1 does not ask for the phone's location: people type a place on the species
+ * card instead. With this off, the onboarding pop-up and the profile switch are
+ * hidden and captures are never tagged automatically. Flip it back on (and
+ * re-add the "expo-location" plugin in app.json) to bring the feature back.
+ */
+export const LOCATION_FEATURE_ENABLED = false;
+
 /** How long a capture waits for a place name before saving without one. */
 const PLACE_TIMEOUT_MS = 2500;
 
@@ -34,6 +42,7 @@ async function permissionGranted(): Promise<boolean> {
 
 /** Whether the switch shows as on: the user's choice, and the phone still allowing it. */
 export async function isLocationSharingOn(): Promise<boolean> {
+  if (!LOCATION_FEATURE_ENABLED) return false;
   const choice = await getMeta(SHARING_KEY);
   if (choice === '0') return false;
   return permissionGranted();
@@ -78,7 +87,7 @@ export async function setLocationSharing(on: boolean): Promise<SharingResult> {
  */
 export function currentPlace(): Promise<string | null> {
   return (async () => {
-    if (!(await isLocationSharingOn())) return null;
+    if (!LOCATION_FEATURE_ENABLED || !(await isLocationSharingOn())) return null;
     const Location = await locationModule();
     if (!Location) return null;
 
