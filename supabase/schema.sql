@@ -184,9 +184,17 @@ drop policy if exists "own ama messages" on public.ama_messages;
 create policy "own ama messages" on public.ama_messages for all
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
-drop policy if exists "own quiz results" on public.quiz_results;
-create policy "own quiz results" on public.quiz_results for all
-  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+-- Read and insert only. A finished day's score is final ("a score already on
+-- the server stays"), and Explorer XP is worked out from these rows, so a
+-- client able to update them could rewrite any past day's score. The app never
+-- needs to: sync inserts with ON CONFLICT DO NOTHING, which needs no update
+-- policy, and deleting the account removes the rows by cascade.
+drop policy if exists "own quiz results"        on public.quiz_results;
+drop policy if exists "read own quiz results"   on public.quiz_results;
+drop policy if exists "insert own quiz results" on public.quiz_results;
+
+create policy "read own quiz results"   on public.quiz_results for select using (auth.uid() = user_id);
+create policy "insert own quiz results" on public.quiz_results for insert with check (auth.uid() = user_id);
 
 -- ---------------------------------------------------------------------------
 -- Photo storage: a private bucket, each user confined to their own folder.
