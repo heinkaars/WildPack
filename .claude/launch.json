@@ -37,19 +37,6 @@
       "port": 8090
     },
     {
-      "name": "wildpack-hosted",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": [
-        "expo",
-        "start",
-        "--no-dev",
-        "--minify",
-        "--port",
-        "8090"
-      ],
-      "port": 8090
-    },
-    {
       "name": "wildpack-web",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
