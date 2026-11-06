@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   below: { gap: CONTENT_GAP },
   prompt: { gap: 2 },
   species: { fontSize: 16, lineHeight: 24 },
-  question: { fontSize: 22, lineHeight: 30 },
+  question: { fontSize: 20, lineHeight: 28 },
 
   options: { gap: 8 },
   option: {
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     borderColor: colors.fillStrong,
     backgroundColor: colors.surface,
   },
-  optionText: { flex: 1, fontSize: 20, lineHeight: 28 },
+  optionText: { flex: 1, fontSize: 18, lineHeight: 26 },
   optionPressed: { backgroundColor: colors.primaryFill },
   optionCorrect: { borderColor: colors.success, backgroundColor: colors.successFill },
   optionWrong: { borderColor: colors.warningStroke, backgroundColor: colors.warningFill },
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
 
   explanation: { padding: 12, gap: 2, borderRadius: 16 },
   feedback: { fontSize: 18, lineHeight: 26 },
-  explanationText: { fontSize: 16, lineHeight: 24 },
+  explanationText: { fontSize: 18, lineHeight: 26 },
   footer: { paddingHorizontal: spacing.screen, paddingTop: spacing.sm },
   footerSlot: { height: sizes.button },
   tryAgain: { height: sizes.button, alignItems: 'center', justifyContent: 'center', borderRadius: 16 },
