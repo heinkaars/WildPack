@@ -54,7 +54,7 @@ export function DailyQuizCard({ score, onOpen, onReplay }: Props) {
       <View style={styles.text}>
         <Text style={[type.levelSemiBold, styles.title]}>Daily quiz</Text>
         <Text style={[type.labelSm, styles.subtitle, styles.muted]}>
-          {QUIZ_QUESTIONS} questions about your Pack, earn up to {quizXp(QUIZ_QUESTIONS)} XP
+          Test your Pack, earn up to {quizXp(QUIZ_QUESTIONS)} XP
         </Text>
       </View>
       <ChevronRight size={16} color={colors.chevron} />
