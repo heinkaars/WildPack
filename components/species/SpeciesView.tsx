@@ -62,7 +62,7 @@ export function SpeciesView({ entry, sightings, index, onIndexChange, onBack, on
         <View style={styles.body}>
           <View style={styles.header}>
             <View style={styles.titles}>
-              <Text style={type.headingM} numberOfLines={2} accessibilityRole="header">
+              <Text style={[type.headingM, styles.title]} numberOfLines={2} accessibilityRole="header">
                 {entry.commonName}
               </Text>
               <Text style={[type.captionLg, styles.scientific]} numberOfLines={1}>
@@ -177,7 +177,8 @@ const styles = StyleSheet.create({
 
   header: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
   titles: { flex: 1, minWidth: 0 },
-  scientific: { color: 'rgba(255, 153, 0, 0.9)' },
+  title: { fontSize: 28, lineHeight: 34 },
+  scientific: { color: 'rgba(255, 153, 0, 0.9)', fontSize: 14, lineHeight: 22 },
   pills: { flexDirection: 'row', gap: 4 },
   pill: {
     paddingHorizontal: 12,
@@ -186,11 +187,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   categoryPill: { backgroundColor: colors.primaryFill, borderColor: colors.primaryFillStrong },
-  categoryText: { color: colors.primary },
+  categoryText: { color: colors.primary, fontSize: 16, lineHeight: 24 },
   sightingPill: { backgroundColor: colors.successFill, borderColor: colors.successStroke },
-  sightingText: { color: colors.success },
+  sightingText: { color: colors.success, fontSize: 16, lineHeight: 24 },
 
-  description: { marginTop: 20, color: colors.textMuted },
+  description: { marginTop: 20, color: colors.textMuted, fontSize: 18, lineHeight: 28 },
 
   details: {
     marginTop: 20,
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: colors.fill,
   },
-  askPlaceholder: { flex: 1, color: colors.textMuted },
+  askPlaceholder: { flex: 1, color: colors.textMuted, fontSize: 18, lineHeight: 27 },
   askSend: { padding: 8, borderRadius: radii.pill },
   pressed: { opacity: 0.7 },
 });

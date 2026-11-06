@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TextInputProps,
+  TextStyle,
   View,
   ViewStyle,
 } from 'react-native';
@@ -22,6 +23,8 @@ type InputProps = Omit<TextInputProps, 'style' | 'editable'> & {
   /** Something at the right end of the field, such as the password eye. */
   trailing?: ReactNode;
   style?: StyleProp<ViewStyle>;
+  /** Overrides the text style, e.g. a larger font size. */
+  textStyle?: StyleProp<TextStyle>;
 };
 
 /**
@@ -29,7 +32,7 @@ type InputProps = Omit<TextInputProps, 'style' | 'editable'> & {
  * so the four Figma states come from props + focus rather than a variant prop.
  */
 export const Input = forwardRef<ComponentRef<typeof TextInput>, InputProps>(function Input(
-  { error, disabled, dropdown, trailing, style, onFocus, onBlur, ...rest },
+  { error, disabled, dropdown, trailing, style, textStyle, onFocus, onBlur, ...rest },
   ref,
 ) {
   const [focused, setFocused] = useState(false);
@@ -58,7 +61,7 @@ export const Input = forwardRef<ComponentRef<typeof TextInput>, InputProps>(func
           setFocused(false);
           onBlur?.(e);
         }}
-        style={[styles.text, { color: textColor }]}
+        style={[styles.text, { color: textColor }, textStyle]}
         {...rest}
       />
       {dropdown && <ChevronDown color={chevronColor} />}
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
     minHeight: 40,
     fontFamily: fonts.bodySemiBold,
-    fontSize: 14,
+    fontSize: 18,
     color: colors.text,
     outlineStyle: 'none',
   } as any,

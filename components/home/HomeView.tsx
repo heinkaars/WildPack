@@ -179,7 +179,6 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
 
       <BottomNav
         active="home"
-        onHome={() => {}}
         onCapture={onCapture}
         style={[styles.nav, { bottom: Math.max(insets.bottom, spacing.md) }]}
       />
