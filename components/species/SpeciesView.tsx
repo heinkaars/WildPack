@@ -95,7 +95,7 @@ export function SpeciesView({ entry, sightings, index, onIndexChange, onBack, on
             <View style={styles.divider} />
             <DetailRow
               icon={<LocationIcon />}
-              text={current.location ?? 'Location not recorded'}
+              text={current.location ?? 'Add location'}
               editLabel="Change location"
               onEdit={() => setEditing('place')}
             />

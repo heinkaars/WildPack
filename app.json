@@ -49,12 +49,6 @@
           "recordAudioAndroid": false
         }
       ],
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "WildPack uses your location to show wildlife native to your region and sightings nearby."
-        }
-      ],
       "expo-asset",
       "expo-sqlite",
       "expo-secure-store",
