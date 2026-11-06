@@ -18,7 +18,7 @@ export function LifelistCard(props: Props) {
           <Image source={props.image} style={styles.photo} />
           <View style={styles.label}>
             <LockIcon />
-            <Text style={type.captionSm}>Not found yet</Text>
+            <Text style={[type.captionSm, styles.caption]}>Not found yet</Text>
           </View>
         </Wash>
       </View>
@@ -40,7 +40,7 @@ export function LifelistCard(props: Props) {
           <View style={[styles.photo, styles.photoPending]} />
         )}
         <View style={styles.label}>
-          <Text style={[type.captionSm, styles.name]} numberOfLines={1}>
+          <Text style={[type.captionSm, styles.caption, styles.name]} numberOfLines={1}>
             {props.name}
           </Text>
         </View>
@@ -80,6 +80,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 4,
+  },
+  caption: {
+    fontSize: 14,
+    lineHeight: 20,
   },
   name: {
     flexShrink: 1,

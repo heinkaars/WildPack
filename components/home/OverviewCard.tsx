@@ -58,7 +58,7 @@ export function OverviewCard({ stats, now = new Date() }: Props) {
 
       <View>
         <View style={styles.xpRow}>
-          <Text style={type.labelSm}>Explorer XP</Text>
+          <Text style={[type.labelSm, styles.xpLabel]}>Explorer XP</Text>
           <Text style={type.bodyBold} accessibilityLiveRegion="polite">
             {stats.xp} XP
           </Text>
@@ -125,8 +125,14 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 20,
   },
+  xpLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
   unlock: {
     ...type.labelSm,
+    fontSize: 16,
+    lineHeight: 24,
     fontFamily: fonts.body,
     paddingTop: 4,
   },

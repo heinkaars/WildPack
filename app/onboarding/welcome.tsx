@@ -76,7 +76,7 @@ export default function WelcomeScreen() {
           <Text style={styles.wordmark}>WildPack</Text>
         </View>
         <Text style={styles.intro}>
-          Build a lifelist by photographing wildlife, and learn facts and earn wins along the way.
+          Build a lifelist by photographing wildlife, and learn facts and earn wins along the way
         </Text>
       </View>
 
@@ -134,20 +134,20 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 57,
     alignSelf: 'center',
-    width: 320,
+    width: 350,
     alignItems: 'center',
     gap: 12,
   },
   welcomeTo: {
     fontFamily: fonts.bodySemiBold,
-    fontSize: 20,
-    lineHeight: 30,
+    fontSize: 24,
+    lineHeight: 34,
     letterSpacing: -0.3,
     color: colors.text,
     textAlign: 'center',
   },
-  wordmark: { ...type.headingXL, color: colors.wordmark, textAlign: 'center' },
-  intro: { ...type.bodyLg, textAlign: 'center' },
+  wordmark: { ...type.headingXL, fontSize: 56, lineHeight: 64, color: colors.wordmark, textAlign: 'center' },
+  intro: { ...type.bodyLg, fontSize: 20, lineHeight: 30, textAlign: 'center' },
 
   heroSlot: { flex: 1, justifyContent: 'center' },
 

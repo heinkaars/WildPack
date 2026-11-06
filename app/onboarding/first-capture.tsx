@@ -89,7 +89,6 @@ export default function FirstCaptureScreen() {
 
   return (
     <OnboardingScreen
-      wordmark={false}
       footer={
         <>
           <Button label="Let’s capture!" onPress={handleCapture} />
@@ -100,10 +99,10 @@ export default function FirstCaptureScreen() {
       <View style={styles.body}>
         <Docent animal={docentFromLook(profile.look)} width={195} />
         <View style={styles.guidance}>
-          <Text style={[type.headingM, styles.center]} accessibilityRole="header">
+          <Text style={[type.headingM, styles.guidanceTitle, styles.center]} accessibilityRole="header">
             Let’s spot your first wildlife!
           </Text>
-          <Text style={[type.bodySm, styles.muted, styles.center]}>
+          <Text style={[type.bodySm, styles.guidanceText, styles.muted, styles.center]}>
             Point your camera at any wildlife nearby. We’ll identify the species and add it
             to your lifelist.
           </Text>
@@ -171,6 +170,8 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   center: { textAlign: 'center' },
   muted: { color: colors.textMuted },
+  guidanceTitle: { fontSize: 28, lineHeight: 34 },
+  guidanceText: { fontSize: 20, lineHeight: 30 },
 
   // Figma: the portrait starts 96px under the top bar, the text 24px under it.
   body: { alignItems: 'center', paddingTop: 96, paddingHorizontal: spacing.screen, gap: 24 },

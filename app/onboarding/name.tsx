@@ -47,7 +47,7 @@ export default function ChooseNameScreen() {
         >
           <Text style={styles.bubbleText}>
             Excellent choice! I’m your docent, your guide on this WildPack adventure. Ask me
-            anything about the wildlife you capture, no question is too wild! Did you know there
+            anything about the wildlife you capture, no question is too wild!{'\n\n'}Did you know there
             are over 1.5 million wildlife species out there? Let’s start exploring and build your
             lifelist together!{'\n\n'}Before we head out, what should I call you?
           </Text>
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
   },
   bubbleText: {
     fontFamily: fonts.body,
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 18,
+    lineHeight: 28,
     letterSpacing: -0.2,
     color: colors.text,
   },

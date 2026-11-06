@@ -16,9 +16,12 @@ export default function WelcomeToPackScreen() {
     >
       <View style={styles.body}>
         <Docent animal={docentFromLook(profile.look)} width={DOCENT_WIDTH} />
-        <Text style={styles.message} accessibilityRole="header">
-          Welcome to the Pack, {profile.name}!{'\n'}I’m so excited to share this adventure with you.{'\n'}Are you ready?
-        </Text>
+        <View style={styles.messageBlock}>
+          <Text style={styles.message} accessibilityRole="header">
+            Welcome to the Pack, {profile.name}!
+          </Text>
+          <Text style={styles.rest}>I’m so excited to share this adventure with you. Are you ready?</Text>
+        </View>
       </View>
     </OnboardingScreen>
   );
@@ -33,14 +36,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 96,
     paddingHorizontal: 49,
-    gap: 16,
+    gap: 24,
   },
+  messageBlock: { gap: 12, alignItems: 'center' },
   message: {
     fontFamily: fonts.title,
-    fontSize: 20,
-    lineHeight: 30,
+    fontSize: 28,
+    lineHeight: 34,
     letterSpacing: -0.3,
     color: colors.text,
+    textAlign: 'center',
+  },
+  rest: {
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 20,
+    lineHeight: 30,
+    color: colors.textMuted,
     textAlign: 'center',
   },
 });

@@ -45,6 +45,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ghostLabel: {
+    fontSize: 20,
+    lineHeight: 30,
     color: colors.text,
   },
   disabled: {
