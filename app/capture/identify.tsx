@@ -79,7 +79,7 @@ export function FailurePopup({ failure, canRetry, onRetry, onRetake, onClose }: 
         {canRetry ? (
           <>
             <Button label="Retake photo" variant="outline" size="compact" onPress={onRetake} style={styles.flex} />
-            <Button label="Try Again" size="compact" onPress={onRetry} style={styles.flex} />
+            <Button label="Try again" size="compact" onPress={onRetry} style={styles.flex} />
           </>
         ) : (
           <Button label="Take a photo" size="compact" onPress={onRetake} style={styles.flex} />
@@ -111,7 +111,7 @@ export default function IdentifyScreen() {
   const { photoUri, photoBase64, setOutcome } = useCaptureSession();
   const [failure, setFailure] = useState<Failure | null>(null);
   // Counts identification attempts. Bumping it re-runs the effect, which is
-  // what "Try Again" does.
+  // what "Try again" does.
   const [attempt, setAttempt] = useState(0);
   // Which attempt has already been fired off. Without this, React's
   // development double-mount would send the photo to OpenAI twice.

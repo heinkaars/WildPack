@@ -180,7 +180,7 @@ export function QuizView({ questions, answers, reward, docent, photoFor, onAnswe
       {/* Always the same height, so a wrong tap moves nothing on the screen. */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, spacing.screen) }]}>
         {solved ? (
-          <Button label={last ? 'See Results' : 'Next Question'} loading={last && !reward} onPress={next} />
+          <Button label={last ? 'See results' : 'Next question'} loading={last && !reward} onPress={next} />
         ) : tapped.length > 0 ? (
           <Wash style={styles.tryAgain}>
             <Text style={[type.label, styles.feedback]} accessibilityLiveRegion="polite">
@@ -267,7 +267,7 @@ function ResultPopup({
         </View>
       </Wash>
 
-      <Button label="Back To Life List" onPress={onContinue} style={styles.resultButton} />
+      <Button label="Back to life list" onPress={onContinue} style={styles.resultButton} />
     </Popup>
   );
 }
@@ -301,7 +301,7 @@ export function QuizMessage({
         </Text>
         {body && <Text style={[type.bodyLg, styles.messageBody, styles.center, styles.muted]}>{body}</Text>}
         {busy && <ActivityIndicator color={colors.primary} />}
-        {onRetry && <Button label="Try Again" onPress={onRetry} style={styles.resultButton} />}
+        {onRetry && <Button label="Try again" onPress={onRetry} style={styles.resultButton} />}
       </View>
     </View>
   );

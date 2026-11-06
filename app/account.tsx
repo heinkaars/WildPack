@@ -91,7 +91,7 @@ export default function ProfileScreen() {
         <PopupButtons>
           <Button label="Not now" variant="outline" size="compact" onPress={() => setLocationBlocked(false)} style={styles.flex} />
           <Button
-            label="Open Settings"
+            label="Open settings"
             size="compact"
             onPress={() => {
               setLocationBlocked(false);

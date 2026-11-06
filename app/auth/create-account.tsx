@@ -48,7 +48,7 @@ export default function CreateAccountScreen() {
   return (
     <AuthScreen
       wordmark
-      title="Create Account"
+      title="Create account"
       subtitle="Hey, let's create an account to save all the data and species you've recorded."
       error={error}
       footer={
@@ -91,7 +91,7 @@ export default function CreateAccountScreen() {
       <PasswordInput
         value={confirm}
         onChangeText={setConfirm}
-        placeholder="Confirm Password"
+        placeholder="Confirm password"
         accessibilityLabel="Confirm password"
         autoComplete="new-password"
         disabled={busy}

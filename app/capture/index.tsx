@@ -195,7 +195,7 @@ export default function CaptureScreen() {
           <PopupButtons>
             <Button label="Choose photo" variant="outline" size="compact" onPress={handleUpload} style={styles.flex} />
             <Button
-              label={blocked ? 'Open Settings' : 'Allow Camera'}
+              label={blocked ? 'Open settings' : 'Allow camera'}
               size="compact"
               onPress={blocked ? () => Linking.openSettings() : requestPermission}
               style={styles.flex}

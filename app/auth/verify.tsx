@@ -91,7 +91,7 @@ export default function VerifyScreen() {
       <PasswordInput
         value={password}
         onChangeText={setPassword}
-        placeholder="New Password"
+        placeholder="New password"
         accessibilityLabel="New password"
         autoComplete="new-password"
         disabled={busy}
