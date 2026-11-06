@@ -15,7 +15,13 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const BUCKET = 'sightings';
-const PAGE = 100;
+/**
+ * As large as one Storage delete accepts (1,000 paths). EAS Hosting's free plan
+ * allows only 10 outgoing calls per request, and each page costs two (list +
+ * remove) on top of the sign-in check, rate limit and final delete. At 100 a
+ * user with a few hundred photos could not delete their account.
+ */
+const PAGE = 1000;
 
 /** Generous: a real user calls this once, ever. */
 const PER_USER_PER_MINUTE = 3;

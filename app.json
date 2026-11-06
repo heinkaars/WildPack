@@ -32,7 +32,12 @@
       "output": "server"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://wildpack.expo.app"
+        }
+      ],
       "expo-splash-screen",
       [
         "expo-camera",

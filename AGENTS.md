@@ -29,3 +29,10 @@ Temporary: using `gpt-4o-mini` for wildlife ID and AMA, running server-side via 
 - Swap point when iNaturalist API lands: server routes only. Clients (`lib/identify-service.ts`, `lib/ama-service.ts`) see no change if response shapes stay the same.
 - Photo capture: request `base64: true` directly from camera/picker (not via file path afterward — `expo-file-system` File class unreliable on real devices)
 - `OPENAI_API_KEY` in `.env` (gitignored); never ships in bundle
+
+## Hosting: API routes on EAS Hosting
+- **Live at** `https://wildpack.expo.app` (Expo's EAS Hosting, free plan). Native builds reach `/api/*` through the expo-router `origin` in `app.json`; in development the origin is the dev server, so local work is unaffected.
+- **Redeploy after changing anything under `app/api/` or `lib/` code those routes use:** `npx expo export -p web && npx eas-cli deploy --prod --environment production`. Deployments are immutable, so a changed env var also needs a redeploy.
+- **Server env vars live on EAS** (production environment): `OPENAI_API_KEY` and `SUPABASE_SERVICE_ROLE_KEY` as *sensitive* (a *secret* one cannot reach Hosting), `TRUSTED_PROXY_HOPS=1`, and the two `EXPO_PUBLIC_SUPABASE_*`. EAS values win over a local `.env`.
+- **`TRUSTED_PROXY_HOPS=1` was measured, not guessed:** EAS Hosting replaces any `x-forwarded-for` the caller sends with just the real address, so the single entry is unforgeable.
+- **Free-plan limits:** 100k requests/month, 10 outgoing calls per request, 10 ms CPU per request. A 7.6M-char base64 photo through identify passed in practice (2026-11-06). Delete account pages Storage by 1,000 to stay under the call limit. If limits bite, the $19/month Starter plan lifts them.
