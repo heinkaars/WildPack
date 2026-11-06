@@ -1,0 +1,52 @@
+# Keeps the free-plan Supabase project awake.
+#
+# Supabase pauses a free project after about a week without activity, and a
+# paused project leaves the app stuck on its cover screen (bad news during App
+# Store review). This runs a tiny read against the database every three days so
+# it never goes idle.
+#
+# It uses only the publishable key, which is already shipped inside the app, so
+# it can read nothing that row level security hides: with no signed-in user the
+# query returns an empty list, but it still reaches the database.
+#
+# Needs two repository secrets (GitHub → Settings → Secrets and variables →
+# Actions): SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY, the same values as
+# EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.
+#
+# If the ping fails (for example the project already paused), the run fails and
+# GitHub emails the repository owner.
+#
+# GitHub turns scheduled workflows off after 60 days with no commits to the
+# repository; it emails a warning first, and one click re-enables it.
+
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '17 6 */3 * *' # 06:17 UTC every third day
+  workflow_dispatch: # lets you run it by hand from the Actions tab
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping the database
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "Add the SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY repository secrets."
+            exit 1
+          fi
+          status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 --retry 3 --retry-delay 10 \
+            -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+            "$SUPABASE_URL/rest/v1/species?select=slug&limit=1")
+          echo "Supabase answered $status"
+          if [ "$status" != "200" ]; then
+            echo "Supabase did not answer normally. If the project is paused, restore it in the Supabase dashboard."
+            exit 1
+          fi
