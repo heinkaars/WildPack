@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import { colors, radii, sizes, type } from '../../lib/theme';
 import { Gradient } from './Gradient';
 import { ChevronLeft, ChevronRight } from './icons';
@@ -19,6 +19,8 @@ type Props = {
   chevronLeft?: boolean;
   chevronRight?: boolean;
   style?: StyleProp<ViewStyle>;
+  /** Overrides the label's text style, e.g. a larger font size. */
+  labelStyle?: StyleProp<TextStyle>;
 };
 
 export function Button({
@@ -31,6 +33,7 @@ export function Button({
   chevronLeft,
   chevronRight,
   style,
+  labelStyle,
 }: Props) {
   const fg = variant === 'primary' ? colors.textOnPrimary : colors.text;
   const content = loading ? (
@@ -38,7 +41,7 @@ export function Button({
   ) : (
     <>
       {chevronLeft && <ChevronLeft color={fg} />}
-      <Text style={[type.button, styles.label, { color: fg }]} numberOfLines={1}>
+      <Text style={[type.button, styles.label, { color: fg }, labelStyle]} numberOfLines={1}>
         {label}
       </Text>
       {chevronRight && <ChevronRight color={fg} />}
@@ -108,6 +111,8 @@ const styles = StyleSheet.create({
     borderColor: colors.text,
   },
   label: {
+    fontSize: 20,
+    lineHeight: 30,
     textAlign: 'center',
     flexShrink: 1,
   },
