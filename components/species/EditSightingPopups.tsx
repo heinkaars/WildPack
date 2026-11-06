@@ -143,7 +143,7 @@ type PlaceProps = {
   onClose: () => void;
 };
 
-/** A free-text place name. Saving it empty clears it back to "Location not recorded". */
+/** A free-text place name. Saving it empty clears it back to "Add location". */
 export function EditPlacePopup({ visible, value, onSave, onClose }: PlaceProps) {
   const [text, setText] = useState(value ?? '');
   const [saving, setSaving] = useState(false);

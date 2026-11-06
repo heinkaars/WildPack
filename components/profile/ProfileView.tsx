@@ -24,6 +24,7 @@ import {
 } from '../ui';
 import type { DocentAnimal } from '../ui';
 import { OnboardingBackground } from '../onboarding/OnboardingScreen';
+import { LOCATION_FEATURE_ENABLED } from '../../lib/location';
 import { Profile } from '../../lib/types';
 import { Stats } from '../../lib/xp';
 import { colors, radii, spacing, type } from '../../lib/theme';
@@ -177,13 +178,15 @@ export function ProfileView(props: Props) {
             </View>
           </View>
 
-          <View style={[styles.card, styles.locationCard]}>
-            <View style={styles.flex}>
-              <Text style={type.levelSemiBold}>Location</Text>
-              <Text style={[type.labelSm, styles.muted]}>Save where each sighting was taken</Text>
+          {LOCATION_FEATURE_ENABLED && (
+            <View style={[styles.card, styles.locationCard]}>
+              <View style={styles.flex}>
+                <Text style={type.levelSemiBold}>Location</Text>
+                <Text style={[type.labelSm, styles.muted]}>Save where each sighting was taken</Text>
+              </View>
+              <Switch checked={locationOn} onChange={props.onToggleLocation} accessibilityLabel="Location" />
             </View>
-            <Switch checked={locationOn} onChange={props.onToggleLocation} accessibilityLabel="Location" />
-          </View>
+          )}
 
           {!email && (
             <Text style={[type.labelSm, styles.muted, styles.note]}>

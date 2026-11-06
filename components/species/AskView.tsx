@@ -148,8 +148,8 @@ export function AskView({ speciesName, userName, docent, messages, sending, erro
 function Avatar({ docent }: { docent: DocentAnimal }) {
   return (
     <View style={styles.avatar} importantForAccessibility="no-hide-descendants">
-      {/* 36 wide makes the portrait 40 tall, so the hat fits inside the slot. */}
-      <Docent animal={docent} width={36} />
+      {/* 54 wide makes the portrait 60 tall, so the hat fits inside the slot. */}
+      <Docent animal={docent} width={54} />
     </View>
   );
 }
@@ -266,8 +266,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: 60,
     fontFamily: fonts.bodySemiBold,
-    fontSize: 18,
-    lineHeight: 27,
+    fontSize: 22,
+    lineHeight: 32,
     letterSpacing: -0.3,
     color: colors.text,
   },
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   userItem: { alignItems: 'flex-end' },
-  answerItem: { paddingLeft: 40, alignItems: 'flex-start' },
+  answerItem: { paddingLeft: 64, alignItems: 'flex-start' },
   typingItem: { marginTop: 16 },
   bubble: {
     maxWidth: BUBBLE_MAX,
@@ -304,8 +304,8 @@ const styles = StyleSheet.create({
   answerBubble: { backgroundColor: colors.surface, borderBottomLeftRadius: 4 },
   bubbleText: {
     fontFamily: fonts.body,
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 18,
+    lineHeight: 28,
     letterSpacing: -0.2,
     color: colors.textSecondary,
   },
@@ -320,8 +320,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     bottom: 0,
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
