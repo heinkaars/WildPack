@@ -64,7 +64,7 @@ create index if not exists ama_messages_thread_idx on public.ama_messages (user_
 create table if not exists public.quiz_results (
   user_id      uuid not null default auth.uid() references auth.users on delete cascade,
   quiz_date    date not null,
-  score        smallint not null check (score between 0 and 3),
+  score        smallint not null check (score between 0 and 5),
   completed_at timestamptz not null default now(),
   created_at   timestamptz not null default now(),
   primary key (user_id, quiz_date)
@@ -107,6 +107,10 @@ alter table public.sightings add  constraint sightings_photo_path_len check (cha
 
 alter table public.ama_messages drop constraint if exists ama_messages_body_len;
 alter table public.ama_messages add  constraint ama_messages_body_len check (char_length(body) <= 8000) not valid;
+
+-- The quiz grew from 3 to 5 questions; a table made before that still caps scores at 3.
+alter table public.quiz_results drop constraint if exists quiz_results_score_check;
+alter table public.quiz_results add  constraint quiz_results_score_check check (score between 0 and 5) not valid;
 
 -- ---------------------------------------------------------------------------
 -- Lifelist view: the collapsed, one-row-per-species shape the app renders.
