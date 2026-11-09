@@ -11,7 +11,9 @@ import {
   LOW_CONFIDENCE_THRESHOLD,
   identifySpecies,
 } from '../../lib/identify-service';
+import { hasAiConsent } from '../../lib/ai-consent';
 import { absoluteFill, colors, fonts, type } from '../../lib/theme';
+import { AiConsentPopup } from '../../components/AiConsentPopup';
 
 export type Failure = { title: string; body: string };
 
@@ -116,8 +118,15 @@ export default function IdentifyScreen() {
   // Which attempt has already been fired off. Without this, React's
   // development double-mount would send the photo to OpenAI twice.
   const started = useRef(-1);
+  // The photo waits here until the user has OK'd sending it to OpenAI (asked once).
+  const [consent, setConsent] = useState<'checking' | 'needed' | 'ok'>('checking');
 
   useEffect(() => {
+    hasAiConsent().then((ok) => setConsent(ok ? 'ok' : 'needed'));
+  }, []);
+
+  useEffect(() => {
+    if (consent !== 'ok') return;
     if (started.current === attempt) return;
     started.current = attempt;
 
@@ -142,7 +151,7 @@ export default function IdentifyScreen() {
         setFailure(error instanceof IdentifyError ? FAILURES[error.kind] : FAILURES.unknown);
       }
     })();
-  }, [attempt, photoBase64]);
+  }, [attempt, photoBase64, consent]);
 
   function handleRetry() {
     setFailure(null);
@@ -151,7 +160,13 @@ export default function IdentifyScreen() {
 
   return (
     <>
-      <IdentifyingView photoUri={photoUri} busy={!failure} />
+      <IdentifyingView photoUri={photoUri} busy={consent === 'ok' && !failure} />
+      <AiConsentPopup
+        visible={consent === 'needed'}
+        what="photo"
+        onAgree={() => setConsent('ok')}
+        onDecline={() => router.dismissTo('/')}
+      />
       {failure && (
         <FailurePopup
           failure={failure}

@@ -5,6 +5,8 @@ import { useLifelist } from '../../lib/lifelist-store';
 import { askAma } from '../../lib/ama-service';
 import { useAmaThread } from '../../lib/ama-store';
 import { AskView } from '../../components/species/AskView';
+import { AiConsentPopup } from '../../components/AiConsentPopup';
+import { hasAiConsent } from '../../lib/ai-consent';
 import { docentFromLook } from '../../components/ui';
 import { colors, spacing, type } from '../../lib/theme';
 
@@ -19,6 +21,8 @@ export default function AskScreen() {
   // A refused question used to fail silently: the message appeared, no answer
   // ever came, and nothing said why. Now the reason is shown above the field.
   const [error, setError] = useState<string | null>(null);
+  // A question typed before the user OK'd sending chats to OpenAI waits here.
+  const [pending, setPending] = useState<string | null>(null);
 
   if (!entry) {
     return (
@@ -29,6 +33,14 @@ export default function AskScreen() {
   }
 
   async function handleSend(question: string) {
+    if (!(await hasAiConsent())) {
+      setPending(question);
+      return;
+    }
+    await send(question);
+  }
+
+  async function send(question: string) {
     if (!entry) return;
     const history = messages;
     setSending(true);
@@ -46,16 +58,28 @@ export default function AskScreen() {
   }
 
   return (
-    <AskView
-      speciesName={entry.commonName}
-      userName={profile.name}
-      docent={docentFromLook(profile.look)}
-      messages={messages}
-      sending={sending}
-      error={error}
-      onSend={handleSend}
-      onClose={() => router.back()}
-    />
+    <>
+      <AskView
+        speciesName={entry.commonName}
+        userName={profile.name}
+        docent={docentFromLook(profile.look)}
+        messages={messages}
+        sending={sending}
+        error={error}
+        onSend={handleSend}
+        onClose={() => router.back()}
+      />
+      <AiConsentPopup
+        visible={pending !== null}
+        what="question"
+        onAgree={() => {
+          const question = pending;
+          setPending(null);
+          if (question) send(question);
+        }}
+        onDecline={() => setPending(null)}
+      />
+    </>
   );
 }
 

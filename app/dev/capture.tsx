@@ -3,7 +3,7 @@ import { Asset } from 'expo-asset';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import CaptureScreen from '../capture/index';
 import ResultScreen from '../capture/result';
-import { FAILURES, FailurePopup, IdentifyingView } from '../capture/identify';
+import IdentifyScreen, { FAILURES, FailurePopup, IdentifyingView } from '../capture/identify';
 import { useCaptureSession } from '../../lib/capture-session';
 import { BADGE_LADDER } from '../../lib/badges';
 import { IdentifyOutcome, LifelistEntry } from '../../lib/types';
@@ -47,12 +47,12 @@ const ENTRY: LifelistEntry = {
   location: null,
 };
 
-type Screen = 'camera' | 'identifying' | 'unsure' | 'offline' | 'result' | 'celebration' | 'badge';
+type Screen = 'camera' | 'identifying' | 'unsure' | 'offline' | 'result' | 'celebration' | 'badge' | 'consent';
 
 /**
  * The capture screens with a sample photo and identification, reachable without
  * a server — for checking the layout in the browser preview. Dev builds only.
- * `/dev/capture?screen=result` (default camera); `badge` is the celebration
+ * `/dev/capture?screen=result` (default camera); `consent` runs the real identify screen; `badge` is the celebration
  * with a badge unlocked, so its pop-up follows. Confirm on `result` really
  * saves the sample to the life list.
  */
@@ -63,6 +63,11 @@ export default function CapturePreview() {
   const [seeded, setSeeded] = useState(false);
 
   useEffect(() => {
+    if (screen === 'consent') {
+      setPhoto(PHOTO, 'sample');
+      setSeeded(true);
+      return;
+    }
     if (screen !== 'result' && screen !== 'celebration' && screen !== 'badge') return;
     setPhoto(PHOTO, 'sample');
     setOutcome(OUTCOME);
@@ -85,6 +90,9 @@ export default function CapturePreview() {
   switch (screen) {
     case 'identifying':
       return <IdentifyingView photoUri={PHOTO} />;
+    case 'consent':
+      // The real identify screen: asks for the OpenAI OK first if this browser hasn't given it.
+      return seeded ? <IdentifyScreen /> : null;
     case 'unsure':
     case 'offline':
       return (

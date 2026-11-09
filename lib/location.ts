@@ -12,7 +12,8 @@ const SHARING_KEY = 'location_sharing';
  * V1 does not ask for the phone's location: people type a place on the species
  * card instead. With this off, the onboarding pop-up and the profile switch are
  * hidden and captures are never tagged automatically. Flip it back on (and
- * re-add the "expo-location" plugin in app.json) to bring the feature back.
+ * re-add the "expo-location" plugin in app.json, and drop it from
+ * "expo.autolinking.exclude" in package.json) to bring the feature back.
  */
 export const LOCATION_FEATURE_ENABLED = false;
 

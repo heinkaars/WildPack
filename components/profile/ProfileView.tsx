@@ -12,6 +12,7 @@ import {
   docentFromLook,
   Gradient,
   CheckCircleIcon,
+  LockIcon,
   LogoutIcon,
   Popup,
   PopupButtons,
@@ -25,6 +26,7 @@ import {
 import type { DocentAnimal } from '../ui';
 import { OnboardingBackground } from '../onboarding/OnboardingScreen';
 import { LOCATION_FEATURE_ENABLED } from '../../lib/location';
+import { openPrivacyPolicy } from '../../lib/ai-consent';
 import { Profile } from '../../lib/types';
 import { Stats } from '../../lib/xp';
 import { colors, radii, spacing, type } from '../../lib/theme';
@@ -205,6 +207,7 @@ export function ProfileView(props: Props) {
                   <ActionRow icon={<LogoutIcon />} label="I have an account" onPress={props.onSignIn} divider />
                 </>
               )}
+              <ActionRow icon={<LockIcon color={colors.primary} />} label="Privacy policy" onPress={openPrivacyPolicy} divider />
               <ActionRow
                 icon={<TrashIcon />}
                 label="Delete account"
