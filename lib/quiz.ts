@@ -1,7 +1,7 @@
 import { LifelistEntry } from './types';
 
 /** How many questions one daily quiz has. */
-export const QUIZ_QUESTIONS = 3;
+export const QUIZ_QUESTIONS = 5;
 
 export type QuizQuestion = {
   speciesSlug: string;
