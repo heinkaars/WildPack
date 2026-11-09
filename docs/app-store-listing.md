@@ -248,9 +248,8 @@ otherwise.
 
 Optional: "Override to higher age rating" → 13+. This is only a suggestion, not a decision.
 Points to weigh:
-- The privacy policy (`public/privacy.html`, "Children") says WildPack is not aimed at children
-  under 13. With a 4+/9+ rating that line still holds as a statement of intent, but the two read
-  a bit oddly side by side; either keep both, raise the rating, or reword that line.
+- The privacy policy's "Children" section was reworded on 2026-11-09 ("for nature lovers of all
+  ages", younger children with a parent), so it now fits a 4+/9+ rating.
 - An open text chat with an AI is something App Review can look at more carefully when the
   rating is low.
 - Raising it hides the app from children whose parents set a stricter limit.
