@@ -8,7 +8,7 @@ import { badgeUnlocked } from '../../lib/badges';
 import { quizXp } from '../../lib/xp';
 
 const RACCOON = Asset.fromModule(require('../../assets/dev/raccoon.jpg')).uri;
-const SQUIRREL = Asset.fromModule(require('../../assets/lifelist/squirrel.jpg')).uri;
+const SQUIRREL = Asset.fromModule(require('../../assets/dev/squirrel.jpg')).uri;
 
 const QUESTIONS: QuizQuestion[] = [
   {
