@@ -1,5 +1,5 @@
 import { ReactNode, useMemo, useState } from 'react';
-import { FlatList, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomNav, Docent, docentFromLook, FilterIcon, ScreenStatusBar, StarIcon } from '../ui';
 import { BadgeShelf } from './BadgeShelf';
@@ -10,7 +10,6 @@ import { OverviewCard } from './OverviewCard';
 import { StreakPopup } from './StreakPopup';
 import { categoryById } from '../../lib/categories';
 import { applyView, DEFAULT_VIEW, isDefaultView, LifelistView } from '../../lib/lifelist-view';
-import { teasersStillHidden } from '../../lib/teasers';
 import { LifelistEntry, Profile } from '../../lib/types';
 import { localDateKey, Stats } from '../../lib/xp';
 import { colors, fonts, spacing, type } from '../../lib/theme';
@@ -32,7 +31,6 @@ type Props = {
 
 type Card =
   | { kind: 'found'; entry: LifelistEntry }
-  | { kind: 'locked'; key: string; image: ImageSourcePropType }
   | { kind: 'spacer'; key: string };
 
 const COLUMNS = 3;
@@ -61,18 +59,12 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
 
   const rows = useMemo(() => {
     const cards: Card[] = applyView(entries, view).map((entry) => ({ kind: 'found', entry }));
-    // Teasers belong to the whole list; once it's filtered they would only mislead.
-    if (!filtered) {
-      for (const teaser of teasersStillHidden(entries)) {
-        cards.push({ kind: 'locked', key: teaser.key, image: teaser.image });
-      }
-    }
     while (cards.length % COLUMNS !== 0) cards.push({ kind: 'spacer', key: `spacer-${cards.length}` });
 
     const chunked: Card[][] = [];
     for (let i = 0; i < cards.length; i += COLUMNS) chunked.push(cards.slice(i, i + COLUMNS));
     return chunked;
-  }, [entries, view, filtered]);
+  }, [entries, view]);
 
   const categoryLabels = view.categories
     .map((id) => categoryById(id)?.label)
@@ -162,7 +154,9 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <Text style={[type.bodyLg, styles.muted, styles.empty]}>
-            Nothing here yet{categoryLabels ? ` in ${categoryLabels}` : ''}.
+            {filtered
+              ? `Nothing here yet${categoryLabels ? ` in ${categoryLabels}` : ''}.`
+              : 'Nothing here yet. Tap Capture to add your first animal.'}
           </Text>
         }
         renderItem={({ item: row }) => (
@@ -176,8 +170,6 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
                   photoUri={card.entry.photoUri}
                   onPress={() => onOpenSpecies(card.entry.id)}
                 />
-              ) : card.kind === 'locked' ? (
-                <LifelistCard key={card.key} kind="locked" image={card.image} />
               ) : (
                 <LifelistCardSpacer key={card.key} />
               ),

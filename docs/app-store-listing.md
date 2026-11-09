@@ -7,8 +7,8 @@ Character counts were measured with a script. Facts about Apple's rules were che
 
 **Decided 2026-11-09:** support page at `/support.html` (in `public/`, live after the next
 deploy), no marketing URL for now, place names labelled as Other User Content.
-**Still open (marked ❓ below):** whether to raise the age rating above the calculated one, and
-whether the teaser photos stay in the release (that decides the content-rights answer).
+Teaser photos removed from the app, so content rights = No.
+**Still open (marked ❓ below):** the age rating — the calculated 4+/9+ is the default.
 
 ---
 
@@ -41,11 +41,11 @@ Snap, identify & learn animals
   what WildPack does.
 
 ### Content rights
-"Does your app contain, show, or access third-party content?" ❓
-- **If the "Not found yet" teaser photos are removed** from the release (being considered): **No**.
-- **If they stay** (`assets/lifelist/`, from the Figma file): **No** only if they are yours or
-  made for the app; if they are licensed stock photos, **Yes, and I have the rights**. Check with
-  the designer where they came from.
+"Does your app contain, show, or access third-party content?" → **No.** The app shows the
+user's own photos, its own artwork and AI-written text. The "Not found yet" teaser photos from
+the Figma file were removed before release (2026-11-09) for this reason. Two of them remain only
+as sample images for the `/dev/...` preview screens, which production builds redirect away from;
+don't use those in store screenshots.
 
 ### Copyright
 ```
