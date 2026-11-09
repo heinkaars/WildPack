@@ -100,7 +100,7 @@ export default function ResultScreen() {
         <View style={styles.card}>
           <View style={styles.titleRow}>
             <View style={styles.titles}>
-              <Text style={type.headingM} numberOfLines={2} accessibilityRole="header">
+              <Text style={[type.headingM, styles.title]} numberOfLines={2} accessibilityRole="header">
                 {selected.commonName}
               </Text>
               <Text style={[type.captionLg, styles.scientific]} numberOfLines={1}>
@@ -110,7 +110,7 @@ export default function ResultScreen() {
             <ConfidencePill confidence={selected.confidence} best={isBest} />
           </View>
 
-          <Text style={[type.bodySm, styles.muted]}>{selected.description}</Text>
+          <Text style={[type.bodySm, styles.muted, styles.description]}>{selected.description}</Text>
 
           <OtherMatches
             others={others}
@@ -158,6 +158,9 @@ export default function ResultScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   muted: { color: colors.textMuted },
+  // Same sizes as the species card (components/species/SpeciesView.tsx).
+  title: { fontSize: 28, lineHeight: 34 },
+  description: { fontSize: 18, lineHeight: 28 },
   scroll: { paddingBottom: spacing.lg },
 
   // Figma: a 375pt photo, rounded 30, running up under the status bar.
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
   card: { paddingHorizontal: spacing.screen, paddingTop: 20, gap: 20 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm },
   titles: { flex: 1 },
-  scientific: { color: 'rgba(255, 153, 0, 0.9)' },
+  scientific: { color: 'rgba(255, 153, 0, 0.9)', fontSize: 14, lineHeight: 22 },
 
   footer: { paddingHorizontal: spacing.screen, paddingTop: spacing.sm, gap: 12 },
   error: { color: colors.warning, textAlign: 'center' },

@@ -242,7 +242,7 @@ Figma: species-Details `88384:3654`, species-Details-Ask `88384:3692`, -ifNotRel
 ## What the daily quiz added
 
 Ours: Figma has no quiz yet, so it is built from existing tokens and worth showing the designer.
-- **Flow:** a card on Home (hidden while the life list is empty) opens `app/quiz.tsx`: 3 multiple-choice
+- **Flow:** a card on Home (hidden while the life list is empty) opens `app/quiz.tsx`: 5 multiple-choice (3 until 2026-11-09)
   questions and the species' photo. A wrong tap turns red and the user keeps trying: the right answer and
   its short explanation only show once they find it. The screen fits without scrolling (the photo takes the
   room left over). Then a results pop-up (and the badge pop-up if the XP crossed one). One quiz per local calendar day.
@@ -250,7 +250,7 @@ Ours: Figma has no quiz yet, so it is built from existing tokens and worth showi
   not quizzed lately; a short life list repeats species. Recent questions are sent along so they aren't
   asked again. Written once a day and kept in the phone's `quizzes` table with each answer, so leaving
   resumes and reopening can't draw a new set.
-- **XP** (`lib/xp.ts`): 20 for finishing + 10 per answer right on the first tap (retries earn nothing), 20–50. The streak still counts captures only.
+- **XP** (`lib/xp.ts`): 20 for finishing + 10 per answer right on the first tap (retries earn nothing), 20–70. The streak still counts captures only.
 - **Sync:** only the score travels (`quiz_results` in `supabase/schema.sql`, outbox job `quiz.insert`), and
   it moves with an account switch. **That table must exist on Supabase before release**: run the schema.
 - `/dev/quiz?screen=quiz|badge|loading|error|done|empty` and `/dev/home?screen=quiz-done` preview it.
