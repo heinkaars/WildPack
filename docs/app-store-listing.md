@@ -5,8 +5,10 @@ bundle ID `com.heinkaars.wildpack`). Copy each block into the field with the sam
 Character counts were measured with a script. Facts about Apple's rules were checked on
 2026-11-09; sources are listed at the end.
 
-**Still to decide (marked ❓ below):** support URL page, marketing URL, the place-name question in
-the privacy label, and the 13+ age override.
+**Decided 2026-11-09:** support page at `/support.html` (in `public/`, live after the next
+deploy), no marketing URL for now, place names labelled as Other User Content.
+**Still open (marked ❓ below):** the 13+ age override (parked), the content-rights check on the
+teaser photos, and a phone number for App Review.
 
 ---
 
@@ -116,19 +118,17 @@ Singular forms are enough; Apple matches plurals. "Identify" isn't needed next t
 "identifier", and words already in the name or subtitle (snap, identify, learn, animals) count
 towards search anyway, so they were left out to make room.
 
-### Support URL — required ❓
-Apple requires a page that shows real contact information (an email is enough).
-- **Option A (recommended): a small support page** at `https://wildpack.expo.app/support.html`
-  with the contact email, a few common questions (why an ID can be wrong, how to keep my list
-  on a new phone, how to delete my account) and a link to the privacy policy. It goes in
-  `public/` next to the privacy policy and is live after the next deploy.
-- **Option B: use the privacy policy URL.** It has the contact email, so it technically works,
-  but App Review sometimes rejects a support URL that is only a privacy policy.
+### Support URL — required
+```
+https://wildpack.expo.app/support.html
+```
+Apple requires a page that shows real contact information. `public/support.html` has the contact
+email, four common questions (wrong ID, no connection, new phone, delete account) and a link to
+the privacy policy. **It only works after the next deploy** (`npx expo export -p web && npx
+eas-cli deploy --prod --environment production`); open the link once before submitting.
 
-### Marketing URL — optional ❓
-- Leave empty (fine for a first release), or
-- point it at a simple landing page later (for example `https://wildpack.expo.app/`, which
-  currently serves the web build of the app, not a landing page).
+### Marketing URL — optional
+Leave empty for 1.0 (decided). Can be added in any later update.
 
 ### Version / build
 - Version: `1.0.0` (matches `app.json`).
@@ -169,15 +169,11 @@ it is kept so briefly and only for security, **leave it off the label**; the pri
 already explains it. If you prefer to be extra careful, add it as **Identifiers → Device ID**,
 App Functionality, Not linked — but that tends to confuse readers more than it helps.
 
-**❓ Place names.** On a species page the user can type where they saw an animal
-("e.g. Vondelpark, Amsterdam"). That is a place the user writes themselves, not the phone's
-location, and WildPack never asks for location permission. Two ways to label it:
-- **Recommended: include it under Other User Content** (as above) and keep "no location".
-  Apple lets free-form text be labelled as Other User Content.
-- **Extra careful: also tick Location → Coarse Location**, App Functionality, Linked. Apple says
-  a prompt for a specific type of data must be declared as that type, and the field is a prompt
-  for a place. The downside is that the store page then shows "Location", which contradicts
-  "WildPack doesn't use your location" in the description and privacy policy.
+**Place names (decided: Other User Content).** On a species page the user can type where they
+saw an animal ("e.g. Vondelpark, Amsterdam"). That is free text the user writes, not the phone's
+location, and WildPack never asks for location permission, so it is part of Other User Content
+and the label shows no Location. (The stricter reading would add Coarse Location; not chosen,
+because it would contradict "WildPack doesn't use your location".)
 
 **Not collected (leave unticked):** Health & Fitness, Financial Info, Precise Location, Sensitive
 Info, Contacts, Browsing History, Search History, Device ID, Purchases, Usage Data, Diagnostics
@@ -244,7 +240,7 @@ answers above are None, not Frequent. The new "Dating and Relationships" declara
 Store Connect from 16 Nov 2026, required for all apps by 12 Jan 2027) targets virtual companions
 that engage in romantic or sexual content; WildPack's guide doesn't.
 
-### Result and override ❓
+### Result and override ❓ (parked 2026-11-09 — decide before submitting)
 These answers give **4+** (or **9+** with Infrequent Realistic Violence). **Recommendation:
 choose "Override to higher age rating" → 13+.** Reasons: the privacy policy says WildPack is not
 aimed at children under 13; an open text chat with an AI is something App Review looks at
