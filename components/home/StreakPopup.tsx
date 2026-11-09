@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Popup, StarIcon } from '../ui';
-import { XP_STREAK_DAYS_COUNTED } from '../../lib/xp';
 import { colors, type } from '../../lib/theme';
 
 type Props = {
@@ -19,10 +18,10 @@ export function StreakPopup({ visible, onClose, streak, activeToday }: Props) {
   const title = streak > 0 ? `${streak}-day streak` : 'No streak yet';
   const status =
     streak === 0
-      ? 'Capture an animal or finish the daily quiz today to start one.'
+      ? 'Start one today!'
       : activeToday
-        ? 'Today counts. Come back tomorrow to keep it going.'
-        : 'Capture an animal or finish the daily quiz today to keep it going.';
+        ? 'Come back tomorrow to keep it going!'
+        : 'Capture or quiz today to keep it going!';
 
   return (
     <Popup visible={visible} onClose={onClose}>
@@ -31,9 +30,7 @@ export function StreakPopup({ visible, onClose, streak, activeToday }: Props) {
         <Text style={[type.headingM, styles.center]}>{title}</Text>
         <Text style={[type.bodyLg, styles.center]}>{status}</Text>
         <Text style={[type.bodyLg, styles.center, styles.muted]}>
-          Your streak counts the days in a row you've captured an animal or finished the daily quiz. Miss a full day and
-          it starts over. Each streak day earns bonus XP, and the bonus grows every day up to day{' '}
-          {XP_STREAK_DAYS_COUNTED}.
+          Capture an animal or finish the quiz each day. Miss a day and it starts over. Longer streaks earn more XP!
         </Text>
         <Button label="Got it" onPress={onClose} style={styles.button} />
       </View>
