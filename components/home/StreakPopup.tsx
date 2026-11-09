@@ -30,7 +30,7 @@ export function StreakPopup({ visible, onClose, streak, activeToday }: Props) {
         <Text style={[type.headingM, styles.center]}>{title}</Text>
         <Text style={[type.bodyLg, styles.center]}>{status}</Text>
         <Text style={[type.bodyLg, styles.center, styles.muted]}>
-          Capture an animal or finish the quiz each day. Miss a day and it starts over. Longer streaks earn more XP!
+          Capture wildlife or finish the quiz each day. Miss a day and it starts over. Longer streaks earn more XP!
         </Text>
         <Button label="Got it" onPress={onClose} style={styles.button} />
       </View>
