@@ -4,8 +4,9 @@
  *
  * - a species new to the life list: 50
  * - seeing a species again: 10
- * - the first capture of each day: 20, plus 10 for every day of the streak
- *   before it, up to 60 — so keeping a streak going pays more each day
+ * - every streak day (a day with a capture or a finished daily quiz): 20, plus
+ *   10 for every day of the streak before it, up to 60 — so keeping a streak
+ *   going pays more each day. Whichever comes first that day earns it.
  * - asking a question in a species chat: 5, for the first 3 per species
  * - finishing the daily quiz: 20, plus 10 for each right answer
  *
@@ -43,9 +44,9 @@ export type Stats = {
   xp: number;
   /** Number of sightings, repeats included ("Capture 13"). */
   captures: number;
-  /** Consecutive days with a capture, ending today or yesterday; 0 once broken. */
+  /** Consecutive streak days, ending today or yesterday; 0 once broken. */
   streak: number;
-  /** Local dates (YYYY-MM-DD) with at least one capture. */
+  /** Local dates (YYYY-MM-DD) with a capture or a finished daily quiz: the streak days. */
   activeDays: Set<string>;
   /** Right answers on each local date (YYYY-MM-DD) with a finished quiz. */
   quizScores: Record<string, number>;
@@ -68,20 +69,11 @@ export function computeStats(activity: Activity, now: Date = new Date()): Stats 
   let xp = 0;
   const seen = new Set<string>();
   const activeDays = new Set<string>();
-  // Streak length on each active day, built up in date order.
-  const runOn = new Map<string, number>();
 
   for (const sighting of activity.sightings) {
     xp += seen.has(sighting.speciesSlug) ? XP_REPEAT_SIGHTING : XP_NEW_SPECIES;
     seen.add(sighting.speciesSlug);
-
-    const day = localDateKey(new Date(sighting.seenAt));
-    if (!activeDays.has(day)) {
-      activeDays.add(day);
-      const run = (runOn.get(previousDay(day)) ?? 0) + 1;
-      runOn.set(day, run);
-      xp += dayXp(run);
-    }
+    activeDays.add(localDateKey(new Date(sighting.seenAt)));
   }
 
   for (const count of Object.values(activity.questionsBySpecies)) {
@@ -92,6 +84,16 @@ export function computeStats(activity: Activity, now: Date = new Date()): Stats 
   for (const quiz of activity.quizzes) {
     xp += quizXp(quiz.score);
     quizScores[quiz.date] = quiz.score;
+    activeDays.add(quiz.date);
+  }
+
+  // Streak length on each streak day, built up in date order (date keys sort
+  // as dates). Each day pays its bonus once, however it was reached.
+  const runOn = new Map<string, number>();
+  for (const day of [...activeDays].sort()) {
+    const run = (runOn.get(previousDay(day)) ?? 0) + 1;
+    runOn.set(day, run);
+    xp += dayXp(run);
   }
 
   const today = localDateKey(now);
@@ -101,7 +103,7 @@ export function computeStats(activity: Activity, now: Date = new Date()): Stats 
   return { xp, captures: activity.sightings.length, streak, activeDays, quizScores };
 }
 
-/** The bonus for the first capture on a day that is day `run` of a streak. */
+/** The bonus for a day that is day `run` of a streak. */
 function dayXp(run: number): number {
   return XP_DAY_BASE + XP_PER_STREAK_DAY * Math.min(run, XP_STREAK_DAYS_COUNTED);
 }

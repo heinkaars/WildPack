@@ -7,6 +7,7 @@ import { DailyQuizCard } from './DailyQuizCard';
 import { FilterPopup } from './FilterPopup';
 import { LifelistCard, LifelistCardSpacer } from './LifelistCard';
 import { OverviewCard } from './OverviewCard';
+import { StreakPopup } from './StreakPopup';
 import { categoryById } from '../../lib/categories';
 import { applyView, DEFAULT_VIEW, isDefaultView, LifelistView } from '../../lib/lifelist-view';
 import { teasersStillHidden } from '../../lib/teasers';
@@ -54,6 +55,7 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
   const insets = useSafeAreaInsets();
   const [view, setView] = useState<LifelistView>(DEFAULT_VIEW);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [streakOpen, setStreakOpen] = useState(false);
 
   const filtered = !isDefaultView(view);
 
@@ -99,13 +101,20 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
             </View>
           </Pressable>
 
-          <View style={styles.streak} accessible accessibilityLabel={`${stats.streak}-day streak`}>
+          <Pressable
+            onPress={() => setStreakOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`${stats.streak}-day streak`}
+            accessibilityHint="Explains what a streak is"
+            hitSlop={8}
+            style={({ pressed }) => [styles.streak, pressed && styles.pressed]}
+          >
             <StarIcon size={18} />
             <Text style={type.count}>{stats.streak}</Text>
-          </View>
+          </Pressable>
         </View>
 
-        <OverviewCard stats={stats} now={now} />
+        <OverviewCard stats={stats} />
         {/* The quiz asks about the life list, so it has nothing to offer until there is one. */}
         {entries.length > 0 && (
           <DailyQuizCard score={stats.quizScores[localDateKey(now)]} onOpen={onOpenQuiz} onReplay={onReplayQuiz} />
@@ -184,6 +193,12 @@ export function HomeView({ profile, entries, stats, onOpenProfile, onOpenSpecies
       />
 
       <FilterPopup visible={filterOpen} view={view} onChange={setView} onClose={() => setFilterOpen(false)} />
+      <StreakPopup
+        visible={streakOpen}
+        onClose={() => setStreakOpen(false)}
+        streak={stats.streak}
+        activeToday={stats.activeDays.has(localDateKey(now))}
+      />
     </View>
   );
 }

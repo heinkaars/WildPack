@@ -6,7 +6,7 @@ import { useLifelist } from './lifelist-store';
 import { pickQuizSpecies, QuizQuestion, scoreQuiz } from './quiz';
 import { fetchQuizQuestions } from './quiz-service';
 import { sync } from './sync';
-import { computeStats, localDateKey, quizXp } from './xp';
+import { computeStats, localDateKey } from './xp';
 
 export type QuizReward = {
   score: number;
@@ -34,7 +34,7 @@ const AVOID_QUESTIONS = 15;
  */
 export function useDailyQuiz() {
   const { userId } = useAuth();
-  const { refresh } = useLifelist();
+  const { recordQuiz } = useLifelist();
   // Fixed when the screen opens, so a quiz running past midnight still counts for the day it began.
   const [date] = useState(() => localDateKey(new Date()));
   const [state, setState] = useState<DailyQuizState>({ status: 'loading' });
@@ -100,11 +100,12 @@ export function useDailyQuiz() {
 
       await db.saveQuizResult({ date, score, completedAt, answers });
       await db.enqueue('quiz.insert', { date, score, completedAt });
-      await refresh();
+      await recordQuiz();
       if (userId) sync(userId);
 
-      const earned = quizXp(score);
-      const xpTotal = xpBefore + earned;
+      // More than the quiz's own XP when it is the day's first streak day.
+      const xpTotal = computeStats(await db.readActivity()).xp;
+      const earned = xpTotal - xpBefore;
       setState({
         status: 'ready',
         questions,
@@ -112,7 +113,7 @@ export function useDailyQuiz() {
         reward: { score, xpEarned: earned, xpTotal, badge: badgeUnlocked(xpBefore, xpTotal) },
       });
     },
-    [state, date, refresh, userId],
+    [state, date, recordQuiz, userId],
   );
 
   return { state, retry: load, answer };

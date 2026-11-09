@@ -28,21 +28,11 @@ const DEFAULT_PROFILE: Profile = {
 // rather than pretending to be one.
 const PLACEHOLDER_PROFILE: Profile = { name: 'Explorer', look: DEFAULT_LOOK };
 
-function dateKey(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-function isYesterday(previousKey: string, todayKey: string): boolean {
-  const previous = new Date(previousKey);
-  const today = new Date(todayKey);
-  const diffDays = Math.round((today.getTime() - previous.getTime()) / 86_400_000);
-  return diffDays === 1;
-}
-
-function nextStreakValue(current: number, lastActivityDate: string | null, todayKey: string): number {
-  if (lastActivityDate === todayKey) return current || 1;
-  if (lastActivityDate && isYesterday(lastActivityDate, todayKey)) return current + 1;
-  return 1;
+/** The latest streak day, i.e. what the profile stores as its last activity. */
+function lastActiveDay(stats: Stats): string | null {
+  let latest: string | null = null;
+  for (const day of stats.activeDays) if (latest === null || day > latest) latest = day;
+  return latest;
 }
 
 type LifelistState = {
@@ -66,6 +56,8 @@ const EMPTY_STATS: Stats = { xp: 0, captures: 0, streak: 0, activeDays: new Set(
 type LifelistContextValue = Omit<LifelistState, 'lastActivityDate'> & {
   /** Re-reads the local database, e.g. after a chat question changed the XP. */
   refresh: () => Promise<void>;
+  /** Re-reads the local database after a finished daily quiz and saves the streak it may have moved. */
+  recordQuiz: () => Promise<void>;
   getEntry: (id: string) => LifelistEntry | undefined;
   /** Takes the photo's base64 so the sighting keeps a durable local copy. */
   addSighting: (guess: SpeciesGuess, photoBase64: string, location: string | null) => Promise<CelebrationPayload>;
@@ -166,10 +158,34 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<LifelistContextValue>(() => {
     const { lastActivityDate: _ignored, ...visible } = state;
 
+    // The profile keeps a copy of the streak for the server. It is worked out
+    // from the same records as the one on screen, so the two always agree.
+    // While the real profile is still in flight it is left alone: the name
+    // here would be the stand-in, and pushing it would replace the user's own
+    // name with a placeholder — permanently, since the server keeps whatever
+    // it was last told. The streak catches up on the next streak day.
+    const saveStreak = async (stats: Stats) => {
+      const current = stateRef.current;
+      const lastActivityDate = lastActiveDay(stats);
+      setState((prev) => ({ ...prev, streak: stats.streak, lastActivityDate }));
+      if (!current.profileLoaded) return;
+      if (current.streak === stats.streak && current.lastActivityDate === lastActivityDate) return;
+      const profileRow = { ...current.profile, streak: stats.streak, lastActivityDate };
+      await db.writeProfile(profileRow);
+      await db.enqueue('profile.update', profileRow);
+    };
+
     return {
       ...visible,
 
       refresh,
+
+      recordQuiz: async () => {
+        const [entries, activity] = await Promise.all([db.readLifelist(), db.readActivity()]);
+        const stats = computeStats(activity);
+        setState((prev) => ({ ...prev, entries, stats }));
+        await saveStreak(stats);
+      },
 
       getEntry: (id) => state.entries.find((entry) => entry.id === id),
 
@@ -216,7 +232,6 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
         const sightingId = uuid();
         const now = new Date();
         const seenAt = now.toISOString();
-        const todayKey = dateKey(now);
 
         const isNewSpecies = !current.entries.some((entry) => entry.id === speciesSlug);
 
@@ -250,28 +265,16 @@ export function LifelistProvider({ children }: { children: React.ReactNode }) {
           seenAt,
         });
 
-        const streak = nextStreakValue(current.streak, current.lastActivityDate, todayKey);
-
         // Queued in dependency order: the species row must exist on the server
         // before the sighting that points at it.
         await db.enqueue('species.upsert', species);
         await db.enqueue('sighting.insert', { id: sightingId, speciesSlug, location, seenAt });
         if (photoLocalUri) await db.enqueue('photo.upload', { sightingId });
 
-        // Capturing while the real profile is still in flight must not touch
-        // it. The name here would be the stand-in, and pushing it would replace
-        // the user's own name with a placeholder — permanently, since the
-        // server keeps whatever it was last told. The streak catches up on the
-        // next capture once the profile has landed.
-        if (current.profileLoaded) {
-          const profileRow = { ...current.profile, streak, lastActivityDate: todayKey };
-          await db.writeProfile(profileRow);
-          await db.enqueue('profile.update', profileRow);
-        }
-
         const [entries, activity] = await Promise.all([db.readLifelist(), db.readActivity()]);
         const stats = computeStats(activity);
-        setState((prev) => ({ ...prev, entries, streak, lastActivityDate: todayKey, stats }));
+        setState((prev) => ({ ...prev, entries, stats }));
+        await saveStreak(stats);
 
         if (userId) sync(userId);
 
