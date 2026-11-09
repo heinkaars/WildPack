@@ -7,8 +7,8 @@ Character counts were measured with a script. Facts about Apple's rules were che
 
 **Decided 2026-11-09:** support page at `/support.html` (in `public/`, live after the next
 deploy), no marketing URL for now, place names labelled as Other User Content.
-**Still open (marked ❓ below):** the 13+ age override (parked), the content-rights check on the
-teaser photos, and a phone number for App Review.
+**Still open (marked ❓ below):** whether to raise the age rating above the calculated one, and
+whether the teaser photos stay in the release (that decides the content-rights answer).
 
 ---
 
@@ -41,10 +41,11 @@ Snap, identify & learn animals
   what WildPack does.
 
 ### Content rights
-"Does your app contain, show, or access third-party content?" → **No** — *if* the animal photos
-used for the "Not found yet" teasers on the life list (`assets/lifelist/`) are yours or licensed
-for use in the app. They came from the Figma file; ❓ check with the designer where they came
-from. If they are stock photos with a licence, the answer is **Yes, and I have the rights**.
+"Does your app contain, show, or access third-party content?" ❓
+- **If the "Not found yet" teaser photos are removed** from the release (being considered): **No**.
+- **If they stay** (`assets/lifelist/`, from the Figma file): **No** only if they are yours or
+  made for the app; if they are licensed stock photos, **Yes, and I have the rights**. Check with
+  the designer where they came from.
 
 ### Copyright
 ```
@@ -240,13 +241,19 @@ answers above are None, not Frequent. The new "Dating and Relationships" declara
 Store Connect from 16 Nov 2026, required for all apps by 12 Jan 2027) targets virtual companions
 that engage in romantic or sexual content; WildPack's guide doesn't.
 
-### Result and override ❓ (parked 2026-11-09 — decide before submitting)
-These answers give **4+** (or **9+** with Infrequent Realistic Violence). **Recommendation:
-choose "Override to higher age rating" → 13+.** Reasons: the privacy policy says WildPack is not
-aimed at children under 13; an open text chat with an AI is something App Review looks at
-carefully for young children; and it avoids the Kids category rules (you can't use "Made for
-Kids" anyway, because the app sends data to a third party). The downside is small: it only hides
-the app from children whose parents set a stricter limit.
+### Result and override ❓ (your decision, still open)
+These answers give **4+** (or **9+** with Infrequent Realistic Violence). That calculated rating
+is the default: under "Age Categories and Override" choose **Not Applicable** unless you decide
+otherwise.
+
+Optional: "Override to higher age rating" → 13+. This is only a suggestion, not a decision.
+Points to weigh:
+- The privacy policy (`public/privacy.html`, "Children") says WildPack is not aimed at children
+  under 13. With a 4+/9+ rating that line still holds as a statement of intent, but the two read
+  a bit oddly side by side; either keep both, raise the rating, or reword that line.
+- An open text chat with an AI is something App Review can look at more carefully when the
+  rating is low.
+- Raising it hides the app from children whose parents set a stricter limit.
 
 "Made for Kids" → **Not applicable**. Age Suitability URL → leave empty.
 
@@ -293,8 +300,9 @@ Tips:
 
 **Sign-in required:** **No** (untick "Sign-in required"; no demo account needed).
 
-**Contact information:** Hein Kaars Sijpesteijn, hein.wildpack@gmail.com, phone ❓ (Apple asks
-for a phone number here; it is not shown publicly).
+**Contact information:** Hein Kaars Sijpesteijn, hein.wildpack@gmail.com, and your phone
+number (you have it; it is deliberately not written here because this repository is public on
+GitHub). Apple doesn't show it publicly.
 
 **Notes** (paste into "Notes"):
 ```
