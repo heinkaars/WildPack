@@ -59,8 +59,6 @@ export const colors = {
   overlay: 'rgba(0, 0, 0, 0.7)',
   /** Switch track when off (Figma "black/10", a warm brown at 10%). */
   switchTrack: 'rgba(110, 66, 0, 0.1)',
-  /** "white/40": the week's day pills on Home when no capture that day. */
-  dayPill: 'rgba(255, 255, 255, 0.4)',
   /** Base of the orange wash (soft orange 30%) under Home's overview card and life-list cards. */
   wash: 'rgba(255, 153, 0, 0.3)',
   /** Profile's Delete account row (Tailwind red-500 in Figma), its icon tile and chevron. */
