@@ -39,11 +39,16 @@ export function BadgeShelf({ xp }: { xp: number }) {
           <View style={styles.info}>
             <BadgeTile badge={open.id} earned={isBadgeEarned(open, xp)} size={72} />
             <Text style={[type.headingM, styles.center]}>{open.name}</Text>
-            <Text style={[type.bodyLg, styles.center, styles.muted]}>
-              {isBadgeEarned(open, xp)
-                ? `Earned at ${open.xp} XP.`
-                : `Unlocks at ${open.xp} XP — ${open.xp - xp} XP to go. Capture species, keep your streak going and ask your docent questions to earn XP.`}
-            </Text>
+            {isBadgeEarned(open, xp) ? (
+              <Text style={[type.bodyLg, styles.center]}>Unlocked at {open.xp} XP. Nice work!</Text>
+            ) : (
+              <>
+                <Text style={[type.bodyLg, styles.center]}>{open.xp - xp} XP to go!</Text>
+                <Text style={[type.bodyLg, styles.center, styles.muted]}>
+                  Capture wildlife, take the daily quiz and ask about the animals you find to earn XP.
+                </Text>
+              </>
+            )}
             <Button label="Got it" onPress={() => setShown(false)} style={styles.button} />
           </View>
         )}

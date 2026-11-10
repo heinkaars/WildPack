@@ -35,8 +35,8 @@ export function AiConsentPopup({ visible, what, onAgree, onDecline }: Props) {
 
   const body =
     what === 'photo'
-      ? 'To name the animal, WildPack sends your photo to OpenAI, an AI company. The same goes for questions you ask about a species later.'
-      : 'To answer, WildPack sends your question and the chat so far to OpenAI, an AI company. The same goes for photos you identify.';
+      ? 'To identify the animal, WildPack sends your photo and any questions you ask later to OpenAI.'
+      : 'To answer, WildPack sends your question, the chat so far and any photos you identify to OpenAI.';
 
   return (
     <Popup visible={visible} onClose={saving ? undefined : onDecline}>
@@ -45,9 +45,8 @@ export function AiConsentPopup({ visible, what, onAgree, onDecline }: Props) {
         <Text style={[type.headingM, styles.center]} accessibilityRole="header">
           Before I take a look
         </Text>
-        <Text style={[type.bodySm, styles.center, styles.muted]}>{body}</Text>
         <Text style={[type.bodySm, styles.center, styles.muted]}>
-          OpenAI uses it only to answer, not to train its AI. Your name and email are never sent.
+          {body} They’re not used for AI training, and your name and email are never shared.
         </Text>
         <Text
           style={[type.bodySm, styles.center, styles.link]}
