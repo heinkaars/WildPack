@@ -1,30 +1,15 @@
-import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
-import { LockIcon, Wash } from '../ui';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Wash } from '../ui';
 import { colors, type } from '../../lib/theme';
 
-type Props =
-  | { kind: 'found'; name: string; photoUri: string; onPress: () => void }
-  | { kind: 'locked'; image: ImageSourcePropType };
+type Props = { kind: 'found'; name: string; photoUri: string; onPress: () => void };
 
 /**
  * One card in Home's life list (88384:3217): a found species with its own
- * photo and name, or a locked teaser with "Not found yet".
+ * photo and name. (Figma's locked "Not found yet" teasers were removed before
+ * the App Store release.)
  */
 export function LifelistCard(props: Props) {
-  if (props.kind === 'locked') {
-    return (
-      <View style={styles.slot} accessible accessibilityLabel="Not found yet">
-        <Wash style={styles.card}>
-          <Image source={props.image} style={styles.photo} />
-          <View style={styles.label}>
-            <LockIcon />
-            <Text style={[type.captionSm, styles.caption]}>Not found yet</Text>
-          </View>
-        </Wash>
-      </View>
-    );
-  }
-
   return (
     <Pressable
       onPress={props.onPress}

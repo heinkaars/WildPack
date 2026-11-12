@@ -7,7 +7,7 @@ import type { DocentAnimal } from '../../components/ui';
 import { computeStats, localDateKey } from '../../lib/xp';
 import { LifelistEntry } from '../../lib/types';
 
-const SQUIRREL = Asset.fromModule(require('../../assets/lifelist/squirrel.jpg')).uri;
+const SQUIRREL = Asset.fromModule(require('../../assets/dev/squirrel.jpg')).uri;
 const RACCOON = Asset.fromModule(require('../../assets/dev/raccoon.jpg')).uri;
 
 function daysAgo(days: number, hour = 10): string {

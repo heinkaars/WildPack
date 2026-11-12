@@ -23,10 +23,10 @@ export function DailyQuizCard({ score, onOpen, onReplay }: Props) {
           </Gradient>
         </View>
         <View style={styles.text}>
-          <Text style={type.levelSemiBold}>
+          <Text style={[type.levelSemiBold, styles.title]}>
             Quiz done: {score} of {QUIZ_QUESTIONS} right
           </Text>
-          <Text style={[type.labelSm, styles.muted]}>+{quizXp(score)} XP earned. New quiz tomorrow.</Text>
+          <Text style={[type.labelSm, styles.subtitle, styles.muted]}>+{quizXp(score)} XP earned. New quiz tomorrow.</Text>
         </View>
         {onReplay && (
           <Pressable

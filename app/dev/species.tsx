@@ -7,7 +7,7 @@ import { AskView, ChatMessage } from '../../components/species/AskView';
 import { LifelistEntry, Sighting } from '../../lib/types';
 
 const RACCOON = Asset.fromModule(require('../../assets/dev/raccoon.jpg')).uri;
-const RACCOON_2 = Asset.fromModule(require('../../assets/lifelist/raccoon.jpg')).uri;
+const RACCOON_2 = Asset.fromModule(require('../../assets/dev/raccoon-2.jpg')).uri;
 
 // Three captures of the same raccoon, for the photo carousel.
 const CAPTURES: Sighting[] = [

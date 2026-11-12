@@ -174,11 +174,12 @@ Figma: Home `88384:2943`, Home-Profile `88384:3300`.
 - **Home** (`components/home/HomeView.tsx`, used by `app/index.tsx`): greeting by time of day,
   avatar → profile, streak pill, this week's capture days, XP bar "N XP more to unlock <badge>",
   badge row (tap a badge → pop-up with its name and XP), life list, bottom nav.
-- **Life list:** own finds first, then "Not found yet" teasers (`lib/teasers.ts`, the 9 Figma animal
-  photos in `assets/lifelist/`). A teaser disappears once a found species has that animal's name in
-  it ("Red Fox" hides the fox). **Filter** pop-up (not in Figma): pick any number of categories
-  ("All" clears them) + sort (recently captured, A–Z, Z–A, most captured); teasers hide while it is
-  changed. `lib/lifelist-view.ts`.
+- **Life list:** the user's own finds. Figma's "Not found yet" teaser cards (9 animal photos) were
+  removed before the App Store release (2026-11-09, user's call, so the app ships no third-party
+  photos); an empty list says "Nothing here yet. Tap Capture to add your first animal." Two of
+  those photos stay as dev-only samples in `assets/dev/`. **Filter** pop-up (not in Figma): pick
+  any number of categories ("All" clears them) + sort (recently captured, A–Z, Z–A, most
+  captured). `lib/lifelist-view.ts`.
 - **Profile** (`components/profile/ProfileView.tsx`, used by `app/account.tsx`, now a normal pushed
   screen with Figma's back button instead of a modal): docent, tap-to-edit name, email when signed
   in, 4 stats, docent picker (check on the chosen one), Location switch, account rows. Signed in:
