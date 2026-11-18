@@ -29,7 +29,7 @@ export const FAILURES: Record<FailureKind, Failure> = {
   },
   noAnimal: {
     title: "I don't see an animal",
-    body: 'This looks like a plant or an object. Point the camera at a bird, bug or other critter and try again.',
+    body: 'I can’t spot any wildlife here. They’re sneaky, so look a little closer and try again.',
   },
   offline: {
     title: 'No connection',
@@ -88,7 +88,7 @@ export function FailurePopup({ failure, canRetry, onRetry, onRetake, onClose }: 
             <Button label="Try again" size="compact" onPress={onRetry} style={styles.flex} />
           </>
         ) : (
-          <Button label="Take a photo" size="compact" onPress={onRetake} style={styles.flex} />
+          <Button label={failure === FAILURES.noAnimal || failure === FAILURES.unsure ? 'Retake photo' : 'Take a photo'} size="compact" onPress={onRetake} style={styles.flex} />
         )}
       </PopupButtons>
     </Popup>
@@ -174,7 +174,7 @@ export default function IdentifyScreen() {
       {failure && (
         <FailurePopup
           failure={failure}
-          canRetry={Boolean(photoBase64) && failure !== FAILURES.noAnimal}
+          canRetry={Boolean(photoBase64) && failure !== FAILURES.noAnimal && failure !== FAILURES.unsure}
           onRetry={handleRetry}
           onRetake={() => router.replace('/capture')}
           onClose={() => router.dismissTo('/')}
