@@ -27,6 +27,10 @@ export const FAILURES: Record<FailureKind, Failure> = {
     title: 'Something went wrong',
     body: 'I have trouble identifying this. Nature can be sneaky sometimes.',
   },
+  noAnimal: {
+    title: "I don't see an animal",
+    body: 'This looks like a plant or an object. Point the camera at a bird, bug or other critter and try again.',
+  },
   offline: {
     title: 'No connection',
     body: "I couldn't reach the internet. Check your signal — your photo is safe and ready to try again.",
@@ -170,7 +174,7 @@ export default function IdentifyScreen() {
       {failure && (
         <FailurePopup
           failure={failure}
-          canRetry={Boolean(photoBase64)}
+          canRetry={Boolean(photoBase64) && failure !== FAILURES.noAnimal}
           onRetry={handleRetry}
           onRetake={() => router.replace('/capture')}
           onClose={() => router.dismissTo('/')}

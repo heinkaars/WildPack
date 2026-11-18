@@ -9,7 +9,7 @@ const TIMEOUT_MS = 30_000;
  *  frame at all) — treat it as "couldn't identify" rather than a real guess. */
 export const LOW_CONFIDENCE_THRESHOLD = 0.3;
 
-export type IdentifyErrorKind = 'offline' | 'timeout' | 'server' | 'auth' | 'rate';
+export type IdentifyErrorKind = 'offline' | 'timeout' | 'server' | 'auth' | 'rate' | 'noAnimal';
 
 export class IdentifyError extends Error {
   readonly kind: IdentifyErrorKind;
@@ -61,6 +61,9 @@ export async function identifySpecies(imageBase64: string): Promise<IdentifyOutc
     }
     if (response.status === 429) {
       throw new IdentifyError('rate', 'Identify request hit the rate limit');
+    }
+    if (response.status === 422) {
+      throw new IdentifyError('noAnimal', 'No animal found in the photo');
     }
     throw new IdentifyError('server', `Identify request failed: ${response.status}`);
   }
