@@ -1,6 +1,7 @@
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { docentFromLook } from '../components/ui';
 import { QuizMessage, QuizView } from '../components/quiz/QuizView';
+import { useAuth } from '../lib/auth';
 import { useLifelist } from '../lib/lifelist-store';
 import { QUIZ_QUESTIONS } from '../lib/quiz';
 import { useDailyQuiz } from '../lib/quiz-store';
@@ -9,10 +10,14 @@ import { quizXp } from '../lib/xp';
 /** Today's quiz, opened from the card on Home. */
 export default function QuizScreen() {
   const router = useRouter();
+  const { isAnonymous } = useAuth();
   const { profile, getEntry } = useLifelist();
   const { state, retry, answer } = useDailyQuiz();
   const docent = docentFromLook(profile.look);
   const close = () => router.back();
+
+  // The quiz needs an account; a guest who lands here by a direct link goes home.
+  if (isAnonymous) return <Redirect href="/" />;
 
   switch (state.status) {
     case 'loading':

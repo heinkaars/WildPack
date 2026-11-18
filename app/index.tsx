@@ -1,6 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { HomeView } from '../components/home/HomeView';
+import { QuizAccountPopup } from '../components/quiz/QuizAccountPopup';
+import { useAuth } from '../lib/auth';
 import { SyncIndicator } from '../components/SyncIndicator';
 import * as db from '../lib/db';
 import { useLifelist } from '../lib/lifelist-store';
@@ -12,6 +15,9 @@ import { colors, type } from '../lib/theme';
 export default function HomeScreen() {
   const router = useRouter();
   const { ready, profile, entries, stats, refresh } = useLifelist();
+  const { isAnonymous } = useAuth();
+  const [needsAccount, setNeedsAccount] = useState(false);
+  const [toAccount, setToAccount] = useState(false);
 
   if (!ready) {
     return (
@@ -30,7 +36,7 @@ export default function HomeScreen() {
         onOpenProfile={() => router.push('/account')}
         onOpenSpecies={(id) => router.push(`/species/${id}`)}
         onCapture={() => router.push('/capture')}
-        onOpenQuiz={() => router.push('/quiz')}
+        onOpenQuiz={() => (isAnonymous ? setNeedsAccount(true) : router.push('/quiz'))}
         onReplayQuiz={
           __DEV__
             ? async () => {
@@ -41,6 +47,21 @@ export default function HomeScreen() {
             : undefined
         }
         notices={<SyncIndicator />}
+      />
+      {/* Guests need an account for the daily quiz. Navigate once the pop-up has fully closed (see Popup). */}
+      <QuizAccountPopup
+        visible={needsAccount}
+        onNotNow={() => setNeedsAccount(false)}
+        onCreateAccount={() => {
+          setToAccount(true);
+          setNeedsAccount(false);
+        }}
+        onDismissed={() => {
+          if (toAccount) {
+            setToAccount(false);
+            router.push('/auth/create-account');
+          }
+        }}
       />
       {/* Confirms a sign-in or a new account, both of which land here. */}
       <FlashBanner />
