@@ -49,7 +49,7 @@ export default function CreateAccountScreen() {
     <AuthScreen
       wordmark
       title="Create account"
-      subtitle="Hey, let's create an account to save all the data and species you've recorded."
+      subtitle="Create an account to save your lifelist"
       error={error}
       footer={
         <ActionGroup>
