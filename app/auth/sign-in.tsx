@@ -7,6 +7,7 @@ import {
   AuthScreen,
   MessageBox,
   PasswordInput,
+  PromptLink,
   TextLink,
 } from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
@@ -64,6 +65,7 @@ export default function SignInScreen() {
   return (
     <AuthScreen
       title="Welcome back"
+      wordmark
       subtitle="Sign in to bring your lifelist onto this phone."
       error={error}
       footer={
@@ -79,7 +81,11 @@ export default function SignInScreen() {
             {/* Reached from onboarding's "I have an account", this is for existing
                 accounts only; creating one comes later, from the profile. */}
             {!needsOnboarding && (
-              <TextLink label="Create an account instead" onPress={() => router.replace('/auth/create-account')} />
+              <PromptLink
+                prompt="Don't have an account?"
+                action="Create one"
+                onPress={() => router.replace('/auth/create-account')}
+              />
             )}
           </ActionGroup>
           {carrying && (
