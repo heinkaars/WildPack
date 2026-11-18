@@ -42,7 +42,7 @@ export default function HomeScreen() {
             ? async () => {
                 await db.deleteQuiz(localDateKey(new Date()));
                 await refresh();
-                router.push('/quiz');
+                router.push('/quiz?dev=1');
               }
             : undefined
         }
