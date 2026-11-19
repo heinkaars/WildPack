@@ -13,7 +13,7 @@ import {
 import { useAuth } from '../../lib/auth';
 import { useOnboarding } from '../../lib/onboarding';
 import { previewMerge } from '../../lib/account-switch';
-import { showFlash } from '../../lib/flash';
+import { showWelcome } from '../../lib/welcome';
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -51,7 +51,7 @@ export default function SignInScreen() {
       // A1 in the moment before the store has rebuilt around the account.
       await markComplete();
 
-      showFlash(`Welcome back. Signed in as ${trimmed}.`);
+      showWelcome({ kind: 'signed-in', email: trimmed });
 
       // The lifelist store rebuilds itself around the new account; going back to
       // the root means landing on it once it has.
