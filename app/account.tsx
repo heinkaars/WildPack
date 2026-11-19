@@ -3,18 +3,20 @@ import { AppState, Linking, Pressable, StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ProfileView } from '../components/profile/ProfileView';
 import { Button, Popup, PopupButtons } from '../components/ui';
+import * as db from '../lib/db';
 import { deleteAccount } from '../lib/account-service';
 import { useAuth } from '../lib/auth';
 import { useLifelist } from '../lib/lifelist-store';
 import { isLocationSharingOn, setLocationSharing } from '../lib/location';
 import { useOnboarding } from '../lib/onboarding';
 import { colors, type } from '../lib/theme';
+import { localDateKey } from '../lib/xp';
 
 /** Profile (Figma Home-Profile 88384:3300), opened from the avatar on Home. */
 export default function ProfileScreen() {
   const router = useRouter();
   const { isAnonymous, email, signOut } = useAuth();
-  const { profile, profileLoaded, entries, stats, updateProfile } = useLifelist();
+  const { profile, profileLoaded, entries, stats, updateProfile, refresh } = useLifelist();
   const { resetOnboarding } = useOnboarding();
 
   const [locationOn, setLocationOn] = useState(false);
@@ -57,6 +59,13 @@ export default function ProfileScreen() {
     router.dismissTo('/');
   }
 
+  // Development only: throws away today's result and opens the quiz, even as a guest.
+  async function replayQuiz() {
+    await db.deleteQuiz(localDateKey(new Date()));
+    await refresh();
+    router.push('/quiz?dev=1');
+  }
+
   return (
     <>
       <ProfileView
@@ -76,9 +85,14 @@ export default function ProfileScreen() {
         onDeleteAccount={removeAccount}
         devTools={
           __DEV__ && (
-            <Pressable onPress={resetOnboarding} hitSlop={8} style={styles.dev}>
-              <Text style={[type.labelSm, styles.devText]}>↺ Replay onboarding (dev)</Text>
-            </Pressable>
+            <>
+              <Pressable onPress={resetOnboarding} hitSlop={8} style={styles.dev}>
+                <Text style={[type.labelSm, styles.devText]}>↺ Replay onboarding (dev)</Text>
+              </Pressable>
+              <Pressable onPress={replayQuiz} hitSlop={8} style={styles.dev}>
+                <Text style={[type.labelSm, styles.devText]}>↺ Replay quiz (dev)</Text>
+              </Pressable>
+            </>
           )
         }
       />

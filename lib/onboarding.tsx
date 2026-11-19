@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRouter, useSegments } from 'expo-router';
 import { useLifelist } from './lifelist-store';
 import {
@@ -9,6 +9,7 @@ import {
   markOnboardingComplete as writeComplete,
   snoozeOnboarding,
 } from './onboarding-flags';
+import { WelcomeScene } from '../components/onboarding/WelcomeScene';
 import { absoluteFill, colors } from './theme';
 
 type OnboardingContextValue = {
@@ -105,7 +106,7 @@ export function OnboardingGate() {
 
   return (
     <View style={styles.cover}>
-      <Text style={styles.wordmark}>WildPack</Text>
+      <WelcomeScene />
     </View>
   );
 }
@@ -114,8 +115,5 @@ const styles = StyleSheet.create({
   cover: {
     ...absoluteFill,
     backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  wordmark: { fontSize: 22, fontWeight: '700', color: colors.forest, letterSpacing: 0.5 },
 });

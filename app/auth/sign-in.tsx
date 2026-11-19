@@ -7,12 +7,13 @@ import {
   AuthScreen,
   MessageBox,
   PasswordInput,
+  PromptLink,
   TextLink,
 } from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
 import { useOnboarding } from '../../lib/onboarding';
 import { previewMerge } from '../../lib/account-switch';
-import { showFlash } from '../../lib/flash';
+import { showWelcome } from '../../lib/welcome';
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function SignInScreen() {
       // A1 in the moment before the store has rebuilt around the account.
       await markComplete();
 
-      showFlash(`Welcome back. Signed in as ${trimmed}.`);
+      showWelcome({ kind: 'signed-in', email: trimmed });
 
       // The lifelist store rebuilds itself around the new account; going back to
       // the root means landing on it once it has.
@@ -64,6 +65,7 @@ export default function SignInScreen() {
   return (
     <AuthScreen
       title="Welcome back"
+      wordmark
       subtitle="Sign in to bring your lifelist onto this phone."
       error={error}
       footer={
@@ -79,7 +81,11 @@ export default function SignInScreen() {
             {/* Reached from onboarding's "I have an account", this is for existing
                 accounts only; creating one comes later, from the profile. */}
             {!needsOnboarding && (
-              <TextLink label="Create an account instead" onPress={() => router.replace('/auth/create-account')} />
+              <PromptLink
+                prompt="Don't have an account?"
+                action="Create one"
+                onPress={() => router.replace('/auth/create-account')}
+              />
             )}
           </ActionGroup>
           {carrying && (
