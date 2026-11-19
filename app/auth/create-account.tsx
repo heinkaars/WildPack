@@ -10,7 +10,7 @@ import {
   PromptLink,
 } from '../../components/AuthScreen';
 import { useAuth } from '../../lib/auth';
-import { showFlash } from '../../lib/flash';
+import { showWelcome } from '../../lib/welcome';
 
 export default function CreateAccountScreen() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function CreateAccountScreen() {
       await signUp(trimmed, password);
       // The account this device has been using is now theirs — same lifelist,
       // same everything, just with a way back into it.
-      showFlash(`You are signed in as ${trimmed}.`);
+      showWelcome({ kind: 'created', email: trimmed });
       router.dismissTo('/');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.');

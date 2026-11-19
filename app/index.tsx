@@ -2,13 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { HomeView } from '../components/home/HomeView';
+import { WelcomePopup } from '../components/WelcomePopup';
 import { QuizAccountPopup } from '../components/quiz/QuizAccountPopup';
 import { useAuth } from '../lib/auth';
 import { SyncIndicator } from '../components/SyncIndicator';
 import * as db from '../lib/db';
 import { useLifelist } from '../lib/lifelist-store';
 import { localDateKey } from '../lib/xp';
-import { FlashBanner } from '../lib/flash';
 import { colors, type } from '../lib/theme';
 
 /** Home: greeting, week / XP overview, badges and the life list (Figma 88384:2943). */
@@ -63,8 +63,8 @@ export default function HomeScreen() {
           }
         }}
       />
-      {/* Confirms a sign-in or a new account, both of which land here. */}
-      <FlashBanner />
+      {/* Greets a sign-in or a new account, both of which land here. */}
+      <WelcomePopup />
     </>
   );
 }
